@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 	"os"
-	"vcs-sms-be/initializers"
-	"vcs-sms-be/routes"
+	"github.com/chienduynguyen1702/vcs-sms-be/initializers"
+	"github.com/chienduynguyen1702/vcs-sms-be/routes"
 
 	"github.com/gin-gonic/gin"
 )

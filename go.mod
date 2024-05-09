@@ -1,4 +1,4 @@
-module vcs-sms-be
+module github.com/chienduynguyen1702/vcs-sms-be
 
 go 1.21.6
 

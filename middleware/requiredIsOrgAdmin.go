@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"net/http"
-	"vcs-sms-be/models"
+	"github.com/chienduynguyen1702/vcs-sms-be/models"
 
 	"github.com/gin-gonic/gin"
 )

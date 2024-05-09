@@ -1,7 +1,7 @@
 package repositories
 
 import (
-	"vcs-sms-be/models"
+	"github.com/chienduynguyen1702/vcs-sms-be/models"
 
 	"gorm.io/gorm"
 )

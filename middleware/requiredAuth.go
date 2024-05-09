@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 	"time"
-	"vcs-sms-be/models"
+	"github.com/chienduynguyen1702/vcs-sms-be/models"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"

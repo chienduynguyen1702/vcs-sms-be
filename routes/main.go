@@ -4,8 +4,9 @@ package routes
 
 import (
 	"os"
-	docs "vcs-sms-be/docs"
 	"time"
+
+	docs "github.com/chienduynguyen1702/vcs-sms-be/docs"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
