@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:12-alpine
+    container_name: param-be-db
+    restart: always
+    ports:
+      - "5435:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: param
+    volumes:
+      - param_db_volume:/var/lib/postgresql/data
+
+volumes:
+  param_db_volume:
