@@ -1,18 +1,18 @@
-version: '3'
+# version: '3'
 
 services:
   postgres:
     image: postgres:12-alpine
-    container_name: param-be-db
+    container_name: vcs-sms-db
     restart: always
     ports:
-      - "5435:5432"
+      - "$DB_PORT:5432"
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: param
+      POSTGRES_USER: vcs
+      POSTGRES_PASSWORD: vcs
+      POSTGRES_DB: $DB_DATABASE
     volumes:
-      - param_db_volume:/var/lib/postgresql/data
+      - vcs_sms_db_volume:/var/lib/postgresql/data
 
 volumes:
-  param_db_volume:
+  vcs_sms_db_volume:

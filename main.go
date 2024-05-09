@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/chienduynguyen1702/vcs-sms-be/configs"
+	"github.com/chienduynguyen1702/vcs-sms-be/factory"
 	"github.com/chienduynguyen1702/vcs-sms-be/routes"
 
 	"github.com/gin-gonic/gin"
@@ -28,16 +29,15 @@ func init() {
 	// Set controller
 	// controllers.SetDB(db) // set controller use that db *gorm.DB
 	log.Println("Finished init.")
-}
-func main() {
 	if os.Getenv("GIN_MODE") == "release" {
 		gin.SetMode(gin.ReleaseMode)
 	}
-
-	r := routes.SetupV1Router()
+	factory.AppFactoryInstance = factory.NewAppFactory(db)
+}
+func main() {
 
 	port := os.Getenv("PORT")
-
+	r := routes.SetupV1Router()
 	if port == "" {
 		log.Fatal("$PORT must be set")
 	}

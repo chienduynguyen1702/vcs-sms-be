@@ -2,14 +2,16 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/chienduynguyen1702/vcs-sms-be/factory"
 )
 
 func setupGroupAuth(r *gin.RouterGroup) {
-	// authGroup := r.Group("/auth")
-	// {
-	// 	authGroup.POST("/login", controllers.Login)
-	// 	authGroup.POST("/register", controllers.Register)
-	// 	authGroup.GET("/validate", middleware.RequiredAuth, controllers.Validate)
-	// 	authGroup.POST("/logout", middleware.RequiredAuth, controllers.Logout)
-	// }
+	authController := factory.AppFactoryInstance.CreateAuthController()
+	authGroup := r.Group("/auth")
+	{
+		authGroup.POST("/login", authController.Login)
+		// authGroup.POST("/register", authController.Register)
+		// authGroup.GET("/validate", middleware.RequiredAuth, authController.Validate)
+		// authGroup.POST("/logout", middleware.RequiredAuth, authController.Logout)
+	}
 }

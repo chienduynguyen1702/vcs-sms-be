@@ -7,6 +7,7 @@ import (
 	"time"
 
 	docs "github.com/chienduynguyen1702/vcs-sms-be/docs"
+	"github.com/chienduynguyen1702/vcs-sms-be/factory"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -18,7 +19,7 @@ func SetupV1Router() *gin.Engine {
 	r := gin.Default()
 	// CORS setup
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000", "https://parameter-store-fe-golang.up.railway.app", os.Getenv("HOSTNAME_URL"), "http://localhost:" + os.Getenv("PORT")},
+		AllowOrigins:     []string{"http://localhost:3000", os.Getenv("HOSTNAME_URL"), "http://localhost:" + os.Getenv("PORT")},
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
@@ -29,6 +30,7 @@ func SetupV1Router() *gin.Engine {
 	// Setup routes for the API version 1
 	v1 := r.Group("/api/v1")
 	{
+		setupGroupUser(v1)
 		setupGroupAuth(v1)
 		setupGroupOrganization(v1)
 	}
@@ -50,6 +52,9 @@ func SetupV1Router() *gin.Engine {
 		docs.SwaggerInfo.Host = os.Getenv("HOSTNAME")
 		docs.SwaggerInfo.Schemes = []string{"https"}
 	}
+
+	mainController := factory.AppFactoryInstance.CreateMainController()
+	v1.GET("/ping", mainController.Ping)
 
 	v1.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	return r

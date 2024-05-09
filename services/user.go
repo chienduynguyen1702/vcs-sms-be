@@ -14,14 +14,14 @@ type UserService struct {
 	userRepo *repositories.UserRepository
 }
 
-func NewUserService(userRepo *repositories.UserRepository) IUserService {
-	return &UserService{userRepo}
+func NewUserService(userRepo *repositories.UserRepository) *UserService {
+	return &UserService{userRepo: userRepo}
 }
 
 func (us *UserService) CreateUser(user *models.User) error {
 	return us.userRepo.CreateUser(user)
 }
 
-func (us *UserService) GetUserByEmail(email string) (*models.User, error) {
+func (us *UserService) GetUserByEmail(email string) *models.User {
 	return us.userRepo.GetUserByEmail(email)
 }

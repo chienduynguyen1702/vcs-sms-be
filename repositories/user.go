@@ -19,12 +19,10 @@ func (ur *UserRepository) CreateUser(user *models.User) error {
 	return ur.db.Create(user).Error
 }
 
-func (ur *UserRepository) GetUserByEmail(email string) (*models.User, error) {
+func (ur *UserRepository) GetUserByEmail(email string) *models.User {
 	var user models.User
-	if err := ur.db.Where("email = ?", email).First(&user).Error; err != nil {
-		return nil, err
-	}
-	return &user, nil
+	ur.db.Where("email = ?", email).First(&user)
+	return &user
 }
 
 func (ur *UserRepository) GetUserByID(id uint) (*models.User, error) {
