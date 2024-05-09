@@ -3,7 +3,8 @@ package main
 import (
 	"log"
 	"os"
-	"github.com/chienduynguyen1702/vcs-sms-be/initializers"
+
+	"github.com/chienduynguyen1702/vcs-sms-be/configs"
 	"github.com/chienduynguyen1702/vcs-sms-be/routes"
 
 	"github.com/gin-gonic/gin"
@@ -11,16 +12,16 @@ import (
 
 func init() {
 	if os.Getenv("SERVERLESS_DEPLOY") != "true" {
-		initializers.LoadEnvVariables()
+		configs.LoadEnvVariables()
 	}
-	db, err := initializers.ConnectDatabase() // return *gorm.DB
+	db, err := configs.ConnectDatabase() // return *gorm.DB
 	if err != nil {
 		log.Fatal("Failed to connect to database")
 	}
 
 	// Migration db
 	if os.Getenv("RUN_MIGRATION") == "true" {
-		initializers.Migration(db) // migration db
+		configs.Migration(db) // migration db
 	}
 	// Seed data
 

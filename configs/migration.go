@@ -1,7 +1,8 @@
-package initializers
+package configs
 
 import (
 	"log"
+
 	"github.com/chienduynguyen1702/vcs-sms-be/models"
 
 	"gorm.io/gorm"
