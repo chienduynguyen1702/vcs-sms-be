@@ -3,6 +3,7 @@ package controllers
 import (
 	"net/http"
 
+	"github.com/chienduynguyen1702/vcs-sms-be/dtos"
 	"github.com/chienduynguyen1702/vcs-sms-be/services"
 	"github.com/gin-gonic/gin"
 )
@@ -18,29 +19,49 @@ func NewAuthController(authService *services.AuthService) *AuthController {
 // Login godoc
 // @Summary Login
 // @Description Login
-// @Tags auth
+// @Tags Authentication
 // @Accept  json
 // @Produce  json
-// @Param loginReq body controllers.Login.loginReq true "Login Request"
+// @Param loginReq body dtos.LoginRequest true "Login Request"
 // @Success 200 {object} string
 // @Router /api/v1/auth/login [post]
 func (ac *AuthController) Login(ctx *gin.Context) {
-	// get user from context
-	type loginReq struct {
-		Email    string `json:"email" binding:"required"`
-		Password string `json:"password" binding:"required"`
-	}
-	var loginReqBody loginReq
+	var loginReqBody dtos.LoginRequest
 
 	if err := ctx.ShouldBindJSON(&loginReqBody); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, dtos.ErrorResponse(err.Error()))
 		return
 	}
 	loginResponse := ac.authService.Login(loginReqBody.Email, loginReqBody.Password)
 
 	if !loginResponse.Success {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": loginResponse.Message})
+		ctx.JSON(http.StatusBadRequest, dtos.ErrorResponse(loginResponse.Message))
 		return
 	}
 	ctx.JSON(http.StatusOK, loginResponse)
+}
+
+// Register godoc
+// @Summary Register
+// @Description Register
+// @Tags Authentication
+// @Accept  json
+// @Produce  json
+// @Param registerReq body dtos.RegisterRequest true "Register Request"
+// @Success 200 {object} string
+// @Router /api/v1/auth/register [post]
+func (ac *AuthController) Register(ctx *gin.Context) {
+	var registerReqBody dtos.RegisterRequest
+
+	if err := ctx.ShouldBindJSON(&registerReqBody); err != nil {
+		ctx.JSON(http.StatusBadRequest, dtos.ErrorResponse(err.Error()))
+		return
+	}
+	registerResponse := ac.authService.Register(registerReqBody.Email, registerReqBody.Password, registerReqBody.PasswordConfirm, registerReqBody.OrganizationName)
+
+	if !registerResponse.Success {
+		ctx.JSON(http.StatusBadRequest, dtos.ErrorResponse(registerResponse.Message))
+		return
+	}
+	ctx.JSON(http.StatusOK, registerResponse)
 }

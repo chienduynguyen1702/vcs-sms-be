@@ -16,7 +16,7 @@ func NewMainController() *MainController {
 // Ping godoc
 // @Summary Ping
 // @Description Ping
-// @Tags main
+// @Tags Ping
 // @Accept  json
 // @Produce  json
 // @Success 200 {object} string

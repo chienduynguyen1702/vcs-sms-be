@@ -17,6 +17,8 @@ type AppFactory struct {
 	db             *gorm.DB
 	userRepository *repositories.UserRepository
 	userRepoInit   sync.Once
+	orgRepository  *repositories.OrganizationRepository
+	orgRepoInit    sync.Once
 }
 
 func NewAppFactory(db *gorm.DB) *AppFactory {

@@ -7,7 +7,8 @@ import (
 
 func (af *AppFactory) CreateAuthService() *services.AuthService {
 	userRepository := af.CreateUserRepository()
-	return services.NewAuthService(userRepository)
+	organizationRepository := af.CreateOrganizationRepository()
+	return services.NewAuthService(userRepository, organizationRepository)
 }
 
 func (af *AppFactory) CreateAuthController() *controllers.AuthController {

@@ -22,6 +22,9 @@ func (ur *UserRepository) CreateUser(user *models.User) error {
 func (ur *UserRepository) GetUserByEmail(email string) *models.User {
 	var user models.User
 	ur.db.Where("email = ?", email).First(&user)
+	if user.ID == 0 {
+		return nil
+	}
 	return &user
 }
 
