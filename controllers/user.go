@@ -61,7 +61,7 @@ func (uc *UserController) GetUserByEmail(ctx *gin.Context) {
 // @Produce  json
 // @Param id path int true "User ID"
 // @Success 200 {object} string
-// @Router /api/v1/user/{id} [get]
+// @Router /api/v1/users/{id} [get]
 func (uc *UserController) GetUserByID(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, dtos.SuccessResponse("Get user by ID successfully", nil))
 }
@@ -74,7 +74,7 @@ func (uc *UserController) GetUserByID(ctx *gin.Context) {
 // @Produce  json
 // @Param updateReq body dtos.UpdateUserRequest true "Update User Request"
 // @Success 200 {object} string
-// @Router /api/v1/user/{id} [put]
+// @Router /api/v1/users/{id} [put]
 func (uc *UserController) UpdateUser(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, dtos.SuccessResponse("Update user successfully", nil))
 }
@@ -87,7 +87,7 @@ func (uc *UserController) UpdateUser(ctx *gin.Context) {
 // @Produce  json
 // @Param id path int true "User ID"
 // @Success 200 {object} string
-// @Router /api/v1/user/{id} [delete]
+// @Router /api/v1/users/{id} [delete]
 func (uc *UserController) DeleteUser(ctx *gin.Context) {
 	userID := ctx.Param("id")
 	if userID == "" {
