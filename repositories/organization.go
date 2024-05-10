@@ -30,7 +30,7 @@ func (or *OrganizationRepository) GetOrganizationByName(name string) *models.Org
 	return &organization
 }
 
-func (or *OrganizationRepository) GetOrganizationByID(id uint) (*models.Organization, error) {
+func (or *OrganizationRepository) GetOrganizationByID(id string) (*models.Organization, error) {
 	var organization models.Organization
 	if err := or.db.Where("id = ?", id).First(&organization).Error; err != nil {
 		return nil, err

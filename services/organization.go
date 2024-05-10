@@ -1,6 +1,7 @@
 package services
 
 import (
+	"github.com/chienduynguyen1702/vcs-sms-be/dtos"
 	"github.com/chienduynguyen1702/vcs-sms-be/models"
 	"github.com/chienduynguyen1702/vcs-sms-be/repositories"
 )
@@ -24,4 +25,32 @@ func (us *OrganizationService) CreateOrganization(organization *models.Organizat
 
 func (us *OrganizationService) GetOrganizationByName(email string) *models.Organization {
 	return us.organizationRepo.GetOrganizationByName(email)
+}
+
+func (us *OrganizationService) GetOrganizationByID(ID string) (dtos.OrganizationResponse, error) {
+	org, err := us.organizationRepo.GetOrganizationByID(ID)
+	if err != nil {
+		return dtos.OrganizationResponse{}, err
+	}
+	return dtos.MakeOrganizationResponse(*org), nil
+}
+
+func (us *OrganizationService) UpdateOrganization(organization *dtos.UpdateOrganizationRequest, orgID string) (dtos.OrganizationResponse, error) {
+	org, err := us.organizationRepo.GetOrganizationByID(orgID)
+	if err != nil {
+		return dtos.OrganizationResponse{}, err
+	}
+
+	org.Name = organization.Name
+	org.AliasName = organization.AliasName
+	org.EstablishmentDate = organization.EstablishmentDate
+	org.Description = organization.Description
+	org.Address = organization.Address
+
+	err = us.organizationRepo.UpdateOrganization(org)
+	if err != nil {
+		return dtos.OrganizationResponse{}, err
+	}
+
+	return dtos.MakeOrganizationResponse(*org), nil
 }

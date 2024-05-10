@@ -1,13 +1,16 @@
 package routes
 
 import (
+	"github.com/chienduynguyen1702/vcs-sms-be/factory"
+	"github.com/chienduynguyen1702/vcs-sms-be/middleware"
 	"github.com/gin-gonic/gin"
 )
 
 func setupGroupOrganization(r *gin.RouterGroup) {
-	// organizationGroup := r.Group("/organizations", middleware.RequiredAuth)
-	// {
-	// organizationGroup.GET("/", controllers.GetOrganizationInformation)
-	// organizationGroup.PUT("/:organization_id", middleware.RequiredIsOrgAdmin, controllers.UpdateOrganizationInformation)
-	// }
+	organizationController := factory.AppFactoryInstance.CreateOrganizationController()
+	organizationGroup := r.Group("/organizations", middleware.RequiredAuth)
+	{
+		organizationGroup.GET("/", organizationController.GetOrganization)
+		organizationGroup.PUT("/", organizationController.UpdateOrganization)
+	}
 }

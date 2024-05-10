@@ -39,6 +39,19 @@ definitions:
     - password
     - password_confirm
     type: object
+  dtos.UpdateOrganizationRequest:
+    properties:
+      address:
+        type: string
+      alias_name:
+        type: string
+      description:
+        type: string
+      establishment_date:
+        type: string
+      name:
+        type: string
+    type: object
   dtos.UpdateServerRequest:
     properties:
       ip:
@@ -117,6 +130,42 @@ paths:
       summary: Register
       tags:
       - Authentication
+  /api/v1/organizations/:
+    get:
+      consumes:
+      - application/json
+      description: Get organization
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Get organization
+      tags:
+      - Organization
+    put:
+      consumes:
+      - application/json
+      description: Update organization
+      parameters:
+      - description: Update Organization Request
+        in: body
+        name: UpdateOrganizationBodyRequest
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UpdateOrganizationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Update organization
+      tags:
+      - Organization
   /api/v1/ping:
     get:
       consumes:
