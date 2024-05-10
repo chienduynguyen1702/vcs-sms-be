@@ -6,7 +6,6 @@ import (
 	"github.com/chienduynguyen1702/vcs-sms-be/dtos"
 	"github.com/chienduynguyen1702/vcs-sms-be/models"
 	"github.com/chienduynguyen1702/vcs-sms-be/repositories"
-	"github.com/chienduynguyen1702/vcs-sms-be/utilities"
 )
 
 type IUserService interface {
@@ -69,22 +68,8 @@ func (us *UserService) DeleteUser(id string) error {
 	return us.userRepo.DeleteUser(user)
 }
 
-func (us *UserService) GetUsers(adminID string) (dtos.ListUserResponse, error) {
-	// get admin user
-	adminUser, err := us.userRepo.GetUserByID(adminID)
-	if err != nil {
-		return nil, err
-	}
-	if adminUser == nil {
-		return nil, fmt.Errorf("admin user not found")
-	}
-	// get organizationID from admin user
-	orgID := adminUser.OrganizationID
-	if orgID == 0 {
-		return nil, fmt.Errorf("admin user does not belong to any organization")
-	}
-	orgIDString := utilities.ParseUintToString(orgID)
-	users, err := repositories.UserRepo.GetUsersByOrganizationID(orgIDString)
+func (us *UserService) GetUsers(orgID string) (dtos.ListUserResponse, error) {
+	users, err := repositories.UserRepo.GetUsersByOrganizationID(orgID)
 	if err != nil {
 		return nil, err
 	}

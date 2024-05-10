@@ -113,13 +113,13 @@ func (uc *UserController) DeleteUser(ctx *gin.Context) {
 // @Success 200 {object} string
 // @Router /api/v1/users [get]
 func (uc *UserController) GetUsers(ctx *gin.Context) {
-	adminId, exist := ctx.Get("userID")
+	orgId, exist := ctx.Get("orgID")
 	if !exist {
 		ctx.JSON(http.StatusUnauthorized, dtos.ErrorResponse("Unauthorized"))
 		return
 	}
-	adminID := adminId.(string)
-	users, err := uc.userService.GetUsers(adminID)
+	orgID := orgId.(string)
+	users, err := uc.userService.GetUsers(orgID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, dtos.ErrorResponse(err.Error()))
 		return

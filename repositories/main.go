@@ -6,8 +6,9 @@ var (
 	DB *gorm.DB
 	// RedisClient *redis.Client
 
-	UserRepo         *UserRepository
 	OrganizationRepo *OrganizationRepository
+	UserRepo         *UserRepository
+	ServerRepo       *ServerRepository
 )
 
 func SetupDatabase(db *gorm.DB) {
