@@ -54,18 +54,28 @@ func (as *AuthService) Register(email, password, confirmPassword, organizationNa
 	if userInDb != nil {
 		return dtos.ErrorResponse("User already exists")
 	}
+	newOrg := &models.Organization{
+		Name: organizationName,
+	}
+	createdOrg, errCreatingOrg := as.organizationRepo.CreateOrganization(newOrg)
+	if errCreatingOrg != nil {
+		return dtos.ErrorResponse(errCreatingOrg.Error())
+	}
 	// Create new user
 	newUser := &models.User{
-		Email:    email,
-		Password: password,
+		Email:          email,
+		Username:       email,
+		Password:       password,
+		OrganizationID: createdOrg.ID,
 	}
 	if err := as.userRepo.CreateUser(newUser); err != nil {
 		return dtos.ErrorResponse(err.Error())
 	}
 	return dtos.SuccessResponse(
 		"Register successfully",
-		dtos.UserResponse{
-			Email: newUser.Email,
+		dtos.RegisterResponse{
+			Email:            newUser.Email,
+			OrganizationName: organizationName,
 		},
 	)
 }

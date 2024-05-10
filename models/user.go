@@ -10,7 +10,7 @@ import (
 type User struct {
 	gorm.Model
 	Email               string    `gorm:"type:varchar(255);unique;not null" json:"email"`
-	Username            string    `gorm:"type:varchar(100);unique;not null" json:"username"`
+	Username            string    `gorm:"type:varchar(100);unique" json:"username"`
 	Name                string    `gorm:"type:varchar(255);" json:"name"`
 	Password            string    `gorm:"type:varchar(255);not null" json:"password"`
 	Phone               string    `gorm:"type:varchar(255);" json:"phone"`

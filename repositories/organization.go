@@ -13,8 +13,11 @@ func NewOrganizationRepository(db *gorm.DB) *OrganizationRepository {
 	return &OrganizationRepository{db}
 }
 
-func (or *OrganizationRepository) CreateOrganization(organization *models.Organization) error {
-	return or.db.Create(organization).Error
+func (or *OrganizationRepository) CreateOrganization(organization *models.Organization) (*models.Organization, error) {
+	if err := or.db.Create(organization).Error; err != nil {
+		return nil, err
+	}
+	return organization, nil
 }
 
 func (or *OrganizationRepository) GetOrganizationByName(name string) *models.Organization {

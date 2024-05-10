@@ -18,7 +18,7 @@ func NewOrganizationService(organizationRepo *repositories.OrganizationRepositor
 	return &OrganizationService{organizationRepo: organizationRepo}
 }
 
-func (us *OrganizationService) CreateOrganization(organization *models.Organization) error {
+func (us *OrganizationService) CreateOrganization(organization *models.Organization) (*models.Organization, error) {
 	return us.organizationRepo.CreateOrganization(organization)
 }
 
