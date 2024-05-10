@@ -51,9 +51,32 @@ func (uc *UserController) CreateUser(ctx *gin.Context) {
 		},
 	))
 }
-func (uc *UserController) GetUserByEmail(ctx *gin.Context) {
-	ctx.JSON(http.StatusOK, dtos.SuccessResponse("Get user by email successfully", nil))
-}
+
+// // GetUserByEmail godoc
+// // @Summary Get user by email
+// // @Description Get user by email
+// // @Tags User
+// // @Accept  json
+// // @Produce  json
+// // @Param email body dtos.FindUserByEmailRequest true "User Email"
+// // @Success 200 {object} string
+// // @Router /api/v1/users/email [get]
+// func (uc *UserController) GetUserByEmail(ctx *gin.Context) {
+// 	email := ctx.Query("email")
+// 	if email == "" {
+// 		ctx.JSON(http.StatusBadRequest, dtos.ErrorResponse("Email is required"))
+// 		return
+// 	}
+// 	userDTOResponse, err := uc.userService.GetUserByEmail(email)
+// 	if err != nil {
+// 		ctx.JSON(http.StatusInternalServerError, dtos.ErrorResponse(err.Error()))
+// 		return
+// 	}
+// 	ctx.JSON(http.StatusOK, dtos.SuccessResponse(
+// 		"Get user by email successfully",
+// 		userDTOResponse,
+// 	))
+// }
 
 // GetUserByID godoc
 // @Summary Get user by ID
@@ -63,9 +86,22 @@ func (uc *UserController) GetUserByEmail(ctx *gin.Context) {
 // @Produce  json
 // @Param id path int true "User ID"
 // @Success 200 {object} string
-// @Router /api/v1/users/{id} [get]
+// @Router /api/v1/users/{user_id} [get]
 func (uc *UserController) GetUserByID(ctx *gin.Context) {
-	ctx.JSON(http.StatusOK, dtos.SuccessResponse("Get user by ID successfully", nil))
+	userID := ctx.Param("user_id")
+	if userID == "" {
+		ctx.JSON(http.StatusBadRequest, dtos.ErrorResponse("User ID is required"))
+		return
+	}
+	userDTOResponse, err := uc.userService.GetUserByID(userID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, dtos.ErrorResponse(err.Error()))
+		return
+	}
+	ctx.JSON(http.StatusOK, dtos.SuccessResponse(
+		"Get user by ID successfully",
+		userDTOResponse,
+	))
 }
 
 // UpdateUser godoc
@@ -76,7 +112,7 @@ func (uc *UserController) GetUserByID(ctx *gin.Context) {
 // @Produce  json
 // @Param updateReq body dtos.UpdateUserRequest true "Update User Request"
 // @Success 200 {object} string
-// @Router /api/v1/users/{id} [put]
+// @Router /api/v1/users/{user_id} [put]
 func (uc *UserController) UpdateUser(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, dtos.SuccessResponse("Update user successfully", nil))
 }
@@ -89,9 +125,9 @@ func (uc *UserController) UpdateUser(ctx *gin.Context) {
 // @Produce  json
 // @Param id path int true "User ID"
 // @Success 200 {object} string
-// @Router /api/v1/users/{id} [delete]
+// @Router /api/v1/users/{user_id} [delete]
 func (uc *UserController) DeleteUser(ctx *gin.Context) {
-	userID := ctx.Param("id")
+	userID := ctx.Param("user_id")
 	if userID == "" {
 		ctx.JSON(http.StatusBadRequest, dtos.ErrorResponse("User ID is required"))
 		return
@@ -110,9 +146,13 @@ func (uc *UserController) DeleteUser(ctx *gin.Context) {
 // @Tags User
 // @Accept  json
 // @Produce  json
+// @Param email query string false "Email"
+// @Param username query string false "Username"
 // @Success 200 {object} string
 // @Router /api/v1/users [get]
 func (uc *UserController) GetUsers(ctx *gin.Context) {
+	// email := ctx.Query("email")
+	// username := ctx.Query("username")
 	orgId, exist := ctx.Get("orgID")
 	if !exist {
 		ctx.JSON(http.StatusUnauthorized, dtos.ErrorResponse("Unauthorized"))

@@ -11,9 +11,13 @@ func setupGroupUser(r *gin.RouterGroup) {
 	userGroup := r.Group("/users", middleware.RequiredAuth)
 	{
 		userGroup.GET("/", userController.GetUsers)
+		// userGroup.GET("/email", userController.GetUserByEmail)
+
+		userGroup.GET("/:user_id", userController.GetUserByID)
 		userGroup.POST("/", userController.CreateUser)
 		userGroup.PUT("/:user_id", userController.UpdateUser)
-		userGroup.GET("/:user_id", userController.GetUserByID)
+		userGroup.DELETE("/:user_id", userController.DeleteUser)
+
 		// userGroup.POST("/register", userController.Register)
 		// userGroup.GET("/validate", middleware.RequiredAuth, userController.Validate)
 		// userGroup.POST("/logout", middleware.RequiredAuth, userController.Logout)

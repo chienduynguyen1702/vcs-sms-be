@@ -23,6 +23,19 @@ func MakeListUserResponse(users []models.User) ListUserResponse {
 	return listUserResponse
 }
 
+func MakeUserResponse(user models.User) UserResponse {
+	return UserResponse{
+		ID:             user.ID,
+		Email:          user.Email,
+		Username:       user.Username,
+		OrganizationID: user.OrganizationID,
+	}
+}
+
+type FindUserByEmailRequest struct {
+	Email string `json:"email"`
+}
+
 type CreateUserRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`

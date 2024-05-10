@@ -17,3 +17,8 @@ func ParseStringToUint(id string) (uint, error) {
 func ParseUintToString(id uint) string {
 	return strconv.Itoa(int(id))
 }
+
+// parse %40 to @
+func ParseEmail(email string) string {
+	return email
+}

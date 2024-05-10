@@ -45,15 +45,27 @@ func (us *UserService) CreateUser(user *dtos.CreateUserRequest, adminID string) 
 	return us.userRepo.CreateUser(newUser)
 }
 
-func (us *UserService) GetUserByEmail(email string) *models.User {
-	return us.userRepo.GetUserByEmail(email)
+func (us *UserService) GetUserByEmail(email string) (dtos.UserResponse, error) {
+	user := us.userRepo.GetUserByEmail(email)
+	if user == nil {
+		return dtos.UserResponse{}, fmt.Errorf("User not found")
+	}
+
+	return dtos.MakeUserResponse(*user), nil
 }
 
-func (us *UserService) GetUserByID(id string) (*models.User, error) {
-	return us.userRepo.GetUserByID(id)
+func (us *UserService) GetUserByID(id string) (dtos.UserResponse, error) {
+	user, err := us.userRepo.GetUserByID(id)
+	if user == nil {
+		return dtos.UserResponse{}, fmt.Errorf("User not found")
+	}
+	if err != nil {
+		return dtos.UserResponse{}, err
+	}
+	return dtos.MakeUserResponse(*user), nil
 }
 
-func (us *UserService) UpdateUser(id string, user *models.User) error {
+func (us *UserService) UpdateUser(user *models.User) error {
 	return us.userRepo.UpdateUser(user)
 }
 

@@ -123,6 +123,15 @@ paths:
       consumes:
       - application/json
       description: Get all users
+      parameters:
+      - description: Email
+        in: query
+        name: email
+        type: string
+      - description: Username
+        in: query
+        name: username
+        type: string
       produces:
       - application/json
       responses:
@@ -154,7 +163,7 @@ paths:
       summary: Create user
       tags:
       - User
-  /api/v1/users/{id}:
+  /api/v1/users/{user_id}:
     delete:
       consumes:
       - application/json
