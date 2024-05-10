@@ -20,6 +20,11 @@ func Migration(db *gorm.DB) error {
 		log.Println("Failed to migrate User models")
 		return err
 	}
+	err = db.AutoMigrate(&models.Server{})
+	if err != nil {
+		log.Println("Failed to migrate Server models")
+		return err
+	}
 	log.Printf("Database migrated\n")
 	return nil
 }

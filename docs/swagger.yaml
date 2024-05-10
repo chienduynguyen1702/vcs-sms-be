@@ -1,4 +1,11 @@
 definitions:
+  dtos.CreateServerRequest:
+    properties:
+      ip:
+        type: string
+      name:
+        type: string
+    type: object
   dtos.CreateUserRequest:
     properties:
       email:
@@ -31,6 +38,13 @@ definitions:
     required:
     - password
     - password_confirm
+    type: object
+  dtos.UpdateServerRequest:
+    properties:
+      ip:
+        type: string
+      name:
+        type: string
     type: object
   dtos.UpdateUserRequest:
     properties:
@@ -118,6 +132,109 @@ paths:
       summary: Ping
       tags:
       - Ping
+  /api/v1/servers:
+    get:
+      consumes:
+      - application/json
+      description: Get all servers
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Get all servers
+      tags:
+      - Server
+    post:
+      consumes:
+      - application/json
+      description: Create a new server
+      parameters:
+      - description: Create Server Request
+        in: body
+        name: CreateServerBodyRequest
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.CreateServerRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Create a new server
+      tags:
+      - Server
+  /api/v1/servers/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete server
+      parameters:
+      - description: Server ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Delete server
+      tags:
+      - Server
+    get:
+      consumes:
+      - application/json
+      description: Get server by ID
+      parameters:
+      - description: Server ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Get server by ID
+      tags:
+      - Server
+    put:
+      consumes:
+      - application/json
+      description: Update server
+      parameters:
+      - description: Server ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update Server Request
+        in: body
+        name: UpdateServerBodyRequest
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UpdateServerRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Update server
+      tags:
+      - Server
   /api/v1/users:
     get:
       consumes:

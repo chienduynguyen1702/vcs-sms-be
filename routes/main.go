@@ -33,6 +33,7 @@ func SetupV1Router() *gin.Engine {
 		setupGroupUser(v1)
 		setupGroupAuth(v1)
 		setupGroupOrganization(v1)
+		setupGroupServer(v1)
 	}
 	if os.Getenv("GIN_MODE") == "release" {
 		gin.SetMode(gin.ReleaseMode)

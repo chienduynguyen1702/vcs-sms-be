@@ -20,9 +20,9 @@ func (sr *ServerRepository) CreateServer(server *models.Server) error {
 	return sr.db.Create(server).Error
 }
 
-func (sr *ServerRepository) GetServerByEmail(email string) *models.Server {
+func (sr *ServerRepository) GetServerByIP(ip string) *models.Server {
 	var server models.Server
-	sr.db.Where("email = ?", email).First(&server)
+	sr.db.Where("ip = ?", ip).First(&server)
 	if server.ID == 0 {
 		return nil
 	}

@@ -3,6 +3,7 @@ package dtos
 import "github.com/chienduynguyen1702/vcs-sms-be/models"
 
 type ServerResponse struct {
+	ID        uint   `json:"id"`
 	Name      string `json:"name"`
 	IP        string `json:"ip"`
 	IsChecked bool   `json:"is_checked"`
@@ -14,6 +15,7 @@ func MakeListServerResponse(servers []models.Server) ListServerResponse {
 	var listServerResponse ListServerResponse
 	for _, server := range servers {
 		listServerResponse = append(listServerResponse, ServerResponse{
+			ID:        server.ID,
 			Name:      server.Name,
 			IP:        server.IP,
 			IsChecked: server.IsChecked,
@@ -23,14 +25,22 @@ func MakeListServerResponse(servers []models.Server) ListServerResponse {
 	return listServerResponse
 }
 
+func MakeServerResponse(server models.Server) ServerResponse {
+	return ServerResponse{
+		ID:        server.ID,
+		Name:      server.Name,
+		IP:        server.IP,
+		IsChecked: server.IsChecked,
+		IsOnline:  server.IsOnline,
+	}
+}
+
 type CreateServerRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-	Username string `json:"servername"`
+	Name string `json:"name"`
+	IP   string `json:"ip"`
 }
 
 type UpdateServerRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-	Username string `json:"servername"`
+	Name string `json:"name"`
+	IP   string `json:"ip"`
 }
