@@ -140,7 +140,42 @@ paths:
       summary: Create user
       tags:
       - User
-  /api/v1/user/{id}:
+  /api/v1/users:
+    get:
+      consumes:
+      - application/json
+      description: Get all users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Get all users
+      tags:
+      - User
+  /api/v1/users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Delete user
+      tags:
+      - User
     get:
       consumes:
       - application/json
