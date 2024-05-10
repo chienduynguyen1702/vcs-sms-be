@@ -3,7 +3,10 @@ package dtos
 import "github.com/chienduynguyen1702/vcs-sms-be/models"
 
 type UserResponse struct {
-	Email string `json:"email"`
+	ID             uint   `json:"id"`
+	Email          string `json:"email"`
+	Username       string `json:"username"`
+	OrganizationID uint   `json:"organization_id"`
 }
 type ListUserResponse []UserResponse
 
@@ -11,7 +14,10 @@ func MakeListUserResponse(users []models.User) ListUserResponse {
 	var listUserResponse ListUserResponse
 	for _, user := range users {
 		listUserResponse = append(listUserResponse, UserResponse{
-			Email: user.Email,
+			ID:             user.ID,
+			Email:          user.Email,
+			Username:       user.Username,
+			OrganizationID: user.OrganizationID,
 		})
 	}
 	return listUserResponse

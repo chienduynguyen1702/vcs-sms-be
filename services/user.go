@@ -6,6 +6,7 @@ import (
 	"github.com/chienduynguyen1702/vcs-sms-be/dtos"
 	"github.com/chienduynguyen1702/vcs-sms-be/models"
 	"github.com/chienduynguyen1702/vcs-sms-be/repositories"
+	"github.com/chienduynguyen1702/vcs-sms-be/utilities"
 )
 
 type IUserService interface {
@@ -21,7 +22,7 @@ func NewUserService(userRepo *repositories.UserRepository) *UserService {
 	return &UserService{userRepo: userRepo}
 }
 
-func (us *UserService) CreateUser(user *dtos.CreateUserRequest, adminID uint) error {
+func (us *UserService) CreateUser(user *dtos.CreateUserRequest, adminID string) error {
 	// get admin user
 	adminUser, err := us.userRepo.GetUserByID(adminID)
 	if err != nil {
@@ -50,12 +51,7 @@ func (us *UserService) GetUserByEmail(email string) *models.User {
 }
 
 func (us *UserService) GetUserByID(id string) (*models.User, error) {
-	// parse string to uint
-	ID, err := parseStringToUint(id)
-	if err != nil {
-		return nil, err
-	}
-	return us.userRepo.GetUserByID(ID)
+	return us.userRepo.GetUserByID(id)
 }
 
 func (us *UserService) UpdateUser(id string, user *models.User) error {
@@ -63,12 +59,7 @@ func (us *UserService) UpdateUser(id string, user *models.User) error {
 }
 
 func (us *UserService) DeleteUser(id string) error {
-	// parse string to uint
-	ID, err := parseStringToUint(id)
-	if err != nil {
-		return err
-	}
-	user, err := us.userRepo.GetUserByID(ID)
+	user, err := us.userRepo.GetUserByID(id)
 	if err != nil {
 		return err
 	}
@@ -78,7 +69,7 @@ func (us *UserService) DeleteUser(id string) error {
 	return us.userRepo.DeleteUser(user)
 }
 
-func (us *UserService) GetUsers(adminID uint) (dtos.ListUserResponse, error) {
+func (us *UserService) GetUsers(adminID string) (dtos.ListUserResponse, error) {
 	// get admin user
 	adminUser, err := us.userRepo.GetUserByID(adminID)
 	if err != nil {
@@ -92,7 +83,8 @@ func (us *UserService) GetUsers(adminID uint) (dtos.ListUserResponse, error) {
 	if orgID == 0 {
 		return nil, fmt.Errorf("admin user does not belong to any organization")
 	}
-	users, err := repositories.UserRepo.GetUsersByOrganizationID(orgID)
+	orgIDString := utilities.ParseUintToString(orgID)
+	users, err := repositories.UserRepo.GetUsersByOrganizationID(orgIDString)
 	if err != nil {
 		return nil, err
 	}

@@ -9,9 +9,10 @@ import (
 )
 
 func GenerateJWTToken(userID uint) (string, error) {
+	userIDString := fmt.Sprint(userID)
 	// Generate a JWT token
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"user_id": userID,
+		"user_id": userIDString,
 		"exp":     time.Now().Add(time.Hour * 24 * 30).Unix(),
 	})
 	tokenstring, err := jwtToken.SignedString([]byte(os.Getenv("SECRET_KEY")))
@@ -21,7 +22,7 @@ func GenerateJWTToken(userID uint) (string, error) {
 	return tokenstring, nil
 }
 
-func ParseJWTToken(tokenString string) (int64, uint, error) {
+func ParseJWTToken(tokenString string) (int64, string, error) {
 	// Parse the JWT token
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		// Don't forget to validate the alg is what you expect:
@@ -31,19 +32,19 @@ func ParseJWTToken(tokenString string) (int64, uint, error) {
 		return []byte(os.Getenv("SECRET_KEY")), nil
 	})
 	if err != nil {
-		return 0, 0, err
+		return 0, "", err
 	}
 	if !token.Valid {
-		return 0, 0, fmt.Errorf("invalid token")
+		return 0, "", fmt.Errorf("invalid token")
 	}
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		return 0, 0, fmt.Errorf("failed to parse claims")
+		return 0, "", fmt.Errorf("failed to parse claims")
 	}
-	userID := uint(claims["user_id"].(float64))
+	userID := claims["user_id"].(string)
 	exp, err := claims.GetExpirationTime()
 	if err != nil {
-		return 0, 0, err
+		return 0, "", err
 	}
 	exp2 := exp.Unix()
 	return exp2, userID, nil

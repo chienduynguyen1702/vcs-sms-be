@@ -29,7 +29,7 @@ func (ur *UserRepository) GetUserByEmail(email string) *models.User {
 	return &user
 }
 
-func (ur *UserRepository) GetUserByID(id uint) (*models.User, error) {
+func (ur *UserRepository) GetUserByID(id string) (*models.User, error) {
 	var user models.User
 	if err := ur.db.Where("id = ?", id).First(&user).Error; err != nil {
 		return nil, err
@@ -53,7 +53,7 @@ func (ur *UserRepository) GetUsers() ([]models.User, error) {
 	return users, nil
 }
 
-func (ur *UserRepository) GetUsersByOrganizationID(organizationID uint) ([]models.User, error) {
+func (ur *UserRepository) GetUsersByOrganizationID(organizationID string) ([]models.User, error) {
 	var users []models.User
 	if err := ur.db.Where("organization_id = ?", organizationID).Find(&users).Error; err != nil {
 		return nil, err

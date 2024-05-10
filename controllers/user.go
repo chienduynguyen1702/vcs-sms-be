@@ -4,7 +4,9 @@ import (
 	"net/http"
 
 	"github.com/chienduynguyen1702/vcs-sms-be/dtos"
+	"github.com/chienduynguyen1702/vcs-sms-be/models"
 	"github.com/chienduynguyen1702/vcs-sms-be/services"
+	"github.com/chienduynguyen1702/vcs-sms-be/utilities"
 	"github.com/gin-gonic/gin"
 )
 
@@ -26,18 +28,18 @@ func NewUserController(userService *services.UserService) *UserController {
 // @Success 200 {object} string
 // @Router /api/v1/users [post]
 func (uc *UserController) CreateUser(ctx *gin.Context) {
-	adminId, exist := ctx.Get("userID")
-	if !exist {
-		ctx.JSON(http.StatusUnauthorized, dtos.ErrorResponse("Unauthorized"))
-		return
-	}
-	// adminID := adminId.(uint)
 	newUser := &dtos.CreateUserRequest{}
 	if err := ctx.ShouldBindJSON(newUser); err != nil {
 		ctx.JSON(http.StatusBadRequest, dtos.ErrorResponse(err.Error()))
 		return
 	}
-	err := uc.userService.CreateUser(newUser, adminId.(uint))
+	admin, exist := ctx.Get("userID")
+	if !exist {
+		ctx.JSON(http.StatusUnauthorized, dtos.ErrorResponse("Unauthorized"))
+		return
+	}
+	adminID := utilities.ParseUintToString(admin.(models.User).ID)
+	err := uc.userService.CreateUser(newUser, adminID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, dtos.ErrorResponse(err.Error()))
 		return
@@ -116,7 +118,7 @@ func (uc *UserController) GetUsers(ctx *gin.Context) {
 		ctx.JSON(http.StatusUnauthorized, dtos.ErrorResponse("Unauthorized"))
 		return
 	}
-	adminID := adminId.(uint)
+	adminID := adminId.(string)
 	users, err := uc.userService.GetUsers(adminID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, dtos.ErrorResponse(err.Error()))

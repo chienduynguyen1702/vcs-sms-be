@@ -13,3 +13,7 @@ func ParseStringToUint(id string) (uint, error) {
 	}
 	return uint(intID), nil
 }
+
+func ParseUintToString(id uint) string {
+	return strconv.Itoa(int(id))
+}

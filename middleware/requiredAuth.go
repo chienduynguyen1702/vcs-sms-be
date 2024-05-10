@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/chienduynguyen1702/vcs-sms-be/repositories"
+	"github.com/chienduynguyen1702/vcs-sms-be/utilities"
 	"github.com/gin-gonic/gin"
 )
 
@@ -32,7 +33,9 @@ func RequiredAuth(c *gin.Context) {
 		c.AbortWithStatus(http.StatusUnauthorized)
 		return
 	}
-	c.Set("userID", userInDB)
+	orgID := utilities.ParseUintToString(userInDB.OrganizationID)
+	c.Set("userID", userID)
+	c.Set("orgID", orgID)
 	c.Next()
 }
 

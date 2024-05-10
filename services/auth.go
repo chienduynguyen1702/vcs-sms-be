@@ -1,7 +1,6 @@
 package services
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/chienduynguyen1702/vcs-sms-be/dtos"
@@ -15,13 +14,14 @@ type AuthService struct {
 }
 
 func NewAuthService(userRepo *repositories.UserRepository, organizationRepo *repositories.OrganizationRepository) *AuthService {
-	return &AuthService{userRepo: userRepo,
+	return &AuthService{
+		userRepo:         userRepo,
 		organizationRepo: organizationRepo,
 	}
 }
 func (as *AuthService) Login(email, password string) (uint, dtos.Response) {
 	// Check if user exists
-	fmt.Println("debug", email, password)
+	// fmt.Println("debug", email, password)
 	userInDb := as.userRepo.GetUserByEmail(email)
 	if userInDb == nil {
 		return 0, dtos.ErrorResponse("User does not exist")
@@ -35,7 +35,10 @@ func (as *AuthService) Login(email, password string) (uint, dtos.Response) {
 	as.userRepo.UpdateUser(userInDb)
 
 	ur := dtos.UserResponse{
-		Email: userInDb.Email,
+		ID:             userInDb.ID,
+		Email:          userInDb.Email,
+		Username:       userInDb.Username,
+		OrganizationID: userInDb.OrganizationID,
 	}
 	return userInDb.ID, dtos.SuccessResponse("Login successfully", ur)
 }
