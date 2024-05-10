@@ -118,7 +118,21 @@ paths:
       summary: Ping
       tags:
       - Ping
-  /api/v1/user:
+  /api/v1/users:
+    get:
+      consumes:
+      - application/json
+      description: Get all users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Get all users
+      tags:
+      - User
     post:
       consumes:
       - application/json
@@ -138,21 +152,6 @@ paths:
           schema:
             type: string
       summary: Create user
-      tags:
-      - User
-  /api/v1/users:
-    get:
-      consumes:
-      - application/json
-      description: Get all users
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            type: string
-      summary: Get all users
       tags:
       - User
   /api/v1/users/{id}:

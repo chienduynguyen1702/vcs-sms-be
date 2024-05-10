@@ -39,6 +39,7 @@ func (us *UserService) CreateUser(user *dtos.CreateUserRequest, adminID uint) er
 	newUser := &models.User{
 		Email:          user.Email,
 		Password:       user.Password,
+		Username:       user.Username,
 		OrganizationID: orgID,
 	}
 	return us.userRepo.CreateUser(newUser)

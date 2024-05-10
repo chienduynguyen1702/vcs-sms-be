@@ -32,12 +32,7 @@ func RequiredAuth(c *gin.Context) {
 		c.AbortWithStatus(http.StatusUnauthorized)
 		return
 	}
-	if userInDB == nil {
-		// log.Println("User not found")
-		c.AbortWithStatus(http.StatusUnauthorized)
-		return
-	}
-	c.Set("userID", userID)
+	c.Set("userID", userInDB)
 	c.Next()
 }
 

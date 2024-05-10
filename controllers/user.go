@@ -24,7 +24,7 @@ func NewUserController(userService *services.UserService) *UserController {
 // @Produce  json
 // @Param createReq body dtos.CreateUserRequest true "Create User Request"
 // @Success 200 {object} string
-// @Router /api/v1/user [post]
+// @Router /api/v1/users [post]
 func (uc *UserController) CreateUser(ctx *gin.Context) {
 	adminId, exist := ctx.Get("userID")
 	if !exist {
