@@ -116,7 +116,7 @@ func (uc *UserController) GetUsers(ctx *gin.Context) {
 		ctx.JSON(http.StatusUnauthorized, dtos.ErrorResponse("Unauthorized"))
 		return
 	}
-	adminID := adminId.(string)
+	adminID := adminId.(uint)
 	users, err := uc.userService.GetUsers(adminID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, dtos.ErrorResponse(err.Error()))

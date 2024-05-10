@@ -77,11 +77,19 @@ func (us *UserService) DeleteUser(id string) error {
 	return us.userRepo.DeleteUser(user)
 }
 
-func (us *UserService) GetUsers(orgId string) (dtos.ListUserResponse, error) {
-	// parse string to uint
-	orgID, err := parseStringToUint(orgId)
+func (us *UserService) GetUsers(adminID uint) (dtos.ListUserResponse, error) {
+	// get admin user
+	adminUser, err := us.userRepo.GetUserByID(adminID)
 	if err != nil {
 		return nil, err
+	}
+	if adminUser == nil {
+		return nil, fmt.Errorf("admin user not found")
+	}
+	// get organizationID from admin user
+	orgID := adminUser.OrganizationID
+	if orgID == 0 {
+		return nil, fmt.Errorf("admin user does not belong to any organization")
 	}
 	users, err := repositories.UserRepo.GetUsersByOrganizationID(orgID)
 	if err != nil {
