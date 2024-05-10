@@ -10,7 +10,8 @@ type OrganizationRepository struct {
 }
 
 func NewOrganizationRepository(db *gorm.DB) *OrganizationRepository {
-	return &OrganizationRepository{db}
+	OrganizationRepo = &OrganizationRepository{db}
+	return OrganizationRepo
 }
 
 func (or *OrganizationRepository) CreateOrganization(organization *models.Organization) (*models.Organization, error) {

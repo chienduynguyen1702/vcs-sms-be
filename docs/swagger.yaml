@@ -1,4 +1,13 @@
 definitions:
+  dtos.CreateUserRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
   dtos.LoginRequest:
     properties:
       email:
@@ -20,10 +29,17 @@ definitions:
       password_confirm:
         type: string
     required:
-    - email
-    - organization_name
     - password
     - password_confirm
+    type: object
+  dtos.UpdateUserRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
     type: object
 info:
   contact: {}
@@ -48,6 +64,21 @@ paths:
           schema:
             type: string
       summary: Login
+      tags:
+      - Authentication
+  /api/v1/auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: Logout
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Logout
       tags:
       - Authentication
   /api/v1/auth/register:
@@ -87,4 +118,68 @@ paths:
       summary: Ping
       tags:
       - Ping
+  /api/v1/user:
+    post:
+      consumes:
+      - application/json
+      description: Create user
+      parameters:
+      - description: Create User Request
+        in: body
+        name: createReq
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.CreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Create user
+      tags:
+      - User
+  /api/v1/user/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get user by ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Get user by ID
+      tags:
+      - User
+    put:
+      consumes:
+      - application/json
+      description: Update user
+      parameters:
+      - description: Update User Request
+        in: body
+        name: updateReq
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UpdateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Update user
+      tags:
+      - User
 swagger: "2.0"

@@ -15,5 +15,5 @@ type Organization struct {
 	Description       string    `gorm:"type:text" json:"description"`
 	Address           string    `gorm:"type:text" json:"address"`
 
-	Users    []User    `gorm:"one2many:organization_usr;" json:"users"`
+	Users []User `gorm:"one2many:organization_usr;" json:"users"`
 }

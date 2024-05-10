@@ -2,6 +2,7 @@ package services
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/chienduynguyen1702/vcs-sms-be/dtos"
 	"github.com/chienduynguyen1702/vcs-sms-be/models"
@@ -18,21 +19,25 @@ func NewAuthService(userRepo *repositories.UserRepository, organizationRepo *rep
 		organizationRepo: organizationRepo,
 	}
 }
-func (as *AuthService) Login(email, password string) dtos.Response {
+func (as *AuthService) Login(email, password string) (uint, dtos.Response) {
 	// Check if user exists
 	fmt.Println("debug", email, password)
 	userInDb := as.userRepo.GetUserByEmail(email)
 	if userInDb == nil {
-		return dtos.ErrorResponse("User does not exist")
+		return 0, dtos.ErrorResponse("User does not exist")
 	}
 	// Check if password is correct
 	if userInDb.Password != password {
-		return dtos.ErrorResponse("Password is incorrect")
+		return 0, dtos.ErrorResponse("Password is incorrect")
 	}
+	// Update login time
+	userInDb.LastLogin = time.Now()
+	as.userRepo.UpdateUser(userInDb)
+
 	ur := dtos.UserResponse{
 		Email: userInDb.Email,
 	}
-	return dtos.SuccessResponse("Login successfully", ur)
+	return userInDb.ID, dtos.SuccessResponse("Login successfully", ur)
 }
 
 func (as *AuthService) Register(email, password, confirmPassword, organizationName string) dtos.Response {

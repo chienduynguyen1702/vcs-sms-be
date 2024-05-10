@@ -25,3 +25,15 @@ func (us *UserService) CreateUser(user *models.User) error {
 func (us *UserService) GetUserByEmail(email string) *models.User {
 	return us.userRepo.GetUserByEmail(email)
 }
+
+func (us *UserService) GetUserByID(id uint) (*models.User, error) {
+	return us.userRepo.GetUserByID(id)
+}
+
+func (us *UserService) UpdateUser(user *models.User) error {
+	return us.userRepo.UpdateUser(user)
+}
+
+func (us *UserService) DeleteUser(user *models.User) error {
+	return us.userRepo.DeleteUser(user)
+}
