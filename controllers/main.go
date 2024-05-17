@@ -3,6 +3,7 @@ package controllers
 import (
 	"net/http"
 
+	"github.com/chienduynguyen1702/vcs-sms-be/dtos"
 	"github.com/gin-gonic/gin"
 )
 
@@ -22,5 +23,9 @@ func NewMainController() *MainController {
 // @Success 200 {object} string
 // @Router /api/v1/ping [get]
 func (mc *MainController) Ping(ctx *gin.Context) {
-	ctx.JSON(http.StatusOK, "pong")
+	ctx.JSON(http.StatusOK, dtos.Response{
+		Success: true,
+		Message: "Pong",
+		Data:    nil,
+	})
 }

@@ -3,17 +3,90 @@
 package routes
 
 import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"io"
 	"os"
 	"time"
 
 	docs "github.com/chienduynguyen1702/vcs-sms-be/docs"
+	"github.com/chienduynguyen1702/vcs-sms-be/dtos"
 	"github.com/chienduynguyen1702/vcs-sms-be/factory"
+	"gopkg.in/natefinch/lumberjack.v2"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
+
+type bodyLogWriter struct {
+	gin.ResponseWriter
+	body *bytes.Buffer
+}
+
+func (w bodyLogWriter) Write(b []byte) (int, error) {
+	w.body.Write(b)
+	return w.ResponseWriter.Write(b)
+}
+
+// RequestResponseLogger logs request and response details
+func RequestResponseLogger() gin.HandlerFunc {
+	// Cấu hình Lumberjack để quản lý log rotation
+	logFile := &lumberjack.Logger{
+		Filename:   "./logs/api.log",
+		MaxSize:    10, // megabytes
+		MaxBackups: 3,
+		MaxAge:     28, // days
+		Compress:   true,
+	}
+
+	return func(c *gin.Context) {
+		startTime := time.Now()
+
+		// Đọc request body
+		bodyLogWriter := &bodyLogWriter{body: bytes.NewBufferString(""), ResponseWriter: c.Writer}
+		c.Writer = bodyLogWriter
+
+		c.Next()
+
+		// Tính toán thời gian phản hồi
+		latency := time.Since(startTime)
+
+		// Trích xuất thông tin response
+		responseBody := bodyLogWriter.body.String()
+		// Bind Json responseBody to dtos.Response
+		var response dtos.Response
+		err := json.Unmarshal([]byte(responseBody), &response)
+		if err != nil {
+			response = dtos.Response{
+				Success: false,
+				Message: "Internal Server Error: Logger",
+				Data:    nil,
+			}
+		}
+
+		if latency > time.Minute {
+			latency = latency.Truncate(time.Second)
+		}
+
+		logEntry := fmt.Sprintf("[GIN] %v | %3d | %13v | %15s | %-7s |%5d| %#v\n",
+			startTime.Format("2006/01/02 - 15:04:05"),
+			c.Writer.Status(),
+			latency,
+			c.ClientIP(),
+			c.Request.Method,
+			c.Writer.Size(),
+			c.Request.URL.Path,
+		)
+		// Log response message if status code indicates an error
+		if c.Writer.Status() >= 400 {
+			logEntry = fmt.Sprintf("%s%s\n", logEntry, response.Message)
+		}
+		io.MultiWriter(logFile).Write([]byte(logEntry))
+	}
+}
 
 func SetupV1Router() *gin.Engine {
 	r := gin.Default()
@@ -26,6 +99,9 @@ func SetupV1Router() *gin.Engine {
 		AllowCredentials: true,
 		MaxAge:           12 * 30 * time.Hour,
 	}))
+	r.Use(gin.Recovery())
+	// use logger
+	r.Use(RequestResponseLogger())
 
 	// Setup routes for the API version 1
 	v1 := r.Group("/api/v1")
