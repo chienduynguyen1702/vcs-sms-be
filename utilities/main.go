@@ -1,6 +1,9 @@
 package utilities
 
-import "strconv"
+import (
+	"strconv"
+	"time"
+)
 
 func ParseStringToInt(id string) (int, error) {
 	return strconv.Atoi(id)
@@ -21,4 +24,14 @@ func ParseUintToString(id uint) string {
 // parse %40 to @
 func ParseEmail(email string) string {
 	return email
+}
+
+// format YYYY-MM-DD
+func ParseDateToString(date time.Time) string {
+	return date.Format("2006-01-02")
+}
+
+func ParseStringToDate(dateString string) time.Time {
+	date, _ := time.Parse("2006-01-02", dateString)
+	return date
 }

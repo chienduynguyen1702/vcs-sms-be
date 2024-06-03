@@ -4,6 +4,7 @@ import (
 	"github.com/chienduynguyen1702/vcs-sms-be/dtos"
 	"github.com/chienduynguyen1702/vcs-sms-be/models"
 	"github.com/chienduynguyen1702/vcs-sms-be/repositories"
+	"github.com/chienduynguyen1702/vcs-sms-be/utilities"
 )
 
 type IOrganizationService interface {
@@ -40,12 +41,15 @@ func (us *OrganizationService) UpdateOrganization(organization *dtos.UpdateOrgan
 	if err != nil {
 		return dtos.OrganizationResponse{}, err
 	}
+	parsedEstablishmentDate := utilities.ParseStringToDate(organization.EstablishmentDate)
 
+	// Update organization
 	org.Name = organization.Name
 	org.AliasName = organization.AliasName
-	org.EstablishmentDate = organization.EstablishmentDate
+	org.EstablishmentDate = parsedEstablishmentDate
 	org.Description = organization.Description
 	org.Address = organization.Address
+	org.WebsiteURL = organization.WebsiteURL
 
 	err = us.organizationRepo.UpdateOrganization(org)
 	if err != nil {

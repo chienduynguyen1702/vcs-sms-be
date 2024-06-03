@@ -14,6 +14,7 @@ type Organization struct {
 	EstablishmentDate time.Time `json:"establishment_date"`
 	Description       string    `gorm:"type:text" json:"description"`
 	Address           string    `gorm:"type:text" json:"address"`
+	WebsiteURL        string    `gorm:"type:varchar(100)" json:"website_url"`
 
 	Users []User `gorm:"one2many:organization_usr;" json:"users"`
 }

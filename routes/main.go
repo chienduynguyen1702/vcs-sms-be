@@ -62,7 +62,7 @@ func RequestResponseLogger() gin.HandlerFunc {
 		if err != nil {
 			response = dtos.Response{
 				Success: false,
-				Message: "Internal Server Error: Logger",
+				Message: "Internal Server Error: Not found",
 				Data:    nil,
 			}
 		}

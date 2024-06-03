@@ -80,3 +80,15 @@ func (ac *AuthController) Logout(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, dtos.SuccessResponse("Logout successfully", nil))
 }
+
+// Validate godoc
+// @Summary Validate
+// @Description Validate
+// @Tags Authentication
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} string
+// @Router /api/v1/auth/validate [get]
+func (ac *AuthController) Validate(ctx *gin.Context) {
+	ctx.JSON(http.StatusOK, dtos.SuccessResponse("Token is valid", nil))
+}

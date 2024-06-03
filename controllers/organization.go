@@ -46,7 +46,7 @@ func (oc *OrganizationController) GetOrganization(ctx *gin.Context) {
 // @Produce  json
 // @Param UpdateOrganizationBodyRequest body dtos.UpdateOrganizationRequest true "Update Organization Request"
 // @Success 200 {object} string
-// @Router /api/v1/organizations/ [put]
+// @Router /api/v1/organizations/{orgID} [put]
 func (oc *OrganizationController) UpdateOrganization(ctx *gin.Context) {
 	orgID, exist := ctx.Get("orgID")
 	if !exist {

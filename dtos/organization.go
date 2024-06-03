@@ -13,6 +13,7 @@ type OrganizationResponse struct {
 	EstablishmentDate time.Time `json:"establishment_date"`
 	Description       string    `json:"description"`
 	Address           string    `json:"address"`
+	WebsiteURL        string    `json:"website_url"`
 }
 
 func MakeOrganizationResponse(organization models.Organization) OrganizationResponse {
@@ -23,13 +24,15 @@ func MakeOrganizationResponse(organization models.Organization) OrganizationResp
 		EstablishmentDate: organization.EstablishmentDate,
 		Description:       organization.Description,
 		Address:           organization.Address,
+		WebsiteURL:        organization.WebsiteURL,
 	}
 }
 
 type UpdateOrganizationRequest struct {
-	Name              string    `json:"name"`
-	AliasName         string    `json:"alias_name"`
-	EstablishmentDate time.Time `json:"establishment_date"`
-	Description       string    `json:"description"`
-	Address           string    `json:"address"`
+	Name              string `json:"name"`
+	AliasName         string `json:"alias_name"`
+	EstablishmentDate string `json:"establishment_date"`
+	Description       string `json:"description"`
+	Address           string `json:"address"`
+	WebsiteURL        string `json:"website_url"`
 }

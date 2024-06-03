@@ -18,6 +18,10 @@ func RequiredAuth(c *gin.Context) {
 	// 	return
 	// }
 
+	// print out header
+	// for k, v := range c.Request.Header {
+	// 	fmt.Printf("Header field %q, Value %q\n", k, v)
+	// }
 	// Get token from header
 	tokenString := c.GetHeader("Authorization")
 	if tokenString == "" {
