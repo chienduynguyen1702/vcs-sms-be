@@ -621,3 +621,674 @@ parsing time "01-01-0001" as "2006-01-02T15:04:05Z07:00": cannot parse "01-01-00
 [GIN] 2024/06/03 - 18:13:26 | 200 |    1.568611ms |             ::1 | GET     | 1174| "/api/v1/organizations/"
 [GIN] 2024/06/03 - 18:13:29 | 200 |     856.069µs |             ::1 | GET     | 1174| "/api/v1/organizations/"
 [GIN] 2024/06/03 - 18:13:47 | 200 |    1.088906ms |             ::1 | GET     | 1174| "/api/v1/organizations/"
+[GIN] 2024/06/03 - 18:52:31 | 200 |    4.362565ms |             ::1 | POST    |  273| "/api/v1/auth/login"
+[GIN] 2024/06/03 - 18:52:32 | 200 |    1.123976ms |             ::1 | GET     | 1174| "/api/v1/organizations/"
+[GIN] 2024/06/03 - 18:53:06 | 200 |     607.466µs |             ::1 | GET     |   55| "/api/v1/auth/validate"
+[GIN] 2024/06/03 - 18:53:06 | 200 |    1.143706ms |             ::1 | GET     | 1174| "/api/v1/organizations/"
+[GIN] 2024/06/03 - 18:53:58 | 200 |     480.925µs |             ::1 | GET     |   55| "/api/v1/auth/validate"
+[GIN] 2024/06/03 - 18:54:00 | 200 |     657.187µs |             ::1 | GET     |   55| "/api/v1/auth/validate"
+[GIN] 2024/06/03 - 18:54:03 | 200 |     680.267µs |             ::1 | GET     |   55| "/api/v1/auth/validate"
+[GIN] 2024/06/03 - 18:54:04 | 200 |     503.563µs |             ::1 | GET     |   55| "/api/v1/auth/validate"
+[GIN] 2024/06/03 - 18:54:05 | 200 |     602.149µs |             ::1 | GET     |   55| "/api/v1/auth/validate"
+[GIN] 2024/06/03 - 18:54:07 | 200 |     681.213µs |             ::1 | GET     |   55| "/api/v1/auth/validate"
+[GIN] 2024/06/03 - 18:54:12 | 200 |     591.379µs |             ::1 | GET     |   55| "/api/v1/auth/validate"
+[GIN] 2024/06/03 - 18:54:38 | 200 |     960.193µs |             ::1 | GET     | 1174| "/api/v1/organizations/"
+[GIN] 2024/06/03 - 18:54:40 | 200 |      736.85µs |             ::1 | GET     | 1174| "/api/v1/organizations/"
+[GIN] 2024/06/03 - 18:55:08 | 200 |     385.973µs |             ::1 | GET     |   55| "/api/v1/auth/validate"
+[GIN] 2024/06/03 - 18:55:14 | 200 |     464.947µs |             ::1 | GET     |   55| "/api/v1/auth/validate"
+[GIN] 2024/06/03 - 18:55:47 | 404 |       1.899µs |             ::1 | GET     |   -1| "/api/v1/project-list/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:55:47 | 404 |         771ns |             ::1 | GET     |   -1| "/api/v1/project-list/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:55:47 | 404 |         818ns |             ::1 | GET     |   -1| "/api/v1/project-list/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:55:48 | 404 |         799ns |             ::1 | GET     |   -1| "/api/v1/project-list/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:55:48 | 404 |         344ns |             ::1 | GET     |   -1| "/api/v1/project-list/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:56:44 | 200 |     675.266µs |             ::1 | GET     |   55| "/api/v1/auth/validate"
+[GIN] 2024/06/03 - 18:56:44 | 404 |       2.145µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:56:44 | 404 |         456ns |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:56:44 | 404 |         522ns |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:56:44 | 404 |         377ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:56:44 | 404 |         460ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:56:44 | 404 |         338ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:56:44 | 404 |       1.103µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:56:45 | 404 |       1.024µs |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:56:45 | 404 |         452ns |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:56:45 | 404 |         452ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:56:45 | 404 |       1.382µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:56:45 | 404 |         333ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:56:45 | 404 |         432ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:56:45 | 404 |       1.639µs |             ::1 | GET     |   -1| "/api/v1/project-list/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:56:45 | 404 |         643ns |             ::1 | GET     |   -1| "/api/v1/project-list/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:56:45 | 404 |       1.046µs |             ::1 | GET     |   -1| "/api/v1/project-list/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:56:46 | 404 |         828ns |             ::1 | GET     |   -1| "/api/v1/project-list/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:56:46 | 404 |         485ns |             ::1 | GET     |   -1| "/api/v1/project-list/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:56:48 | 404 |       1.602µs |             ::1 | GET     |   -1| "/api/v1/project-list/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:56:48 | 404 |       1.217µs |             ::1 | GET     |   -1| "/api/v1/project-list/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:56:52 | 404 |       1.251µs |             ::1 | GET     |   -1| "/api/v1/project-list/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:56:52 | 404 |         536ns |             ::1 | GET     |   -1| "/api/v1/project-list/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:58:12 | 404 |       2.686µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:58:12 | 404 |        1.01µs |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:58:12 | 404 |         466ns |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:58:12 | 404 |       1.147µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:58:12 | 404 |         658ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:58:12 | 404 |       1.211µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:58:12 | 404 |       1.643µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:58:13 | 404 |       1.571µs |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:58:13 | 404 |         762ns |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:58:13 | 404 |         341ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:58:13 | 404 |         561ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:58:13 | 404 |       1.308µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:58:13 | 404 |         683ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:58:14 | 404 |       1.443µs |             ::1 | GET     |   -1| "/api/v1/project-list/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:58:14 | 404 |         573ns |             ::1 | GET     |   -1| "/api/v1/project-list/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:58:14 | 404 |        1.38µs |             ::1 | GET     |   -1| "/api/v1/project-list/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:58:14 | 404 |       1.506µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:58:15 | 404 |       1.363µs |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:58:15 | 404 |       1.657µs |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:58:15 | 404 |         639ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:58:15 | 404 |         647ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:58:15 | 404 |         341ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:58:15 | 404 |         895ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:58:19 | 404 |         877ns |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:58:19 | 404 |       1.003µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:58:19 | 404 |         380ns |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:58:19 | 404 |         579ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:58:19 | 404 |         503ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 18:58:19 | 404 |         863ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:08 | 200 |     451.585µs |             ::1 | GET     |   55| "/api/v1/auth/validate"
+[GIN] 2024/06/03 - 19:00:24 | 200 |     335.972µs |             ::1 | GET     |   55| "/api/v1/auth/validate"
+[GIN] 2024/06/03 - 19:00:24 | 404 |       1.121µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:24 | 404 |       1.208µs |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:24 | 404 |         690ns |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:24 | 404 |         344ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:24 | 404 |         468ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:24 | 404 |         346ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:25 | 404 |         948ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:25 | 404 |       1.651µs |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:25 | 404 |         756ns |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:25 | 404 |         563ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:25 | 404 |         267ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:25 | 404 |         946ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:25 | 404 |       1.191µs |             ::1 | GET     |   -1| "/api/v1/project-list/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:25 | 404 |         669ns |             ::1 | GET     |   -1| "/api/v1/project-list/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:25 | 404 |         446ns |             ::1 | GET     |   -1| "/api/v1/project-list/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:26 | 404 |       1.095µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:26 | 404 |         869ns |             ::1 | GET     |   -1| "/api/v1/project-list/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:26 | 404 |         643ns |             ::1 | GET     |   -1| "/api/v1/project-list/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:26 | 404 |         862ns |             ::1 | GET     |   -1| "/api/v1/project-list/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:27 | 404 |       1.525µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:27 | 404 |       1.387µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:27 | 404 |         920ns |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:27 | 404 |       1.892µs |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:27 | 404 |         660ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:27 | 404 |         520ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:27 | 404 |         500ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:31 | 200 |     555.591µs |             ::1 | GET     |   55| "/api/v1/auth/validate"
+[GIN] 2024/06/03 - 19:00:31 | 404 |       1.082µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:31 | 404 |       1.051µs |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:31 | 404 |         756ns |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:31 | 404 |         474ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:31 | 404 |         522ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:31 | 404 |         425ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:32 | 404 |       1.931µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:32 | 404 |       1.693µs |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:32 | 404 |         582ns |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:32 | 404 |         487ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:32 | 404 |         472ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:32 | 404 |         578ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:34 | 404 |         857ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:34 | 404 |         906ns |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:34 | 404 |         407ns |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:34 | 404 |       2.315µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:34 | 404 |         587ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:34 | 404 |         622ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:38 | 404 |         736ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:38 | 404 |         699ns |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:38 | 404 |      21.514µs |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:38 | 404 |         425ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:38 | 404 |         452ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:00:38 | 404 |         311ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:03:40 | 200 |     644.186µs |             ::1 | GET     |   55| "/api/v1/auth/validate"
+[GIN] 2024/06/03 - 19:03:41 | 404 |       1.172µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:03:41 | 404 |         593ns |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:03:41 | 404 |         446ns |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:03:41 | 404 |         441ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:03:41 | 404 |         503ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:03:41 | 404 |         424ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:03:42 | 404 |         905ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:03:42 | 404 |       1.186µs |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:03:42 | 404 |         795ns |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:03:42 | 404 |         497ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:03:42 | 404 |       1.029µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:03:42 | 404 |         638ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:03:44 | 404 |        1.21µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:03:44 | 404 |       1.039µs |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:03:44 | 404 |       1.017µs |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:03:44 | 404 |       1.344µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:03:44 | 404 |         679ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:03:44 | 404 |         790ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:03:48 | 404 |         832ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:03:48 | 404 |       1.182µs |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:03:48 | 404 |       1.663µs |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:03:48 | 404 |         899ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:03:48 | 404 |         436ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:03:48 | 404 |         862ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:20 | 200 |     790.935µs |             ::1 | GET     |   55| "/api/v1/auth/validate"
+[GIN] 2024/06/03 - 19:06:20 | 404 |         978ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:20 | 404 |         1.4µs |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:20 | 404 |         937ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:20 | 404 |         629ns |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:20 | 404 |         299ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:20 | 404 |         285ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:21 | 404 |       2.559µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:21 | 404 |         746ns |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:21 | 404 |       1.364µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:21 | 404 |         670ns |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:21 | 404 |         870ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:21 | 404 |         551ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:23 | 404 |         981ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:23 | 404 |         566ns |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:23 | 404 |       1.428µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:23 | 404 |       1.532µs |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:23 | 404 |       1.287µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:23 | 404 |         602ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:27 | 404 |         794ns |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:27 | 404 |         697ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:27 | 404 |       1.574µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:27 | 404 |         895ns |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:27 | 404 |       1.029µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:27 | 404 |       1.078µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:32 | 200 |    1.569939ms |             ::1 | GET     | 1174| "/api/v1/organizations/"
+[GIN] 2024/06/03 - 19:06:32 | 404 |       1.074µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:32 | 404 |         701ns |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:32 | 404 |         673ns |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:32 | 404 |         875ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:32 | 404 |        1.28µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:32 | 404 |         826ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:32 | 404 |       2.132µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:33 | 200 |    1.026945ms |             ::1 | GET     | 1174| "/api/v1/organizations/"
+[GIN] 2024/06/03 - 19:06:33 | 404 |       1.308µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:33 | 404 |       1.042µs |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:33 | 404 |       1.104µs |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:33 | 404 |         331ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:33 | 404 |         348ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:33 | 404 |         301ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:33 | 404 |       4.074µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:34 | 404 |         866ns |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:34 | 404 |         842ns |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:34 | 404 |         536ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:34 | 404 |         835ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:34 | 404 |         585ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:34 | 404 |         353ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:36 | 404 |         935ns |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:36 | 404 |         696ns |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:36 | 404 |         551ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:36 | 404 |       1.065µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:36 | 404 |         719ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:36 | 404 |         402ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:40 | 404 |         963ns |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:40 | 404 |         634ns |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:40 | 404 |         551ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:40 | 404 |        1.65µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:40 | 404 |         605ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:06:40 | 404 |         555ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:07 | 200 |     360.793µs |             ::1 | GET     |   55| "/api/v1/auth/validate"
+[GIN] 2024/06/03 - 19:11:07 | 404 |       1.836µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:07 | 404 |           1µs |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:07 | 404 |         837ns |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:07 | 404 |         784ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:07 | 404 |         884ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:07 | 404 |       1.038µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:08 | 404 |         865ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:08 | 404 |       2.566µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:08 | 404 |       1.175µs |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:08 | 404 |       1.427µs |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:08 | 404 |       1.507µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:08 | 404 |       1.738µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:10 | 404 |       1.137µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:10 | 404 |           1µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:10 | 404 |       1.814µs |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:10 | 404 |       1.288µs |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:10 | 404 |         614ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:10 | 404 |       1.238µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:14 | 404 |       2.167µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:14 | 404 |       1.078µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:14 | 404 |       1.957µs |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:14 | 404 |       1.442µs |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:14 | 404 |       1.247µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:14 | 404 |       1.127µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:20 | 200 |     472.444µs |             ::1 | GET     |   55| "/api/v1/auth/validate"
+[GIN] 2024/06/03 - 19:11:20 | 404 |       2.339µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:20 | 404 |       1.717µs |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:20 | 404 |       1.187µs |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:20 | 404 |       4.047µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:20 | 404 |         849ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:20 | 404 |         725ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:21 | 404 |       1.878µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:21 | 404 |         904ns |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:21 | 404 |       1.303µs |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:21 | 404 |         884ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:21 | 404 |       1.394µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:21 | 404 |       1.542µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:22 | 200 |     375.578µs |             ::1 | POST    |   60| "/api/v1/auth/logout"
+[GIN] 2024/06/03 - 19:11:26 | 200 |    1.385187ms |             ::1 | POST    |  273| "/api/v1/auth/login"
+[GIN] 2024/06/03 - 19:11:26 | 200 |       528.9µs |             ::1 | GET     | 1174| "/api/v1/organizations/"
+[GIN] 2024/06/03 - 19:11:36 | 404 |       2.641µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:36 | 404 |       2.074µs |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:36 | 404 |         818ns |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:36 | 404 |         691ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:36 | 404 |         738ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:36 | 404 |         868ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:36 | 404 |       1.204µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:37 | 404 |       1.253µs |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:37 | 404 |       1.151µs |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:37 | 404 |        1.18µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:37 | 404 |       1.334µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:37 | 404 |        1.26µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:37 | 404 |         888ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:39 | 404 |       1.195µs |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:39 | 404 |        1.06µs |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:39 | 404 |         395ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:39 | 404 |        2.29µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:39 | 404 |         773ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:39 | 404 |        1.41µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:42 | 200 |     613.723µs |             ::1 | GET     |   55| "/api/v1/auth/validate"
+[GIN] 2024/06/03 - 19:11:42 | 404 |        2.73µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:42 | 404 |         822ns |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:42 | 404 |         532ns |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:42 | 404 |         579ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:42 | 404 |       1.803µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:42 | 404 |       2.939µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:43 | 404 |       1.415µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:43 | 404 |       1.153µs |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:43 | 404 |       1.504µs |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:43 | 404 |       1.332µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:43 | 404 |         847ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:43 | 404 |       2.162µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:43 | 200 |     744.403µs |             ::1 | GET     |   55| "/api/v1/auth/validate"
+[GIN] 2024/06/03 - 19:11:44 | 404 |       1.307µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:44 | 404 |         886ns |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:44 | 404 |         898ns |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:44 | 404 |       1.109µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:44 | 404 |       1.618µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:44 | 404 |       5.421µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:45 | 404 |       1.025µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:45 | 404 |         773ns |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:45 | 404 |         926ns |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:45 | 404 |       1.092µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:45 | 404 |         666ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:45 | 404 |        1.24µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:45 | 200 |     494.919µs |             ::1 | GET     |   55| "/api/v1/auth/validate"
+[GIN] 2024/06/03 - 19:11:45 | 404 |       1.366µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:45 | 404 |         796ns |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:45 | 404 |         721ns |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:45 | 404 |         740ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:45 | 404 |         497ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:45 | 404 |         829ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:46 | 404 |         938ns |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:46 | 404 |         461ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:46 | 404 |       1.093µs |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:46 | 404 |       1.724µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:46 | 404 |         803ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:46 | 404 |         524ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:48 | 404 |       2.071µs |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:48 | 404 |         781ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:48 | 404 |       1.601µs |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:48 | 404 |       1.552µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:48 | 404 |         753ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:48 | 404 |       1.138µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:48 | 200 |     472.227µs |             ::1 | GET     |   55| "/api/v1/auth/validate"
+[GIN] 2024/06/03 - 19:11:48 | 404 |       2.211µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:48 | 404 |       1.396µs |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:48 | 404 |         887ns |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:48 | 404 |         524ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:48 | 404 |         597ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:48 | 404 |         355ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:49 | 404 |       1.081µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:49 | 404 |        2.04µs |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:49 | 404 |       1.445µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:49 | 404 |       1.303µs |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:49 | 404 |       2.007µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:49 | 404 |       1.966µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:51 | 200 |     422.905µs |             ::1 | GET     |   55| "/api/v1/auth/validate"
+[GIN] 2024/06/03 - 19:11:51 | 404 |       1.059µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:51 | 404 |         400ns |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:51 | 404 |         576ns |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:51 | 404 |         549ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:51 | 404 |       1.638µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:51 | 404 |       2.577µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:52 | 404 |       1.245µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:52 | 404 |       1.028µs |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:52 | 404 |         894ns |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:52 | 404 |       1.586µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:52 | 404 |         985ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:52 | 404 |         899ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:54 | 404 |       1.028µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:54 | 404 |       1.234µs |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:54 | 404 |         2.1µs |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:54 | 404 |       1.443µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:54 | 404 |         812ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:54 | 404 |       1.958µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:58 | 404 |       1.044µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:58 | 404 |         651ns |             ::1 | GET     |   -1| "/api/v1/stages/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:58 | 404 |         820ns |             ::1 | GET     |   -1| "/api/v1/envs/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:58 | 404 |       1.238µs |             ::1 | GET     |   -1| "/api/v1/projects/undefined/versions/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:58 | 404 |         618ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/overview/"
+Internal Server Error: Not found
+[GIN] 2024/06/03 - 19:11:58 | 404 |         557ns |             ::1 | GET     |   -1| "/api/v1/projects/undefined/parameters/archived"
+Internal Server Error: Not found
