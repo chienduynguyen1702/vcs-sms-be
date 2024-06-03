@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"net/http"
-	"os"
 
 	"github.com/chienduynguyen1702/vcs-sms-be/dtos"
 	"github.com/chienduynguyen1702/vcs-sms-be/services"
@@ -38,20 +37,6 @@ func (ac *AuthController) Login(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, dtos.ErrorResponse(loginResponse.Message))
 		return
 	}
-	// cookie setup
-	// cookie, err := middleware.GenerateJWTToken(userID)
-	// if err != nil {
-	// 	ctx.JSON(http.StatusBadRequest, dtos.ErrorResponse(err.Error()))
-	// 	return
-	// }
-	// expireDay, err := strconv.Atoi(os.Getenv("COOKIE_TTL_DAY"))
-	// if err != nil {
-	// 	ctx.JSON(http.StatusBadRequest, dtos.ErrorResponse(err.Error()))
-	// 	return
-	// }
-	// ttlCookieDay := 24 * 3600 * expireDay
-	// ctx.SetSameSite(http.SameSiteNoneMode)
-	// ctx.SetCookie("Authorization", cookie, ttlCookieDay, "/", os.Getenv("COOKIE_DOMAIN"), true, true)
 
 	ctx.JSON(http.StatusOK, loginResponse)
 }
@@ -90,6 +75,8 @@ func (ac *AuthController) Register(ctx *gin.Context) {
 // @Success 200 {object} string
 // @Router /api/v1/auth/logout [post]
 func (ac *AuthController) Logout(ctx *gin.Context) {
-	ctx.SetCookie("Authorization", "", -1, "/", os.Getenv("COOKIE_DOMAIN"), false, true)
+	// Remove cookie
+	// ctx.SetCookie("Authorization", "", -1, "/", os.Getenv("COOKIE_DOMAIN"), false, true)
+
 	ctx.JSON(http.StatusOK, dtos.SuccessResponse("Logout successfully", nil))
 }
