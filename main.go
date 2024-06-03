@@ -34,6 +34,14 @@ func init() {
 	}
 	factory.AppFactoryInstance = factory.NewAppFactory(db)
 }
+
+// @Security ApiKeyAuth
+// @title VCS SMS API
+// @version 1
+// @description This is a sample server VCS SMS API server.
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
 func main() {
 
 	port := os.Getenv("PORT")

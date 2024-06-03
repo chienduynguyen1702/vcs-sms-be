@@ -34,3 +34,43 @@ ERROR: relation "servers" does not exist (SQLSTATE 42P01)
 ERROR: relation "servers" does not exist (SQLSTATE 42P01)
 [GIN] 2024/05/17 - 16:52:13 | 500 |      1.5159ms |             ::1 | GET     |  101| "/api/v1/servers/"
 ERROR: relation "servers" does not exist (SQLSTATE 42P01)
+[GIN] 2024/06/03 - 15:32:08 | 200 |     249.297µs |             ::1 | GET     | 3728| "/api/v1/swagger/index.html"
+[GIN] 2024/06/03 - 15:32:08 | 200 |     574.574µs |             ::1 | GET     |144966| "/api/v1/swagger/swagger-ui.css"
+[GIN] 2024/06/03 - 15:32:08 | 200 |     648.575µs |             ::1 | GET     |312217| "/api/v1/swagger/swagger-ui-standalone-preset.js"
+[GIN] 2024/06/03 - 15:32:08 | 200 |    2.940989ms |             ::1 | GET     |1061579| "/api/v1/swagger/swagger-ui-bundle.js"
+[GIN] 2024/06/03 - 15:32:08 | 200 |     237.075µs |             ::1 | GET     |18669| "/api/v1/swagger/doc.json"
+[GIN] 2024/06/03 - 15:32:08 | 200 |      34.419µs |             ::1 | GET     |  628| "/api/v1/swagger/favicon-32x32.png"
+[GIN] 2024/06/03 - 15:33:07 | 200 |     229.263µs |             ::1 | GET     | 3728| "/api/v1/swagger/index.html"
+[GIN] 2024/06/03 - 15:33:07 | 200 |     340.531µs |             ::1 | GET     |144966| "/api/v1/swagger/swagger-ui.css"
+[GIN] 2024/06/03 - 15:33:07 | 200 |     711.822µs |             ::1 | GET     |312217| "/api/v1/swagger/swagger-ui-standalone-preset.js"
+[GIN] 2024/06/03 - 15:33:07 | 200 |    2.940284ms |             ::1 | GET     |1061579| "/api/v1/swagger/swagger-ui-bundle.js"
+[GIN] 2024/06/03 - 15:33:07 | 200 |     778.405µs |             ::1 | GET     |18833| "/api/v1/swagger/doc.json"
+[GIN] 2024/06/03 - 15:33:07 | 200 |      45.924µs |             ::1 | GET     |  628| "/api/v1/swagger/favicon-32x32.png"
+[GIN] 2024/06/03 - 15:33:23 | 200 |     4.56459ms |             ::1 | POST    |  138| "/api/v1/auth/login"
+[GIN] 2024/06/03 - 15:41:49 | 304 |      77.843µs |             ::1 | GET     |   -1| "/api/v1/swagger/swagger-ui.css"
+[GIN] 2024/06/03 - 15:41:49 | 200 |    2.430935ms |             ::1 | GET     |1540291| "/api/v1/swagger/swagger-ui-bundle.js.map"
+[GIN] 2024/06/03 - 15:41:49 | 200 |     529.229µs |             ::1 | GET     |493648| "/api/v1/swagger/swagger-ui-standalone-preset.js.map"
+[GIN] 2024/06/03 - 15:41:49 | 200 |     349.233µs |             ::1 | GET     |251179| "/api/v1/swagger/swagger-ui.css.map"
+[GIN] 2024/06/03 - 15:48:41 | 200 |     4.65166ms |             ::1 | POST    |  273| "/api/v1/auth/login"
+[GIN] 2024/06/03 - 15:48:55 | 200 |      11.053µs |             ::1 | GET     |   45| "/api/v1/ping"
+[GIN] 2024/06/03 - 15:49:38 | 200 |      47.824µs |             ::1 | GET     |   45| "/api/v1/ping"
+[GIN] 2024/06/03 - 15:49:38 | 200 |      12.077µs |             ::1 | GET     |   45| "/api/v1/ping"
+[GIN] 2024/06/03 - 15:49:39 | 200 |      12.908µs |             ::1 | GET     |   45| "/api/v1/ping"
+[GIN] 2024/06/03 - 15:49:44 | 200 |    1.216729ms |             ::1 | GET     | 1103| "/api/v1/organizations/"
+[GIN] 2024/06/03 - 15:51:49 | 401 |      75.139µs |             ::1 | GET     |    0| "/api/v1/organizations/"
+Internal Server Error: Logger
+[GIN] 2024/06/03 - 15:51:50 | 401 |      49.223µs |             ::1 | GET     |    0| "/api/v1/organizations/"
+Internal Server Error: Logger
+[GIN] 2024/06/03 - 15:54:00 | 401 |      81.637µs |             ::1 | GET     |   33| "/api/v1/organizations/"
+
+[GIN] 2024/06/03 - 15:54:01 | 401 |      60.233µs |             ::1 | GET     |   33| "/api/v1/organizations/"
+
+[GIN] 2024/06/03 - 15:54:53 | 401 |       90.56µs |             ::1 | GET     |   33| "/api/v1/organizations/"
+
+[GIN] 2024/06/03 - 15:54:53 | 401 |      38.977µs |             ::1 | GET     |   33| "/api/v1/organizations/"
+
+[GIN] 2024/06/03 - 15:54:54 | 401 |      53.672µs |             ::1 | GET     |   33| "/api/v1/organizations/"
+
+[GIN] 2024/06/03 - 15:55:34 | 401 |     120.184µs |             ::1 | GET     |   84| "/api/v1/organizations/"
+
+[GIN] 2024/06/03 - 15:57:03 | 200 |    1.848316ms |             ::1 | GET     | 1103| "/api/v1/organizations/"

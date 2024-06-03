@@ -10,27 +10,35 @@ import (
 )
 
 func RequiredAuth(c *gin.Context) {
-	tokenString, err := c.Cookie("Authorization")
-	if err != nil {
-		// log.Println("Failed to get token from cookie")
-		c.AbortWithStatus(http.StatusUnauthorized)
+	// Get token from cookie
+	// tokenString, err := c.Cookie("Authorization")
+	// if err != nil {
+	// 	// log.Println("Failed to get token from cookie")
+	// 	c.AbortWithStatus(http.StatusUnauthorized)
+	// 	return
+	// }
+
+	// Get token from header
+	tokenString := c.GetHeader("Authorization")
+	if tokenString == "" {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Failed to get token in header"})
 		return
 	}
 	exp, userID, err := ParseJWTToken(tokenString)
 	if err != nil {
 		// log.Println("Failed to parse token")
-		c.AbortWithStatus(http.StatusUnauthorized)
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Failed to parse token : " + err.Error()})
 		return
 	}
 	if exp < getCurrentTime() {
 		// log.Println("Token is expired")
-		c.AbortWithStatus(http.StatusUnauthorized)
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Token is expired"})
 		return
 	}
 	userInDB, err := repositories.UserRepo.GetUserByID(userID)
 	if err != nil {
 		// log.Println("Failed to get user from DB")
-		c.AbortWithStatus(http.StatusUnauthorized)
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Failed to get user from DB"})
 		return
 	}
 	orgID := utilities.ParseUintToString(userInDB.OrganizationID)

@@ -1,7 +1,10 @@
 {
     "swagger": "2.0",
     "info": {
-        "contact": {}
+        "description": "This is a sample server VCS SMS API server.",
+        "title": "VCS SMS API",
+        "contact": {},
+        "version": "1"
     },
     "paths": {
         "/api/v1/auth/login": {
@@ -600,5 +603,17 @@
                 }
             }
         }
-    }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    },
+    "security": [
+        {
+            "ApiKeyAuth": []
+        }
+    ]
 }

@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/chienduynguyen1702/vcs-sms-be/dtos"
+	"github.com/chienduynguyen1702/vcs-sms-be/middleware"
 	"github.com/chienduynguyen1702/vcs-sms-be/models"
 	"github.com/chienduynguyen1702/vcs-sms-be/repositories"
 )
@@ -34,13 +35,16 @@ func (as *AuthService) Login(email, password string) (uint, dtos.Response) {
 	userInDb.LastLogin = time.Now()
 	as.userRepo.UpdateUser(userInDb)
 
-	ur := dtos.UserResponse{
-		ID:             userInDb.ID,
-		Email:          userInDb.Email,
-		Username:       userInDb.Username,
-		OrganizationID: userInDb.OrganizationID,
+	// cookie setup
+	cookie, err := middleware.GenerateJWTToken(userInDb.ID)
+	if err != nil {
+		return 0, dtos.ErrorResponse(err.Error())
 	}
-	return userInDb.ID, dtos.SuccessResponse("Login successfully", ur)
+	lr := dtos.LoginResponse{
+		UserResponse: dtos.MakeUserResponse(*userInDb),
+		Token:        cookie,
+	}
+	return userInDb.ID, dtos.SuccessResponse("Login successfully", lr)
 }
 
 func (as *AuthService) Register(email, password, confirmPassword, organizationName string) dtos.Response {
