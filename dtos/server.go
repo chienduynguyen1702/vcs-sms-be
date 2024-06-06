@@ -9,6 +9,9 @@ type ServerResponse struct {
 	IsChecked   bool   `json:"is_checked"`
 	IsOnline    bool   `json:"is_online" `
 	Description string `json:"description"`
+
+	ArchivedAt string `json:"archived_at"`
+	ArchivedBy uint   `json:"archived_by"`
 }
 type ListServerResponse []ServerResponse
 
@@ -26,6 +29,20 @@ func MakeListServerResponse(servers []models.Server) ListServerResponse {
 	}
 	return listServerResponse
 }
+func MakeListArchivedServerResponse(servers []models.Server) ListServerResponse {
+	var listServerResponse ListServerResponse
+	for _, server := range servers {
+		listServerResponse = append(listServerResponse, ServerResponse{
+			ID:   server.ID,
+			Name: server.Name,
+			IP:   server.IP,
+
+			ArchivedAt: server.ArchivedAt.String(),
+			ArchivedBy: server.ArchivedBy,
+		})
+	}
+	return listServerResponse
+}
 
 func MakeServerResponse(server models.Server) ServerResponse {
 	return ServerResponse{
@@ -38,8 +55,8 @@ func MakeServerResponse(server models.Server) ServerResponse {
 }
 
 type CreateServerRequest struct {
-	Name string `json:"name"`
-	IP   string `json:"ip"`
+	Name        string `json:"name"`
+	IP          string `json:"ip"`
 	Description string `json:"description"`
 }
 

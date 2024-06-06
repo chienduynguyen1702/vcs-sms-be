@@ -15,6 +15,7 @@ func setupGroupServer(rg *gin.RouterGroup) {
 	rg.PUT("/servers/:id", middleware.RequiredAuth, serverController.UpdateServer)
 	rg.DELETE("/servers/:id", middleware.RequiredAuth, serverController.DeleteServer)
 
-	// rg.PATCH("/servers/:id/archive", middleware.RequiredAuth, serverController.ArchiveServer)
-	// rg.PATCH("/servers/:id/unarchive", middleware.RequiredAuth, serverController.UnarchiveServer)
+	rg.GET("/servers/archived", middleware.RequiredAuth, serverController.GetArchivedServer)
+	rg.PATCH("/servers/:id/archive", middleware.RequiredAuth, serverController.ArchiveServer)
+	rg.PATCH("/servers/:id/unarchive", middleware.RequiredAuth, serverController.UnarchiveServer)
 }

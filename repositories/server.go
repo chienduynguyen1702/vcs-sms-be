@@ -29,12 +29,12 @@ func (sr *ServerRepository) GetServerByIP(ip string) *models.Server {
 	return &server
 }
 
-func (sr *ServerRepository) GetServerByID(id string) (*models.Server, error) {
+func (sr *ServerRepository) GetServerByID(id string) (models.Server, error) {
 	var server models.Server
 	if err := sr.db.Where("id = ?", id).First(&server).Error; err != nil {
-		return nil, err
+		return models.Server{}, err
 	}
-	return &server, nil
+	return server, nil
 }
 
 func (sr *ServerRepository) UpdateServer(server *models.Server) error {
@@ -55,8 +55,18 @@ func (sr *ServerRepository) GetServers() ([]models.Server, error) {
 
 func (sr *ServerRepository) GetServersByOrganizationID(organizationID string) ([]models.Server, error) {
 	var servers []models.Server
-	if err := sr.db.Where("organization_id = ?", organizationID).Find(&servers).Error; err != nil {
+	if err := sr.db.Where("organization_id = ?  AND is_archived = ?", organizationID, false).Find(&servers).Error; err != nil {
 		return nil, err
 	}
+	return servers, nil
+}
+func (sr *ServerRepository) GetArchivedServersByOrganizationID(organizationID string) ([]models.Server, error) {
+	var servers []models.Server
+	if err := sr.db.Where("organization_id = ? AND is_archived = ? ", organizationID, true).
+		// Preload("Archiver").
+		Find(&servers).Error; err != nil {
+		return nil, err
+	}
+	// fmt.Println(servers)
 	return servers, nil
 }

@@ -2,6 +2,7 @@ package services
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/chienduynguyen1702/vcs-sms-be/dtos"
 	"github.com/chienduynguyen1702/vcs-sms-be/models"
@@ -56,20 +57,14 @@ func (ss *ServerService) GetServerByIP(ip string) (*models.Server, error) {
 }
 func (ss *ServerService) GetServerByID(id string) (dtos.ServerResponse, error) {
 	server, err := ss.serverRepo.GetServerByID(id)
-	if server == nil {
-		return dtos.ServerResponse{}, fmt.Errorf("Server not found")
-	}
 	if err != nil {
 		return dtos.ServerResponse{}, err
 	}
-	return dtos.MakeServerResponse(*server), nil
+	return dtos.MakeServerResponse(server), nil
 }
 
 func (ss *ServerService) UpdateServer(id string, server *dtos.UpdateServerRequest) (dtos.ServerResponse, error) {
 	serverInDb, err := ss.serverRepo.GetServerByID(id)
-	if serverInDb == nil {
-		return dtos.ServerResponse{}, fmt.Errorf("Server not found")
-	}
 	if err != nil {
 		return dtos.ServerResponse{}, err
 	}
@@ -78,23 +73,20 @@ func (ss *ServerService) UpdateServer(id string, server *dtos.UpdateServerReques
 	serverInDb.IP = server.IP
 	serverInDb.Description = server.Description
 
-	err = ss.serverRepo.UpdateServer(serverInDb)
+	err = ss.serverRepo.UpdateServer(&serverInDb)
 	if err != nil {
 		return dtos.ServerResponse{}, err
 	}
 
-	return dtos.MakeServerResponse(*serverInDb), nil
+	return dtos.MakeServerResponse(serverInDb), nil
 }
 
 func (ss *ServerService) DeleteServer(id string) error {
 	server, err := ss.serverRepo.GetServerByID(id)
-	if server == nil {
-		return fmt.Errorf("Server not found")
-	}
 	if err != nil {
 		return err
 	}
-	return ss.serverRepo.DeleteServer(server)
+	return ss.serverRepo.DeleteServer(&server)
 }
 
 func (ss *ServerService) GetServers(orgID string) (dtos.ListServerResponse, error) {
@@ -103,4 +95,37 @@ func (ss *ServerService) GetServers(orgID string) (dtos.ListServerResponse, erro
 		return nil, err
 	}
 	return dtos.MakeListServerResponse(servers), nil
+}
+func (ss *ServerService) GetArchivedServers(orgID string) (dtos.ListServerResponse, error) {
+	servers, err := ss.serverRepo.GetArchivedServersByOrganizationID(orgID)
+	if err != nil {
+		return dtos.ListServerResponse{}, err
+	}
+	return dtos.MakeListArchivedServerResponse(servers), nil
+}
+
+func (ss *ServerService) ArchiveServer(serverID string, adminID uint) error {
+	//debug adminID
+	server, err := ss.serverRepo.GetServerByID(serverID)
+	if err != nil {
+		return err
+	}
+	server.IsArchived = true
+	server.ArchivedAt = time.Now()
+	server.ArchivedBy = adminID
+
+	return ss.serverRepo.UpdateServer(&server)
+}
+
+func (ss *ServerService) UnarchiveServer(serverID string, adminID uint) error {
+	//debug adminID
+	server, err := ss.serverRepo.GetServerByID(serverID)
+	if err != nil {
+		return err
+	}
+	server.IsArchived = false
+	server.ArchivedAt = time.Time{}
+	server.ArchivedBy = 0
+
+	return ss.serverRepo.UpdateServer(&server)
 }

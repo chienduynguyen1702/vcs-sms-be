@@ -1,6 +1,8 @@
 definitions:
   dtos.CreateServerRequest:
     properties:
+      description:
+        type: string
       ip:
         type: string
       name:
@@ -64,6 +66,8 @@ definitions:
     type: object
   dtos.UpdateServerRequest:
     properties:
+      description:
+        type: string
       ip:
         type: string
       name:
@@ -319,6 +323,63 @@ paths:
           schema:
             type: string
       summary: Update server
+      tags:
+      - Server
+  /api/v1/servers/{id}/archive:
+    patch:
+      consumes:
+      - application/json
+      description: Archive server
+      parameters:
+      - description: Server ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Archive server
+      tags:
+      - Server
+  /api/v1/servers/{id}/unarchive:
+    patch:
+      consumes:
+      - application/json
+      description: Archive server
+      parameters:
+      - description: Server ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Archive server
+      tags:
+      - Server
+  /api/v1/servers/archived:
+    get:
+      consumes:
+      - application/json
+      description: Archive server
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: GetArchivedServer server
       tags:
       - Server
   /api/v1/users:

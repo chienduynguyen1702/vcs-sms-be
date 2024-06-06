@@ -264,6 +264,29 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/servers/archived": {
+            "get": {
+                "description": "Archive server",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Server"
+                ],
+                "summary": "GetArchivedServer server",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/servers/{id}": {
             "get": {
                 "description": "Get server by ID",
@@ -346,6 +369,70 @@ const docTemplate = `{
                     "Server"
                 ],
                 "summary": "Delete server",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Server ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/servers/{id}/archive": {
+            "patch": {
+                "description": "Archive server",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Server"
+                ],
+                "summary": "Archive server",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Server ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/servers/{id}/unarchive": {
+            "patch": {
+                "description": "Archive server",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Server"
+                ],
+                "summary": "Archive server",
                 "parameters": [
                     {
                         "type": "string",
@@ -607,6 +694,9 @@ const docTemplate = `{
         "dtos.CreateServerRequest": {
             "type": "object",
             "properties": {
+                "description": {
+                    "type": "string"
+                },
                 "ip": {
                     "type": "string"
                 },
@@ -703,6 +793,9 @@ const docTemplate = `{
         "dtos.UpdateServerRequest": {
             "type": "object",
             "properties": {
+                "description": {
+                    "type": "string"
+                },
                 "ip": {
                     "type": "string"
                 },

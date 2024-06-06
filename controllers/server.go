@@ -5,6 +5,7 @@ import (
 
 	"github.com/chienduynguyen1702/vcs-sms-be/dtos"
 	"github.com/chienduynguyen1702/vcs-sms-be/services"
+	"github.com/chienduynguyen1702/vcs-sms-be/utilities"
 	"github.com/gin-gonic/gin"
 )
 
@@ -133,4 +134,93 @@ func (sc *ServerController) DeleteServer(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(http.StatusOK, dtos.SuccessResponse("Delete server successfully", nil))
+}
+
+// GetArchivedServer godoc
+// @Summary GetArchivedServer server
+// @Description Archive server
+// @Tags Server
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} string
+// @Router /api/v1/servers/archived [get]
+func (sc *ServerController) GetArchivedServer(ctx *gin.Context) {
+	orgID, exist := ctx.Get("orgID")
+	if !exist {
+		ctx.JSON(http.StatusUnauthorized, dtos.ErrorResponse("Failed to get organizationID in context"))
+		return
+	}
+	servers, err := sc.serverService.GetArchivedServers(orgID.(string))
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, dtos.ErrorResponse(err.Error()))
+		return
+	}
+	ctx.JSON(http.StatusOK, dtos.SuccessResponse("Get all archived servers successfully", servers))
+}
+
+// ArchiveServer godoc
+// @Summary Archive server
+// @Description Archive server
+// @Tags Server
+// @Accept  json
+// @Produce  json
+// @Param id path string true "Server ID"
+// @Success 200 {object} string
+// @Router /api/v1/servers/{id}/archive [patch]
+func (sc *ServerController) ArchiveServer(ctx *gin.Context) {
+	// get server id from param
+	id := ctx.Param("id")
+
+	// get admin id from context to set as archiver
+	adminID, exist := ctx.Get("userID")
+	if !exist {
+		ctx.JSON(http.StatusUnauthorized, dtos.ErrorResponse("Failed to get userID in context"))
+		return
+	}
+	adminIDStr := adminID.(string)
+	adminIDUint, err := utilities.ParseStringToUint(adminIDStr)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, dtos.ErrorResponse(err.Error()))
+		return
+	}
+	err = sc.serverService.ArchiveServer(id, adminIDUint)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, dtos.ErrorResponse(err.Error()))
+		return
+	}
+	ctx.JSON(http.StatusOK, dtos.SuccessResponse("Archive server successfully", nil))
+}
+
+
+// UnarchiveServer godoc
+// @Summary Archive server
+// @Description Archive server
+// @Tags Server
+// @Accept  json
+// @Produce  json
+// @Param id path string true "Server ID"
+// @Success 200 {object} string
+// @Router /api/v1/servers/{id}/unarchive [patch]
+func (sc *ServerController) UnarchiveServer(ctx *gin.Context) {
+	// get server id from param
+	id := ctx.Param("id")
+
+	// get admin id from context to set as archiver
+	adminID, exist := ctx.Get("userID")
+	if !exist {
+		ctx.JSON(http.StatusUnauthorized, dtos.ErrorResponse("Failed to get userID in context"))
+		return
+	}
+	adminIDStr := adminID.(string)
+	adminIDUint, err := utilities.ParseStringToUint(adminIDStr)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, dtos.ErrorResponse(err.Error()))
+		return
+	}
+	err = sc.serverService.UnarchiveServer(id, adminIDUint)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, dtos.ErrorResponse(err.Error()))
+		return
+	}
+	ctx.JSON(http.StatusOK, dtos.SuccessResponse("Archive server successfully", nil))
 }
