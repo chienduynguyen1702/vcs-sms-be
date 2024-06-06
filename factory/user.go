@@ -15,7 +15,8 @@ func (af *AppFactory) CreateUserRepository() *repositories.UserRepository {
 
 func (af *AppFactory) CreateUserService() *services.UserService {
 	userRepository := af.CreateUserRepository()
-	return services.NewUserService(userRepository)
+	roleRepository := af.CreateRoleRepository()
+	return services.NewUserService(userRepository, roleRepository)
 }
 
 func (af *AppFactory) CreateUserController() *controllers.UserController {

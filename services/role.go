@@ -18,9 +18,9 @@ func NewRoleService(roleRepo *repositories.RoleRepository) *RoleService {
 	return &RoleService{roleRepo}
 }
 
-func (rs *RoleService) GetRole() ([]dtos.RoleResponse, error) {
+func (rs *RoleService) GetRoles() ([]dtos.RoleResponse, error) {
 
-	roles, err := rs.roleRepo.GetRole()
+	roles, err := rs.roleRepo.GetRoles()
 	if err != nil {
 		return nil, err
 	}

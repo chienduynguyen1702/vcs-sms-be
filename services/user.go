@@ -15,10 +15,11 @@ type IUserService interface {
 
 type UserService struct {
 	userRepo *repositories.UserRepository
+	roleRepo *repositories.RoleRepository
 }
 
-func NewUserService(userRepo *repositories.UserRepository) *UserService {
-	return &UserService{userRepo: userRepo}
+func NewUserService(userRepo *repositories.UserRepository, roleRepo *repositories.RoleRepository) *UserService {
+	return &UserService{userRepo: userRepo, roleRepo: roleRepo}
 }
 
 func (us *UserService) CreateUser(user *dtos.CreateUserRequest, adminID string) error {
@@ -35,6 +36,24 @@ func (us *UserService) CreateUser(user *dtos.CreateUserRequest, adminID string) 
 	if orgID == 0 {
 		return fmt.Errorf("admin user does not belong to any organization")
 	}
+	// get role by name
+	var findingRoleID uint
+	var errGetRole error
+	var findingRole *models.Role
+	if user.IsOrganizationAdmin {
+		findingRole, errGetRole = us.roleRepo.GetRoleByName("Admin")
+	} else {
+		findingRole, errGetRole = us.roleRepo.GetRoleByName("User")
+	}
+	if errGetRole != nil {
+		return errGetRole
+	}
+	if findingRole == nil {
+		return fmt.Errorf("role not found")
+	}
+
+	findingRoleID = findingRole.ID
+
 	// set organizationID for new user
 	newUser := &models.User{
 		Email:               user.Email,
@@ -43,6 +62,7 @@ func (us *UserService) CreateUser(user *dtos.CreateUserRequest, adminID string) 
 		OrganizationID:      orgID,
 		Phone:               user.Phone,
 		IsOrganizationAdmin: user.IsOrganizationAdmin,
+		RoleID:              findingRoleID,
 	}
 	return us.userRepo.CreateUser(newUser)
 }
@@ -75,12 +95,29 @@ func (us *UserService) UpdateUser(userBodyRequest dtos.UpdateUserRequest, userID
 	if err != nil {
 		return err
 	}
+	// get role by name
+	var findingRoleID uint
+	var errGetRole error
+	var findingRole *models.Role
+	if user.IsOrganizationAdmin {
+		findingRole, errGetRole = us.roleRepo.GetRoleByName("Admin")
+	} else {
+		findingRole, errGetRole = us.roleRepo.GetRoleByName("User")
+	}
+	if errGetRole != nil {
+		return errGetRole
+	}
+	if findingRole == nil {
+		return fmt.Errorf("role not found")
+	}
 
+	findingRoleID = findingRole.ID
 	user.Email = userBodyRequest.Email
 	user.Username = userBodyRequest.Username
 	user.Name = userBodyRequest.Name
 	user.Phone = userBodyRequest.Phone
-	user.IsOrganizationAdmin = userBodyRequest.IsOrganizationAdmin
+	// user.IsOrganizationAdmin = userBodyRequest.IsOrganizationAdmin
+	user.RoleID = findingRoleID
 	user.Password = userBodyRequest.ConfirmPassword
 
 	return us.userRepo.UpdateUser(user)

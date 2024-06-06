@@ -14,8 +14,7 @@ func NewRoleController(roleService *services.RoleService) *RoleController {
 }
 
 func (rc *RoleController) GetRole(ctx *gin.Context) {
-
-	roles, err := rc.roleService.GetRole()
+	roles, err := rc.roleService.GetRoles()
 	if err != nil {
 		ctx.JSON(500, gin.H{"error": err.Error()})
 		return

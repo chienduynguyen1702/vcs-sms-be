@@ -9,6 +9,7 @@ var Users = []models.User{
 		OrganizationID: 1,
 		Phone:          "0123456789",
 		RoleID:         1,
+		Password:       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjAyNDc2NzMsInVzZXJfaWQiOiIxIn0.SwdcD9J72jpfGlmj1aT2KbTlbSsdXZIt6ZyfncH_14Y",
 	},
 	{
 		Email:          "chien@vcs.vn",
@@ -16,5 +17,6 @@ var Users = []models.User{
 		OrganizationID: 1,
 		Phone:          "0123456789",
 		RoleID:         2,
+		Password:       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjAyNDc2NzMsInVzZXJfaWQiOiIxIn0.SwdcD9J72jpfGlmj1aT2KbTlbSsdXZIt6ZyfncH_14Y",
 	},
 }

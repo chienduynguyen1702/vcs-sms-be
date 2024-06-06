@@ -106,6 +106,29 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/auth/validate": {
+            "get": {
+                "description": "Validate",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Validate",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/organizations/": {
             "get": {
                 "description": "Get organization",
@@ -127,7 +150,9 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
+            }
+        },
+        "/api/v1/organizations/{orgID}": {
             "put": {
                 "description": "Update organization",
                 "consumes": [
@@ -342,6 +367,11 @@ const docTemplate = `{
         },
         "/api/v1/users": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Get all users",
                 "consumes": [
                     "application/json"
@@ -364,6 +394,18 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Username",
                         "name": "username",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
                         "in": "query"
                     }
                 ],
@@ -399,6 +441,29 @@ const docTemplate = `{
                         }
                     }
                 ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/users/archived": {
+            "get": {
+                "description": "Get all archived users",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get all archived users",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -471,8 +536,42 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
-            "delete": {
+            }
+        },
+        "/api/v1/users/{user_id}/archive": {
+            "patch": {
+                "description": "Delete user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Delete user",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/users/{user_id}/unarchive": {
+            "patch": {
                 "description": "Delete user",
                 "consumes": [
                     "application/json"
@@ -519,10 +618,22 @@ const docTemplate = `{
         "dtos.CreateUserRequest": {
             "type": "object",
             "properties": {
+                "confirm_password": {
+                    "type": "string"
+                },
                 "email": {
                     "type": "string"
                 },
+                "is_organization_admin": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
                 "password": {
+                    "type": "string"
+                },
+                "phone": {
                     "type": "string"
                 },
                 "username": {
@@ -583,6 +694,9 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "website_url": {
+                    "type": "string"
                 }
             }
         },
@@ -600,10 +714,22 @@ const docTemplate = `{
         "dtos.UpdateUserRequest": {
             "type": "object",
             "properties": {
+                "confirm_password": {
+                    "type": "string"
+                },
                 "email": {
                     "type": "string"
                 },
+                "is_organization_admin": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
                 "password": {
+                    "type": "string"
+                },
+                "phone": {
                     "type": "string"
                 },
                 "username": {
