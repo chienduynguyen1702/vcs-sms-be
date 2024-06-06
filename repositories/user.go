@@ -41,10 +41,6 @@ func (ur *UserRepository) UpdateUser(user *models.User) error {
 	return ur.db.Save(user).Error
 }
 
-func (ur *UserRepository) DeleteUser(user *models.User) error {
-	return ur.db.Delete(user).Error
-}
-
 func (ur *UserRepository) GetUsers() ([]models.User, error) {
 	var users []models.User
 	if err := ur.db.Find(&users).Error; err != nil {
@@ -55,7 +51,26 @@ func (ur *UserRepository) GetUsers() ([]models.User, error) {
 
 func (ur *UserRepository) GetUsersByOrganizationID(organizationID string) ([]models.User, error) {
 	var users []models.User
-	if err := ur.db.Where("organization_id = ?", organizationID).Find(&users).Error; err != nil {
+	if err := ur.db.
+		Where("is_archived = ? AND organization_id = ? ", false, organizationID).
+		Preload("Role").
+		Find(&users).Error; err != nil {
+		return nil, err
+	}
+	return users, nil
+}
+
+func (ur *UserRepository) GetUsersByOrganizationIDAndSearchByEmailAndUsername(organizationID, email, username string) ([]models.User, error) {
+	var users []models.User
+	if err := ur.db.Where("is_archived = ? AND organization_id = ? AND email LIKE ? OR username LIKE ?", false, organizationID, "%"+email+"%", "%"+username+"%").Find(&users).Error; err != nil {
+		return nil, err
+	}
+	return users, nil
+}
+
+func (ur *UserRepository) GetUsersArchivedByOrganizationID(organizationID string) ([]models.User, error) {
+	var users []models.User
+	if err := ur.db.Where("is_archived = ? AND organization_id = ?", true, organizationID).Find(&users).Error; err != nil {
 		return nil, err
 	}
 	return users, nil

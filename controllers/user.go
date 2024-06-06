@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/chienduynguyen1702/vcs-sms-be/dtos"
-	"github.com/chienduynguyen1702/vcs-sms-be/models"
 	"github.com/chienduynguyen1702/vcs-sms-be/services"
 	"github.com/chienduynguyen1702/vcs-sms-be/utilities"
 	"github.com/gin-gonic/gin"
@@ -33,13 +32,13 @@ func (uc *UserController) CreateUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, dtos.ErrorResponse(err.Error()))
 		return
 	}
-	admin, exist := ctx.Get("userID")
+	adminID, exist := ctx.Get("userID")
 	if !exist {
 		ctx.JSON(http.StatusUnauthorized, dtos.ErrorResponse("Unauthorized"))
 		return
 	}
-	adminID := utilities.ParseUintToString(admin.(models.User).ID)
-	err := uc.userService.CreateUser(newUser, adminID)
+	adminIDStr := adminID.(string)
+	err := uc.userService.CreateUser(newUser, adminIDStr)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, dtos.ErrorResponse(err.Error()))
 		return
@@ -51,32 +50,6 @@ func (uc *UserController) CreateUser(ctx *gin.Context) {
 		},
 	))
 }
-
-// // GetUserByEmail godoc
-// // @Summary Get user by email
-// // @Description Get user by email
-// // @Tags User
-// // @Accept  json
-// // @Produce  json
-// // @Param email body dtos.FindUserByEmailRequest true "User Email"
-// // @Success 200 {object} string
-// // @Router /api/v1/users/email [get]
-// func (uc *UserController) GetUserByEmail(ctx *gin.Context) {
-// 	email := ctx.Query("email")
-// 	if email == "" {
-// 		ctx.JSON(http.StatusBadRequest, dtos.ErrorResponse("Email is required"))
-// 		return
-// 	}
-// 	userDTOResponse, err := uc.userService.GetUserByEmail(email)
-// 	if err != nil {
-// 		ctx.JSON(http.StatusInternalServerError, dtos.ErrorResponse(err.Error()))
-// 		return
-// 	}
-// 	ctx.JSON(http.StatusOK, dtos.SuccessResponse(
-// 		"Get user by email successfully",
-// 		userDTOResponse,
-// 	))
-// }
 
 // GetUserByID godoc
 // @Summary Get user by ID
@@ -114,10 +87,27 @@ func (uc *UserController) GetUserByID(ctx *gin.Context) {
 // @Success 200 {object} string
 // @Router /api/v1/users/{user_id} [put]
 func (uc *UserController) UpdateUser(ctx *gin.Context) {
+	userID := ctx.Param("user_id")
+	if userID == "" {
+		ctx.JSON(http.StatusBadRequest, dtos.ErrorResponse("User ID is required"))
+		return
+	}
+
+	updateUser := dtos.UpdateUserRequest{}
+	if err := ctx.ShouldBindJSON(&updateUser); err != nil {
+		ctx.JSON(http.StatusBadRequest, dtos.ErrorResponse(err.Error()))
+		return
+	}
+	// fmt.Println(updateUser)
+	err := uc.userService.UpdateUser(updateUser, userID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, dtos.ErrorResponse(err.Error()))
+		return
+	}
 	ctx.JSON(http.StatusOK, dtos.SuccessResponse("Update user successfully", nil))
 }
 
-// DeleteUser godoc
+// ArchiveUser godoc
 // @Summary Delete user
 // @Description Delete user
 // @Tags User
@@ -125,14 +115,49 @@ func (uc *UserController) UpdateUser(ctx *gin.Context) {
 // @Produce  json
 // @Param id path int true "User ID"
 // @Success 200 {object} string
-// @Router /api/v1/users/{user_id} [delete]
-func (uc *UserController) DeleteUser(ctx *gin.Context) {
+// @Router /api/v1/users/{user_id}/archive [patch]
+func (uc *UserController) ArchiveUser(ctx *gin.Context) {
 	userID := ctx.Param("user_id")
 	if userID == "" {
 		ctx.JSON(http.StatusBadRequest, dtos.ErrorResponse("User ID is required"))
 		return
 	}
-	err := uc.userService.DeleteUser(userID)
+	adminID, exist := ctx.Get("userID")
+	if !exist {
+		ctx.JSON(http.StatusUnauthorized, dtos.ErrorResponse("Unauthorized"))
+		return
+	}
+	adminIDStr := adminID.(string)
+	err := uc.userService.ArchiveUser(userID, adminIDStr)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, dtos.ErrorResponse(err.Error()))
+		return
+	}
+	ctx.JSON(http.StatusOK, dtos.SuccessResponse("Delete user successfully", nil))
+}
+
+// ArchiveUser godoc
+// @Summary Delete user
+// @Description Delete user
+// @Tags User
+// @Accept  json
+// @Produce  json
+// @Param id path int true "User ID"
+// @Success 200 {object} string
+// @Router /api/v1/users/{user_id}/unarchive [patch]
+func (uc *UserController) UnarchiveUser(ctx *gin.Context) {
+	userID := ctx.Param("user_id")
+	if userID == "" {
+		ctx.JSON(http.StatusBadRequest, dtos.ErrorResponse("User ID is required"))
+		return
+	}
+	adminID, exist := ctx.Get("userID")
+	if !exist {
+		ctx.JSON(http.StatusUnauthorized, dtos.ErrorResponse("Unauthorized"))
+		return
+	}
+	adminIDStr := adminID.(string)
+	err := uc.userService.UnarchiveUser(userID, adminIDStr)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, dtos.ErrorResponse(err.Error()))
 		return
@@ -146,20 +171,56 @@ func (uc *UserController) DeleteUser(ctx *gin.Context) {
 // @Tags User
 // @Accept  json
 // @Produce  json
-// @Param email query string false "Email"
-// @Param username query string false "Username"
+// @Param email 	query string false "Email"
+// @Param username 	query string false "Username"
+// @Param page 		query int false "Page"
+// @Param limit 	query int false "Limit"
+// @Security ApiKeyAuth
 // @Success 200 {object} string
 // @Router /api/v1/users [get]
 func (uc *UserController) GetUsers(ctx *gin.Context) {
-	// email := ctx.Query("email")
-	// username := ctx.Query("username")
+	email := ctx.Query("email")
+	username := ctx.Query("username")
+	page := ctx.Query("page")
+	limit := ctx.Query("limit")
+	// parse page and limit to int
+	pageInt, limitInt := utilities.ParsePageAndLimit(page, limit)
+
 	orgId, exist := ctx.Get("orgID")
 	if !exist {
 		ctx.JSON(http.StatusUnauthorized, dtos.ErrorResponse("Unauthorized"))
 		return
 	}
 	orgID := orgId.(string)
-	users, err := uc.userService.GetUsers(orgID)
+	users, err := uc.userService.GetUsers(orgID, email, username, pageInt, limitInt)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, dtos.ErrorResponse(err.Error()))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, dtos.SuccessResponse(
+		"Get all users successfully",
+		users,
+	))
+}
+
+// GetUsersArchived godoc
+// @Summary Get all archived users
+// @Description Get all archived users
+// @Tags User
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} string
+// @Router /api/v1/users/archived [get]
+func (uc *UserController) GetUsersArchived(ctx *gin.Context) {
+
+	orgId, exist := ctx.Get("orgID")
+	if !exist {
+		ctx.JSON(http.StatusUnauthorized, dtos.ErrorResponse("Unauthorized"))
+		return
+	}
+	orgID := orgId.(string)
+	users, err := uc.userService.GetUsersArchived(orgID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, dtos.ErrorResponse(err.Error()))
 		return

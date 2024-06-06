@@ -106,7 +106,7 @@ func SetupV1Router() *gin.Engine {
 	// Setup routes for the API version 1
 	v1 := r.Group("/api/v1")
 	{
-		setupGroupUser(v1)
+		setupGroupUserRole(v1)
 		setupGroupAuth(v1)
 		setupGroupOrganization(v1)
 		setupGroupServer(v1)

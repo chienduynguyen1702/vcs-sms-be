@@ -9,6 +9,7 @@ var (
 	OrganizationRepo *OrganizationRepository
 	UserRepo         *UserRepository
 	ServerRepo       *ServerRepository
+	RoleRepo         *RoleRepository
 )
 
 func SetupDatabase(db *gorm.DB) {
@@ -17,4 +18,10 @@ func SetupDatabase(db *gorm.DB) {
 
 	or := NewOrganizationRepository(db)
 	OrganizationRepo = or
+
+	sr := NewServerRepository(db)
+	ServerRepo = sr
+
+	rr := NewRoleRepository(db)
+	RoleRepo = rr
 }

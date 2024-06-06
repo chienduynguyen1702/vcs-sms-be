@@ -35,3 +35,15 @@ func ParseStringToDate(dateString string) time.Time {
 	date, _ := time.Parse("2006-01-02", dateString)
 	return date
 }
+
+func ParsePageAndLimit(page, limit string) (int, int) {
+	pageInt, err := strconv.Atoi(page)
+	if err != nil {
+		pageInt = 1
+	}
+	limitInt, err := strconv.Atoi(limit)
+	if err != nil {
+		limitInt = 10
+	}
+	return pageInt, limitInt
+}

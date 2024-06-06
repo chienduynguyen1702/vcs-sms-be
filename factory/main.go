@@ -15,12 +15,18 @@ var (
 // AppFactory
 type AppFactory struct {
 	db               *gorm.DB
+
 	userRepository   *repositories.UserRepository
 	userRepoInit     sync.Once
+
 	orgRepository    *repositories.OrganizationRepository
 	orgRepoInit      sync.Once
+
 	serverRepository *repositories.ServerRepository
 	serverRepoInit   sync.Once
+
+	roleRepository   *repositories.RoleRepository
+	roleRepoInit     sync.Once
 }
 
 func NewAppFactory(db *gorm.DB) *AppFactory {

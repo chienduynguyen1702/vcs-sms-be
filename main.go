@@ -6,6 +6,7 @@ import (
 
 	"github.com/chienduynguyen1702/vcs-sms-be/configs"
 	"github.com/chienduynguyen1702/vcs-sms-be/factory"
+	"github.com/chienduynguyen1702/vcs-sms-be/models/seed"
 	"github.com/chienduynguyen1702/vcs-sms-be/routes"
 
 	"github.com/gin-gonic/gin"
@@ -25,6 +26,9 @@ func init() {
 		configs.Migration(db) // migration db
 	}
 	// Seed data
+	if os.Getenv("RUN_SEED") == "true" {
+		seed.InitData(db) // seed data
+	}
 
 	// Set controller
 	// controllers.SetDB(db) // set controller use that db *gorm.DB

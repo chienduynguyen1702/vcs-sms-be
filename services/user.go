@@ -37,10 +37,12 @@ func (us *UserService) CreateUser(user *dtos.CreateUserRequest, adminID string) 
 	}
 	// set organizationID for new user
 	newUser := &models.User{
-		Email:          user.Email,
-		Password:       user.Password,
-		Username:       user.Username,
-		OrganizationID: orgID,
+		Email:               user.Email,
+		Password:            user.Password,
+		Username:            user.Username,
+		OrganizationID:      orgID,
+		Phone:               user.Phone,
+		IsOrganizationAdmin: user.IsOrganizationAdmin,
 	}
 	return us.userRepo.CreateUser(newUser)
 }
@@ -65,11 +67,26 @@ func (us *UserService) GetUserByID(id string) (dtos.UserResponse, error) {
 	return dtos.MakeUserResponse(*user), nil
 }
 
-func (us *UserService) UpdateUser(user *models.User) error {
+func (us *UserService) UpdateUser(userBodyRequest dtos.UpdateUserRequest, userID string) error {
+	user, err := us.userRepo.GetUserByID(userID)
+	if user == nil {
+		return fmt.Errorf("User not found")
+	}
+	if err != nil {
+		return err
+	}
+
+	user.Email = userBodyRequest.Email
+	user.Username = userBodyRequest.Username
+	user.Name = userBodyRequest.Name
+	user.Phone = userBodyRequest.Phone
+	user.IsOrganizationAdmin = userBodyRequest.IsOrganizationAdmin
+	user.Password = userBodyRequest.ConfirmPassword
+
 	return us.userRepo.UpdateUser(user)
 }
 
-func (us *UserService) DeleteUser(id string) error {
+func (us *UserService) ArchiveUser(id, adminID string) error {
 	user, err := us.userRepo.GetUserByID(id)
 	if err != nil {
 		return err
@@ -77,11 +94,43 @@ func (us *UserService) DeleteUser(id string) error {
 	if user == nil {
 		return fmt.Errorf("user not found")
 	}
-	return us.userRepo.DeleteUser(user)
+	user.IsArchived = true
+	user.ArchivedBy = adminID
+	return us.userRepo.UpdateUser(user)
+}
+func (us *UserService) UnarchiveUser(id, adminID string) error {
+	user, err := us.userRepo.GetUserByID(id)
+	if err != nil {
+		return err
+	}
+	if user == nil {
+		return fmt.Errorf("user not found")
+	}
+	user.IsArchived = false
+	user.ArchivedBy = ""
+	return us.userRepo.UpdateUser(user)
 }
 
-func (us *UserService) GetUsers(orgID string) (dtos.ListUserResponse, error) {
+func (us *UserService) GetUsers(orgID string, email, username string, page, limit int) (dtos.PaginateListUserResponse, error) {
+	// if email or username is empty, get all users
+	if email != "" || username != "" {
+		// if email or username is not empty, get users by email or username
+		users, err := repositories.UserRepo.GetUsersByOrganizationIDAndSearchByEmailAndUsername(orgID, email, username)
+		if err != nil {
+			return dtos.PaginateListUserResponse{}, err
+		}
+		return dtos.MakePaginateListUserResponse(users, page, limit), nil
+	}
 	users, err := repositories.UserRepo.GetUsersByOrganizationID(orgID)
+	if err != nil {
+		return dtos.PaginateListUserResponse{}, err
+	}
+	return dtos.MakePaginateListUserResponse(users, page, limit), nil
+
+}
+
+func (us *UserService) GetUsersArchived(orgID string) (dtos.ListUserResponse, error) {
+	users, err := repositories.UserRepo.GetUsersArchivedByOrganizationID(orgID)
 	if err != nil {
 		return nil, err
 	}

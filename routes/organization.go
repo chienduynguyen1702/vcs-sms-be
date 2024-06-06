@@ -6,11 +6,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func setupGroupOrganization(r *gin.RouterGroup) {
+func setupGroupOrganization(rg *gin.RouterGroup) {
 	organizationController := factory.AppFactoryInstance.CreateOrganizationController()
-	organizationGroup := r.Group("/organizations", middleware.RequiredAuth)
-	{
-		organizationGroup.GET("/", organizationController.GetOrganization)
-		organizationGroup.PUT("/:id", organizationController.UpdateOrganization)
-	}
+
+	rg.GET("/organizations", middleware.RequiredAuth, organizationController.GetOrganization)
+	rg.PUT("/organizations/:id", middleware.RequiredAuth, organizationController.UpdateOrganization)
 }

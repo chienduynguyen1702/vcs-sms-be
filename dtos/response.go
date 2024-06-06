@@ -20,3 +20,8 @@ func SuccessResponse(message string, data interface{}) Response {
 		Data:    data,
 	}
 }
+
+const (
+	LIMIT_DEFAULT = 10
+	PAGE_DEFAULT  = 1
+)
