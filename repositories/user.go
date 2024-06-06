@@ -54,6 +54,8 @@ func (ur *UserRepository) GetUsersByOrganizationID(organizationID string) ([]mod
 	if err := ur.db.
 		Where("is_archived = ? AND organization_id = ? ", false, organizationID).
 		Preload("Role").
+		Order("role_id asc").
+		Order("email asc").
 		Find(&users).Error; err != nil {
 		return nil, err
 	}

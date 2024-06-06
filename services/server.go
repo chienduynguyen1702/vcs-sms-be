@@ -22,7 +22,7 @@ func NewServerService(serverRepo *repositories.ServerRepository) *ServerService 
 	return &ServerService{serverRepo: serverRepo}
 }
 
-func (us *ServerService) CreateServer(server *dtos.CreateServerRequest, orgIDString string) error {
+func (ss *ServerService) CreateServer(server *dtos.CreateServerRequest, orgIDString string) error {
 	if orgIDString == "" {
 		return fmt.Errorf("OrganizationID is required")
 	}
@@ -30,7 +30,7 @@ func (us *ServerService) CreateServer(server *dtos.CreateServerRequest, orgIDStr
 	if !isValid {
 		return fmt.Errorf("Invalid IP address")
 	}
-	check := us.serverRepo.GetServerByIP(server.IP)
+	check := ss.serverRepo.GetServerByIP(server.IP)
 	if check != nil {
 		return fmt.Errorf("Server already exists")
 	}
@@ -42,19 +42,20 @@ func (us *ServerService) CreateServer(server *dtos.CreateServerRequest, orgIDStr
 		Name:           server.Name,
 		IP:             server.IP,
 		OrganizationID: orgID,
+		Description:    server.Description,
 	}
-	return us.serverRepo.CreateServer(newServer)
+	return ss.serverRepo.CreateServer(newServer)
 }
-func (us *ServerService) GetServerByIP(ip string) (*models.Server, error) {
-	server := us.serverRepo.GetServerByIP(ip)
+func (ss *ServerService) GetServerByIP(ip string) (*models.Server, error) {
+	server := ss.serverRepo.GetServerByIP(ip)
 	if server == nil {
 		return nil, fmt.Errorf("Server not found")
 	}
 
 	return server, nil
 }
-func (us *ServerService) GetServerByID(id string) (dtos.ServerResponse, error) {
-	server, err := us.serverRepo.GetServerByID(id)
+func (ss *ServerService) GetServerByID(id string) (dtos.ServerResponse, error) {
+	server, err := ss.serverRepo.GetServerByID(id)
 	if server == nil {
 		return dtos.ServerResponse{}, fmt.Errorf("Server not found")
 	}
@@ -64,31 +65,39 @@ func (us *ServerService) GetServerByID(id string) (dtos.ServerResponse, error) {
 	return dtos.MakeServerResponse(*server), nil
 }
 
-func (us *ServerService) UpdateServer(id string, server *dtos.UpdateServerRequest) (dtos.ServerResponse, error) {
-	serverInDb, err := us.serverRepo.GetServerByID(id)
+func (ss *ServerService) UpdateServer(id string, server *dtos.UpdateServerRequest) (dtos.ServerResponse, error) {
+	serverInDb, err := ss.serverRepo.GetServerByID(id)
 	if serverInDb == nil {
 		return dtos.ServerResponse{}, fmt.Errorf("Server not found")
 	}
 	if err != nil {
 		return dtos.ServerResponse{}, err
 	}
+
 	serverInDb.Name = server.Name
 	serverInDb.IP = server.IP
+	serverInDb.Description = server.Description
+
+	err = ss.serverRepo.UpdateServer(serverInDb)
+	if err != nil {
+		return dtos.ServerResponse{}, err
+	}
+
 	return dtos.MakeServerResponse(*serverInDb), nil
 }
 
-func (us *ServerService) DeleteServer(id string) error {
-	server, err := us.serverRepo.GetServerByID(id)
+func (ss *ServerService) DeleteServer(id string) error {
+	server, err := ss.serverRepo.GetServerByID(id)
 	if server == nil {
 		return fmt.Errorf("Server not found")
 	}
 	if err != nil {
 		return err
 	}
-	return us.serverRepo.DeleteServer(server)
+	return ss.serverRepo.DeleteServer(server)
 }
 
-func (us *ServerService) GetServers(orgID string) (dtos.ListServerResponse, error) {
+func (ss *ServerService) GetServers(orgID string) (dtos.ListServerResponse, error) {
 	servers, err := repositories.ServerRepo.GetServersByOrganizationID(orgID)
 	if err != nil {
 		return nil, err

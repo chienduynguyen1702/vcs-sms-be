@@ -6,16 +6,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func setupGroupServer(r *gin.RouterGroup) {
+func setupGroupServer(rg *gin.RouterGroup) {
 	serverController := factory.AppFactoryInstance.CreateServerController()
-	serverGroup := r.Group("/servers", middleware.RequiredAuth)
-	{
-		serverGroup.GET("/", serverController.GetServers)
-		// serverGroup.GET("/ip", serverController.GetServerByIP)
 
-		serverGroup.GET("/:id", serverController.GetServerByID)
-		serverGroup.POST("/", serverController.CreateServer)
-		serverGroup.PUT("/:id", serverController.UpdateServer)
-		serverGroup.DELETE("/:id", serverController.DeleteServer)
-	}
+	rg.GET("/servers", middleware.RequiredAuth, serverController.GetServers)
+	rg.GET("/servers/:id", middleware.RequiredAuth, serverController.GetServerByID)
+	rg.POST("/servers", middleware.RequiredAuth, serverController.CreateServer)
+	rg.PUT("/servers/:id", middleware.RequiredAuth, serverController.UpdateServer)
+	rg.DELETE("/servers/:id", middleware.RequiredAuth, serverController.DeleteServer)
+
+	// rg.PATCH("/servers/:id/archive", middleware.RequiredAuth, serverController.ArchiveServer)
+	// rg.PATCH("/servers/:id/unarchive", middleware.RequiredAuth, serverController.UnarchiveServer)
 }
