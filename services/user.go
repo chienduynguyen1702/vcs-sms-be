@@ -148,11 +148,11 @@ func (us *UserService) UnarchiveUser(id, adminID string) error {
 	return us.userRepo.UpdateUser(user)
 }
 
-func (us *UserService) GetUsers(orgID string, email, username string, page, limit int) (dtos.PaginateListUserResponse, error) {
+func (us *UserService) GetUsers(orgID, search string, page, limit int) (dtos.PaginateListUserResponse, error) {
 	// if email or username is empty, get all users
-	if email != "" || username != "" {
+	if search != "" {
 		// if email or username is not empty, get users by email or username
-		users, err := repositories.UserRepo.GetUsersByOrganizationIDAndSearchByEmailAndUsername(orgID, email, username)
+		users, err := repositories.UserRepo.GetUsersByOrganizationIDAndSearchByEmailAndUsername(orgID, search)
 		if err != nil {
 			return dtos.PaginateListUserResponse{}, err
 		}

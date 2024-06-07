@@ -171,18 +171,16 @@ func (uc *UserController) UnarchiveUser(ctx *gin.Context) {
 // @Tags User
 // @Accept  json
 // @Produce  json
-// @Param email 	query string false "Email"
-// @Param username 	query string false "Username"
 // @Param page 		query int false "Page"
 // @Param limit 	query int false "Limit"
+// @Param search	query string false "Search"
 // @Security ApiKeyAuth
 // @Success 200 {object} string
 // @Router /api/v1/users [get]
 func (uc *UserController) GetUsers(ctx *gin.Context) {
-	email := ctx.Query("email")
-	username := ctx.Query("username")
 	page := ctx.Query("page")
 	limit := ctx.Query("limit")
+	search := ctx.Query("search")
 	// parse page and limit to int
 	pageInt, limitInt := utilities.ParsePageAndLimit(page, limit)
 
@@ -192,7 +190,7 @@ func (uc *UserController) GetUsers(ctx *gin.Context) {
 		return
 	}
 	orgID := orgId.(string)
-	users, err := uc.userService.GetUsers(orgID, email, username, pageInt, limitInt)
+	users, err := uc.userService.GetUsers(orgID, search, pageInt, limitInt)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, dtos.ErrorResponse(err.Error()))
 		return
