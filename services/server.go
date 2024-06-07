@@ -88,23 +88,23 @@ func (ss *ServerService) DeleteServer(id string) error {
 	return ss.serverRepo.DeleteServer(&server)
 }
 
-func (ss *ServerService) GetServers(orgID, search string, page, limit int) (dtos.ListServerResponse, error) {
+func (ss *ServerService) GetServers(orgID, search string, page, limit int) (int64, dtos.ListServerResponse, error) {
 	var servers []models.Server
+	var total int64
 	var err error
-
 	if search != "" {
-		servers, err = ss.serverRepo.GetServersByOrganizationIDAndSearch(orgID, search)
+		total, servers, err = ss.serverRepo.GetServersByOrganizationIDAndSearch(orgID, search, page, limit)
 		if err != nil {
-			return dtos.ListServerResponse{}, err
+			return 0, dtos.ListServerResponse{}, err
 		}
 	} else {
-		servers, err = ss.serverRepo.GetServersByOrganizationID(orgID)
+		total, servers, err = ss.serverRepo.GetServersByOrganizationID(orgID, page, limit)
 		if err != nil {
-			return nil, err
+			return 0, nil, err
 		}
 	}
 
-	return dtos.MakeListServerResponse(servers), nil
+	return total, dtos.MakeListServerResponse(servers), nil
 }
 func (ss *ServerService) GetArchivedServers(orgID string) (dtos.ListServerResponse, error) {
 	servers, err := ss.serverRepo.GetArchivedServersByOrganizationID(orgID)

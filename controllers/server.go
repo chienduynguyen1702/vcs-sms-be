@@ -77,12 +77,14 @@ func (sc *ServerController) GetServers(ctx *gin.Context) {
 		return
 	}
 	orgIDStr := orgId.(string)
-	servers, err := sc.serverService.GetServers(orgIDStr, search, pageInt, limitInt)
+	count, servers, err := sc.serverService.GetServers(orgIDStr, search, pageInt, limitInt)
 	if err != nil {
+		fmt.Println("err", err.Error())
 		ctx.JSON(http.StatusInternalServerError, dtos.ErrorResponse(err.Error()))
 		return
 	}
-	ctx.JSON(http.StatusOK, dtos.SuccessResponse("Get all servers successfully", servers))
+
+	ctx.JSON(http.StatusOK, dtos.SuccessResponse("Get all servers successfully", dtos.PaginationResponse(count, servers)))
 }
 
 // GetServerByID godoc

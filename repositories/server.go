@@ -57,24 +57,46 @@ func (sr *ServerRepository) GetServers() ([]models.Server, error) {
 	return servers, nil
 }
 
-func (sr *ServerRepository) GetServersByOrganizationID(organizationID string) ([]models.Server, error) {
+func (sr *ServerRepository) GetServersByOrganizationID(organizationID string, page, limit int) (int64, []models.Server, error) {
 	var servers []models.Server
+	var total int64
+
+	if err := sr.db.
+		Table("servers").
+		Where("organization_id = ?  AND is_archived = ? ", organizationID, false).
+		Count(&total).Error; err != nil {
+		return 0, nil, err
+	}
 	if err := sr.db.Where("organization_id = ?  AND is_archived = ?", organizationID, false).
+		Offset((page - 1) * limit).
+		Limit(limit).
 		Find(&servers).
 		Order("name asc").
 		Error; err != nil {
-		return nil, err
+		return 0, nil, err
 	}
-	return servers, nil
+	return total, servers, nil
 }
 
-func (sr *ServerRepository) GetServersByOrganizationIDAndSearch(organizationID, search string) ([]models.Server, error) {
+func (sr *ServerRepository) GetServersByOrganizationIDAndSearch(organizationID, search string, page, limit int) (int64, []models.Server, error) {
 	var servers []models.Server
-	// search include upper case and lower case
-	if err := sr.db.Where("organization_id = ?  AND is_archived = ? AND (name LIKE ? OR ip LIKE ?)", organizationID, false, "%"+search+"%", "%"+search+"%").Find(&servers).Error; err != nil {
-		return nil, err
+	// count total servers
+	var total int64
+	if err := sr.db.
+		Table("servers").
+		Where("organization_id = ?  AND is_archived = ? AND (name LIKE ? OR ip LIKE ?)", organizationID, false, "%"+search+"%", "%"+search+"%").
+		Count(&total).Error; err != nil {
+		return 0, nil, err
 	}
-	return servers, nil
+	// search include upper case and lower case
+	if err := sr.db.
+		Where("organization_id = ?  AND is_archived = ? AND (name LIKE ? OR ip LIKE ?)", organizationID, false, "%"+search+"%", "%"+search+"%").
+		Offset((page - 1) * limit).
+		Limit(limit).
+		Find(&servers).Error; err != nil {
+		return 0, nil, err
+	}
+	return total, servers, nil
 }
 func (sr *ServerRepository) GetArchivedServersByOrganizationID(organizationID string) ([]models.Server, error) {
 	var servers []models.Server
