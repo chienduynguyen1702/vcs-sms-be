@@ -10,8 +10,6 @@ type ServerResponse struct {
 	IsOnline    bool   `json:"is_online" `
 	Description string `json:"description"`
 
-	ArchivedAt string `json:"archived_at"`
-	ArchivedBy uint   `json:"archived_by"`
 }
 type ListServerResponse []ServerResponse
 
@@ -37,8 +35,6 @@ func MakeListArchivedServerResponse(servers []models.Server) ListServerResponse 
 			Name: server.Name,
 			IP:   server.IP,
 
-			ArchivedAt: server.ArchivedAt.String(),
-			ArchivedBy: server.ArchivedBy,
 		})
 	}
 	return listServerResponse

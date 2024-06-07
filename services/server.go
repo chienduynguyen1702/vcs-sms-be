@@ -2,7 +2,6 @@ package services
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/chienduynguyen1702/vcs-sms-be/dtos"
 	"github.com/chienduynguyen1702/vcs-sms-be/models"
@@ -121,9 +120,6 @@ func (ss *ServerService) ArchiveServer(serverID string, adminID uint) error {
 	if err != nil {
 		return err
 	}
-	server.IsArchived = true
-	server.ArchivedAt = time.Now()
-	server.ArchivedBy = adminID
 
 	return ss.serverRepo.UpdateServer(&server)
 }
@@ -134,9 +130,45 @@ func (ss *ServerService) UnarchiveServer(serverID string, adminID uint) error {
 	if err != nil {
 		return err
 	}
-	server.IsArchived = false
-	server.ArchivedAt = time.Time{}
-	server.ArchivedBy = 0
 
 	return ss.serverRepo.UpdateServer(&server)
+}
+
+func (ss *ServerService) RestoreServer(serverID string) error {
+	return ss.serverRepo.RestoreDeletedServer(serverID)
+}
+
+func (ss *ServerService) UploadServerList(serverList []dtos.CreateServerRequest, orgID string) (int, int, error) {
+	createCount := 0
+	updateCount := 0
+	var uploadErr error
+	for _, server := range serverList {
+		fmt.Println(server.IP)
+		_, isValid := utilities.ValidateIPAddress(server.IP)
+		if !isValid {
+			return 0, 0, fmt.Errorf("one of server has invalid IP address")
+		}
+
+		existedServer := ss.serverRepo.GetServerByIP(server.IP)
+		if existedServer != nil {
+			existedServer.IP = server.IP
+			existedServer.Name = server.Name
+			existedServer.Description = server.Description
+			err := ss.serverRepo.UpdateServer(existedServer)
+			if err != nil {
+				uploadErr = err
+				break
+			}
+			updateCount++
+		} else {
+			err := ss.CreateServer(&server, orgID)
+			if err != nil {
+				uploadErr = err
+				break
+			}
+			createCount++
+		}
+	}
+
+	return updateCount, createCount, uploadErr
 }

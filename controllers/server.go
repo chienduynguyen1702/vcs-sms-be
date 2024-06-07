@@ -1,12 +1,15 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/chienduynguyen1702/vcs-sms-be/dtos"
 	"github.com/chienduynguyen1702/vcs-sms-be/services"
 	"github.com/chienduynguyen1702/vcs-sms-be/utilities"
 	"github.com/gin-gonic/gin"
+	"github.com/xuri/excelize/v2"
 )
 
 type ServerController struct {
@@ -208,27 +211,103 @@ func (sc *ServerController) ArchiveServer(ctx *gin.Context) {
 // @Produce  json
 // @Param id path string true "Server ID"
 // @Success 200 {object} string
-// @Router /api/v1/servers/{id}/unarchive [patch]
-func (sc *ServerController) UnarchiveServer(ctx *gin.Context) {
+// @Router /api/v1/servers/{id}/restore [patch]
+func (sc *ServerController) Restore(ctx *gin.Context) {
 	// get server id from param
 	id := ctx.Param("id")
 
-	// get admin id from context to set as archiver
-	adminID, exist := ctx.Get("userID")
+	err := sc.serverService.RestoreServer(id)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, dtos.ErrorResponse(err.Error()))
+		return
+	}
+	ctx.JSON(http.StatusOK, dtos.SuccessResponse("Restored server successfully", nil))
+}
+
+// DownloadTemplate godoc
+// @Summary Download template
+// @Description Send to client file template from ./files/server_list_template.xlsx
+// @Tags Server
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} string
+// @Router /api/v1/servers/download-template [get]
+func (sc *ServerController) DownloadTemplate(ctx *gin.Context) {
+	ctx.File("./files/server_list_template.xlsx")
+}
+
+// UploadServerList godoc
+// @Summary Upload server list
+// @Description Upload server list from client .xlsx file
+// @Tags Server
+// @Accept  json
+// @Produce  json
+// @Param file formData file true "Server list file"
+// @Success 200 {object} string
+// @Router /api/v1/servers/upload [post]
+func (sc *ServerController) UploadServerList(ctx *gin.Context) {
+	uploadFile, err := ctx.FormFile("uploadFile")
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, dtos.ErrorResponse(err.Error()))
+		return
+	}
+	orgID, exist := ctx.Get("orgID")
 	if !exist {
-		ctx.JSON(http.StatusUnauthorized, dtos.ErrorResponse("Failed to get userID in context"))
+		ctx.JSON(http.StatusUnauthorized, dtos.ErrorResponse("Failed to get organizationID in context"))
 		return
 	}
-	adminIDStr := adminID.(string)
-	adminIDUint, err := utilities.ParseStringToUint(adminIDStr)
+
+	// Save the file to disk
+	err = ctx.SaveUploadedFile(uploadFile, "files/"+uploadFile.Filename)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, dtos.ErrorResponse(err.Error()))
+		return
+	}
+	// Load data from the Excel file
+	xlsxFile, err := excelize.OpenFile("files/" + uploadFile.Filename)
+	if err != nil {
+		// err = os.Remove("files/" + uploadFile.Filename)
+		ctx.JSON(http.StatusInternalServerError, dtos.ErrorResponse(err.Error()))
+		return
+	}
+	// remove the file after reading
+	err = os.Remove("files/" + uploadFile.Filename)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, dtos.ErrorResponse(err.Error()))
+		return
+	}
+
+	// Get sheet name
+	sheetName := xlsxFile.GetSheetName(0)
+	// Get the values from the Excel sheet
+	rows, err := xlsxFile.GetRows(sheetName)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, dtos.ErrorResponse(err.Error()))
+		return
+	}
+	var serverList []dtos.CreateServerRequest
+	for i, row := range rows {
+		if i == 0 {
+			continue
+		}
+		server := dtos.CreateServerRequest{
+			IP:          row[0],
+			Name:        row[1],
+			Description: row[2],
+		}
+		serverList = append(serverList, server)
+	}
+	// Print the data
+	// fmt.Println(serverList)
+	if len(serverList) == 0 {
+		ctx.JSON(http.StatusBadRequest, dtos.ErrorResponse("No data in the file"))
+		return
+	}
+
+	updatedCount, createdCount, err := sc.serverService.UploadServerList(serverList, orgID.(string))
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, dtos.ErrorResponse(err.Error()))
 		return
 	}
-	err = sc.serverService.UnarchiveServer(id, adminIDUint)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, dtos.ErrorResponse(err.Error()))
-		return
-	}
-	ctx.JSON(http.StatusOK, dtos.SuccessResponse("Archive server successfully", nil))
+	ctx.JSON(http.StatusOK, dtos.SuccessResponse(fmt.Sprintf("uploaded %d servers, created %d servers.", updatedCount, createdCount), nil))
 }

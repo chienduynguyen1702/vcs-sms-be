@@ -45,6 +45,10 @@ func (sr *ServerRepository) DeleteServer(server *models.Server) error {
 	return sr.db.Delete(server).Error
 }
 
+func (sr *ServerRepository) RestoreDeletedServer(serverID string) error {
+	return sr.db.Unscoped().Model(&models.Server{}).Where("id = ?", serverID).Update("deleted_at", nil).Error
+}
+
 func (sr *ServerRepository) GetServers() ([]models.Server, error) {
 	var servers []models.Server
 	if err := sr.db.Find(&servers).Error; err != nil {
@@ -55,7 +59,10 @@ func (sr *ServerRepository) GetServers() ([]models.Server, error) {
 
 func (sr *ServerRepository) GetServersByOrganizationID(organizationID string) ([]models.Server, error) {
 	var servers []models.Server
-	if err := sr.db.Where("organization_id = ?  AND is_archived = ?", organizationID, false).Find(&servers).Error; err != nil {
+	if err := sr.db.Where("organization_id = ?  AND is_archived = ?", organizationID, false).
+		Find(&servers).
+		Order("name asc").
+		Error; err != nil {
 		return nil, err
 	}
 	return servers, nil

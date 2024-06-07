@@ -222,6 +222,26 @@ const docTemplate = `{
                     "Server"
                 ],
                 "summary": "Get all servers",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search",
+                        "name": "search",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -277,6 +297,61 @@ const docTemplate = `{
                     "Server"
                 ],
                 "summary": "GetArchivedServer server",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/servers/download-template": {
+            "get": {
+                "description": "Send to client file template from ./files/server_list_template.xlsx",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Server"
+                ],
+                "summary": "Download template",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/servers/upload": {
+            "post": {
+                "description": "Upload server list from client .xlsx file",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Server"
+                ],
+                "summary": "Upload server list",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "Server list file",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -420,7 +495,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/servers/{id}/unarchive": {
+        "/api/v1/servers/{id}/restore": {
             "patch": {
                 "description": "Archive server",
                 "consumes": [
@@ -472,18 +547,6 @@ const docTemplate = `{
                 "summary": "Get all users",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "Email",
-                        "name": "email",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Username",
-                        "name": "username",
-                        "in": "query"
-                    },
-                    {
                         "type": "integer",
                         "description": "Page",
                         "name": "page",
@@ -493,6 +556,12 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "Limit",
                         "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search",
+                        "name": "search",
                         "in": "query"
                     }
                 ],

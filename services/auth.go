@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/chienduynguyen1702/vcs-sms-be/dtos"
@@ -90,4 +91,16 @@ func (as *AuthService) Register(email, password, confirmPassword, organizationNa
 			OrganizationName: organizationName,
 		},
 	)
+}
+
+func (as *AuthService) Validate(userID string) (dtos.UserResponse, error) {
+	// find user by id
+	user, err := as.userRepo.GetUserByID(userID)
+	if user == nil {
+		return dtos.UserResponse{}, fmt.Errorf("User not found")
+	}
+	if err != nil {
+		return dtos.UserResponse{}, err
+	}
+	return dtos.MakeUserResponse(*user), nil
 }

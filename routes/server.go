@@ -17,5 +17,8 @@ func setupGroupServer(rg *gin.RouterGroup) {
 
 	rg.GET("/servers/archived", middleware.RequiredAuth, serverController.GetArchivedServer)
 	rg.PATCH("/servers/:id/archive", middleware.RequiredAuth, serverController.ArchiveServer)
-	rg.PATCH("/servers/:id/unarchive", middleware.RequiredAuth, serverController.UnarchiveServer)
+	rg.PATCH("/servers/:id/restore", middleware.RequiredAuth, serverController.Restore)
+
+	rg.GET("/servers/download-template", middleware.RequiredAuth, serverController.DownloadTemplate)
+	rg.POST("/servers/upload", middleware.RequiredAuth, serverController.UploadServerList)
 }

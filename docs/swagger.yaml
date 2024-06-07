@@ -227,6 +227,19 @@ paths:
       consumes:
       - application/json
       description: Get all servers
+      parameters:
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Search
+        in: query
+        name: search
+        type: string
       produces:
       - application/json
       responses:
@@ -346,7 +359,7 @@ paths:
       summary: Archive server
       tags:
       - Server
-  /api/v1/servers/{id}/unarchive:
+  /api/v1/servers/{id}/restore:
     patch:
       consumes:
       - application/json
@@ -382,20 +395,48 @@ paths:
       summary: GetArchivedServer server
       tags:
       - Server
+  /api/v1/servers/download-template:
+    get:
+      consumes:
+      - application/json
+      description: Send to client file template from ./files/server_list_template.xlsx
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Download template
+      tags:
+      - Server
+  /api/v1/servers/upload:
+    post:
+      consumes:
+      - application/json
+      description: Upload server list from client .xlsx file
+      parameters:
+      - description: Server list file
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Upload server list
+      tags:
+      - Server
   /api/v1/users:
     get:
       consumes:
       - application/json
       description: Get all users
       parameters:
-      - description: Email
-        in: query
-        name: email
-        type: string
-      - description: Username
-        in: query
-        name: username
-        type: string
       - description: Page
         in: query
         name: page
@@ -404,6 +445,10 @@ paths:
         in: query
         name: limit
         type: integer
+      - description: Search
+        in: query
+        name: search
+        type: string
       produces:
       - application/json
       responses:
