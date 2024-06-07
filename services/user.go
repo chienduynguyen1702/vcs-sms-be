@@ -152,7 +152,7 @@ func (us *UserService) GetUsers(orgID, search string, page, limit int) (dtos.Pag
 	// if email or username is empty, get all users
 	if search != "" {
 		// if email or username is not empty, get users by email or username
-		users, err := repositories.UserRepo.GetUsersByOrganizationIDAndSearchByEmailAndUsername(orgID, search)
+		users, err := repositories.UserRepo.GetUsersByOrganizationIDAndSearch(orgID, search)
 		if err != nil {
 			return dtos.PaginateListUserResponse{}, err
 		}

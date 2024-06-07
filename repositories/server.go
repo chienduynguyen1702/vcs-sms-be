@@ -60,6 +60,14 @@ func (sr *ServerRepository) GetServersByOrganizationID(organizationID string) ([
 	}
 	return servers, nil
 }
+
+func (sr *ServerRepository) GetServersByOrganizationIDAndSearch(organizationID, search string) ([]models.Server, error) {
+	var servers []models.Server
+	if err := sr.db.Where("organization_id = ?  AND is_archived = ? AND name LIKE ? OR ip LIKE ?", organizationID, false, "%"+search+"%", "%"+search+"%").Find(&servers).Error; err != nil {
+		return nil, err
+	}
+	return servers, nil
+}
 func (sr *ServerRepository) GetArchivedServersByOrganizationID(organizationID string) ([]models.Server, error) {
 	var servers []models.Server
 	if err := sr.db.Where("organization_id = ? AND is_archived = ? ", organizationID, true).

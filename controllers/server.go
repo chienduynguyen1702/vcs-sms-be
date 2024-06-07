@@ -57,15 +57,24 @@ func (sc *ServerController) CreateServer(ctx *gin.Context) {
 // @Tags Server
 // @Accept  json
 // @Produce  json
+// @Param page 		query int false "Page"
+// @Param limit 	query int false "Limit"
+// @Param search	query string false "Search"
 // @Success 200 {object} string
 // @Router /api/v1/servers [get]
 func (sc *ServerController) GetServers(ctx *gin.Context) {
-	orgID, exist := ctx.Get("orgID")
+	page := ctx.Query("page")
+	limit := ctx.Query("limit")
+	search := ctx.Query("search")
+	// parse page and limit to int
+	pageInt, limitInt := utilities.ParsePageAndLimit(page, limit)
+	orgId, exist := ctx.Get("orgID")
 	if !exist {
 		ctx.JSON(http.StatusUnauthorized, dtos.ErrorResponse("Failed to get organizationID in context"))
 		return
 	}
-	servers, err := sc.serverService.GetServers(orgID.(string))
+	orgIDStr := orgId.(string)
+	servers, err := sc.serverService.GetServers(orgIDStr, search, pageInt, limitInt)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, dtos.ErrorResponse(err.Error()))
 		return
@@ -190,7 +199,6 @@ func (sc *ServerController) ArchiveServer(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, dtos.SuccessResponse("Archive server successfully", nil))
 }
-
 
 // UnarchiveServer godoc
 // @Summary Archive server
