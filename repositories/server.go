@@ -1,6 +1,10 @@
 package repositories
 
 import (
+	"encoding/json"
+	"fmt"
+	"log"
+
 	"github.com/chienduynguyen1702/vcs-sms-be/models"
 	"github.com/redis/go-redis/v9"
 
@@ -8,12 +12,12 @@ import (
 )
 
 type ServerRepository struct {
-	db    *gorm.DB
-	redis *redis.Client
+	db          *gorm.DB
+	redisClient *redis.Client
 }
 
-func NewServerRepository(db *gorm.DB, redis *redis.Client) *ServerRepository {
-	ServerRepo = &ServerRepository{db, redis}
+func NewServerRepository(db *gorm.DB, redisClient *redis.Client) *ServerRepository {
+	ServerRepo = &ServerRepository{db, redisClient}
 	return ServerRepo
 }
 
@@ -57,47 +61,38 @@ func (sr *ServerRepository) GetServers() ([]models.Server, error) {
 	}
 	return servers, nil
 }
-
-func (sr *ServerRepository) GetServersByOrganizationID(organizationID string, page, limit int) (int64, []models.Server, error) {
-	var servers []models.Server
+func (sr *ServerRepository) CountServers() (int64, error) {
 	var total int64
-
-	if err := sr.db.
-		Table("servers").
-		Where("organization_id = ?  AND is_archived = ? ", organizationID, false).
-		Count(&total).Error; err != nil {
-		return 0, nil, err
+	if err := sr.db.Table("servers").Count(&total).Error; err != nil {
+		return 0, err
 	}
+	return total, nil
+}
+
+func (sr *ServerRepository) GetServersByOrganizationID(organizationID string, page, limit int) ([]models.Server, error) {
+	var servers []models.Server
 	if err := sr.db.Where("organization_id = ?  AND is_archived = ?", organizationID, false).
 		Offset((page - 1) * limit).
 		Limit(limit).
 		Find(&servers).
 		Order("name asc").
 		Error; err != nil {
-		return 0, nil, err
+		return nil, err
 	}
-	return total, servers, nil
+	return servers, nil
 }
 
-func (sr *ServerRepository) GetServersByOrganizationIDAndSearch(organizationID, search string, page, limit int) (int64, []models.Server, error) {
+func (sr *ServerRepository) GetServersByOrganizationIDAndSearch(organizationID, search string, page, limit int) ([]models.Server, error) {
 	var servers []models.Server
-	// count total servers
-	var total int64
-	if err := sr.db.
-		Table("servers").
-		Where("organization_id = ?  AND is_archived = ? AND (name LIKE ? OR ip LIKE ?)", organizationID, false, "%"+search+"%", "%"+search+"%").
-		Count(&total).Error; err != nil {
-		return 0, nil, err
-	}
 	// search include upper case and lower case
 	if err := sr.db.
 		Where("organization_id = ?  AND is_archived = ? AND (name LIKE ? OR ip LIKE ?)", organizationID, false, "%"+search+"%", "%"+search+"%").
 		Offset((page - 1) * limit).
 		Limit(limit).
 		Find(&servers).Error; err != nil {
-		return 0, nil, err
+		return nil, err
 	}
-	return total, servers, nil
+	return servers, nil
 }
 func (sr *ServerRepository) GetArchivedServersByOrganizationID(organizationID string) ([]models.Server, error) {
 	var servers []models.Server
@@ -108,4 +103,47 @@ func (sr *ServerRepository) GetArchivedServersByOrganizationID(organizationID st
 	}
 	// fmt.Println(servers)
 	return servers, nil
+}
+
+func (sr *ServerRepository) GetCachedServers(orgID string, page, limit int) ([]models.Server, error) {
+	var server []models.Server
+	var serverStr string
+	// pasre page and limit to field string
+	feild := fmt.Sprintf("orgID=%s&page=%d&limit=%d", orgID, page, limit)
+
+	// get data from redis
+	err := sr.redisClient.HGet(Context, "servers", feild).Scan(&serverStr)
+	if err != nil {
+		log.Println("err HGet", err)
+		return nil, err
+	}
+	// unmarshal string to servers
+	err = json.Unmarshal([]byte(serverStr), &server)
+	if err != nil {
+		log.Println("err unmarshal", err)
+		return nil, err
+	}
+
+	return server, nil
+}
+
+func (sr *ServerRepository) SetCachedServers(orgID string, page, limit int, servers []models.Server) error {
+	// pasre page and limit to field string
+	feild := fmt.Sprintf("orgID=%s&page=%d&limit=%d", orgID, page, limit)
+	// marshal servers to string
+
+	serializedData, err := json.Marshal(servers)
+	if err != nil {
+		log.Println("err serializedData", err)
+		return err
+	}
+	serversStr := string(serializedData)
+	// set data to redis
+	err = sr.redisClient.HSet(Context, "servers", feild, serversStr).Err()
+	if err != nil {
+		log.Println("err set cache", err)
+		return err
+	}
+
+	return nil
 }

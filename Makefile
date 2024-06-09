@@ -1,5 +1,7 @@
 .PHONY: swagger start new
 
+REDIS_HOST = $(shell docker ps -qf "name=redis")
+
 swagger:
 	swag init --parseDependency --parseInternal
 
@@ -13,5 +15,7 @@ docker-start:
 	docker-compose up --build -d
 docker-stop:
 	docker-compose down
-connect-datn-server:
-	ssh chiennd@103.166.185.48 -p 2222
+redis-connect:
+	docker exec -it ${REDIS_HOST} redis-cli
+redis-hgetall-servers:
+	docker exec -it ${REDIS_HOST} redis-cli hgetall servers

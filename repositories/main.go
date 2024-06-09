@@ -1,19 +1,23 @@
 package repositories
 
 import (
+	"context"
+
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
 
 var (
-	DB          *gorm.DB
-	RedisClient *redis.Client
-
+	DB               *gorm.DB
+	RedisClient      *redis.Client
 	OrganizationRepo *OrganizationRepository
 	UserRepo         *UserRepository
 	ServerRepo       *ServerRepository
 	RoleRepo         *RoleRepository
+	Context          = context.Background()
 )
+
+const ()
 
 func InitRepos(db *gorm.DB, redisClient *redis.Client) {
 	ur := NewUserRepository(db)

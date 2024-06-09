@@ -2,6 +2,7 @@ package services
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/chienduynguyen1702/vcs-sms-be/dtos"
 	"github.com/chienduynguyen1702/vcs-sms-be/models"
@@ -88,24 +89,49 @@ func (ss *ServerService) DeleteServer(id string) error {
 	return ss.serverRepo.DeleteServer(&server)
 }
 
+func (ss *ServerService) CountServers() (int64, error) {
+	return ss.serverRepo.CountServers()
+}
+
 func (ss *ServerService) GetServers(orgID, search string, page, limit int) (int64, dtos.ListServerResponse, error) {
 	var servers []models.Server
 	var total int64
 	var err error
-	if search != "" {
-		total, servers, err = ss.serverRepo.GetServersByOrganizationIDAndSearch(orgID, search, page, limit)
+	// Get total servers
+	total, err = ss.serverRepo.CountServers()
+	if err != nil {
+		return 0, nil, err
+	}
+
+	if search != "" { // Get paginated servers list by search
+		servers, err = ss.serverRepo.GetServersByOrganizationIDAndSearch(orgID, search, page, limit)
 		if err != nil {
 			return 0, dtos.ListServerResponse{}, err
 		}
-	} else {
-		total, servers, err = ss.serverRepo.GetServersByOrganizationID(orgID, page, limit)
+
+	} else { // Get paginated servers list as default
+		// by cache
+		servers, err = ss.serverRepo.GetCachedServers(orgID, page, limit)
 		if err != nil {
-			return 0, nil, err
+			// miss cache, get from db
+			log.Println("miss cache: servers, get from db")
+			servers, err = ss.serverRepo.GetServersByOrganizationID(orgID, page, limit)
+			if err != nil {
+				return 0, nil, err
+			}
+
+			// set cache
+			log.Println("set cache to redis")
+			err = ss.serverRepo.SetCachedServers(orgID, page, limit, servers)
+			if err != nil {
+				return 0, nil, err
+			}
 		}
 	}
 
 	return total, dtos.MakeListServerResponse(servers), nil
 }
+
 func (ss *ServerService) GetArchivedServers(orgID string) (dtos.ListServerResponse, error) {
 	servers, err := ss.serverRepo.GetArchivedServersByOrganizationID(orgID)
 	if err != nil {
@@ -171,4 +197,13 @@ func (ss *ServerService) UploadServerList(serverList []dtos.CreateServerRequest,
 	}
 
 	return updateCount, createCount, uploadErr
+}
+
+func (ss *ServerService) updateCacheServerList() error {
+	// servers, err := ss.serverRepo.GetServers()
+	// if err != nil {
+	//		return err
+	// }
+	// return ss.serverRepo.SetCachedServers(1, len(servers), servers)
+	return nil
 }
