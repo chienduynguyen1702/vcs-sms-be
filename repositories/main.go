@@ -1,10 +1,13 @@
 package repositories
 
-import "gorm.io/gorm"
+import (
+	"github.com/redis/go-redis/v9"
+	"gorm.io/gorm"
+)
 
 var (
-	DB *gorm.DB
-	// RedisClient *redis.Client
+	DB          *gorm.DB
+	RedisClient *redis.Client
 
 	OrganizationRepo *OrganizationRepository
 	UserRepo         *UserRepository
@@ -12,14 +15,14 @@ var (
 	RoleRepo         *RoleRepository
 )
 
-func SetupDatabase(db *gorm.DB) {
+func InitRepos(db *gorm.DB, redisClient *redis.Client) {
 	ur := NewUserRepository(db)
 	UserRepo = ur
 
 	or := NewOrganizationRepository(db)
 	OrganizationRepo = or
 
-	sr := NewServerRepository(db)
+	sr := NewServerRepository(db, redisClient)
 	ServerRepo = sr
 
 	rr := NewRoleRepository(db)

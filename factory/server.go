@@ -8,7 +8,7 @@ import (
 
 func (af *AppFactory) CreateServerRepository() *repositories.ServerRepository {
 	af.serverRepoInit.Do(func() {
-		af.serverRepository = repositories.NewServerRepository(af.db)
+		af.serverRepository = repositories.NewServerRepository(af.db, af.redisClient)
 	})
 	return af.serverRepository
 }

@@ -2,17 +2,18 @@ package repositories
 
 import (
 	"github.com/chienduynguyen1702/vcs-sms-be/models"
+	"github.com/redis/go-redis/v9"
 
 	"gorm.io/gorm"
 )
 
 type ServerRepository struct {
-	db *gorm.DB
-	// redis *redis.Client
+	db    *gorm.DB
+	redis *redis.Client
 }
 
-func NewServerRepository(db *gorm.DB) *ServerRepository {
-	ServerRepo = &ServerRepository{db}
+func NewServerRepository(db *gorm.DB, redis *redis.Client) *ServerRepository {
+	ServerRepo = &ServerRepository{db, redis}
 	return ServerRepo
 }
 

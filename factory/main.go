@@ -5,6 +5,7 @@ import (
 
 	"github.com/chienduynguyen1702/vcs-sms-be/controllers"
 	"github.com/chienduynguyen1702/vcs-sms-be/repositories"
+	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
 
@@ -14,24 +15,26 @@ var (
 
 // AppFactory
 type AppFactory struct {
-	db               *gorm.DB
+	db          *gorm.DB
+	redisClient *redis.Client
 
-	userRepository   *repositories.UserRepository
-	userRepoInit     sync.Once
+	userRepository *repositories.UserRepository
+	userRepoInit   sync.Once
 
-	orgRepository    *repositories.OrganizationRepository
-	orgRepoInit      sync.Once
+	orgRepository *repositories.OrganizationRepository
+	orgRepoInit   sync.Once
 
 	serverRepository *repositories.ServerRepository
 	serverRepoInit   sync.Once
 
-	roleRepository   *repositories.RoleRepository
-	roleRepoInit     sync.Once
+	roleRepository *repositories.RoleRepository
+	roleRepoInit   sync.Once
 }
 
-func NewAppFactory(db *gorm.DB) *AppFactory {
+func NewAppFactory(db *gorm.DB, redisClient *redis.Client) *AppFactory {
 	return &AppFactory{
-		db: db,
+		db:          db,
+		redisClient: redisClient,
 	}
 }
 

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 	"os"
 
@@ -29,6 +30,12 @@ func init() {
 	if os.Getenv("RUN_SEED") == "true" {
 		seed.InitData(db) // seed data
 	}
+	
+	ctxBgr := context.Background()
+	redisClient, err := configs.NewRedisClient(ctxBgr)
+	if err != nil {
+		log.Fatal("Failed to connect to redis")
+	}
 
 	// Set controller
 	// controllers.SetDB(db) // set controller use that db *gorm.DB
@@ -36,7 +43,7 @@ func init() {
 	if os.Getenv("GIN_MODE") == "release" {
 		gin.SetMode(gin.ReleaseMode)
 	}
-	factory.AppFactoryInstance = factory.NewAppFactory(db)
+	factory.AppFactoryInstance = factory.NewAppFactory(db, redisClient)
 }
 
 // @Security ApiKeyAuth
