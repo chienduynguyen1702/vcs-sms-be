@@ -9,8 +9,12 @@ import (
 )
 
 func Migration(db *gorm.DB) error {
-
-	err := db.AutoMigrate(&models.Organization{})
+	err := db.AutoMigrate(&models.Role{})
+	if err != nil {
+		log.Println("Failed to migrate Role models")
+		return err
+	}
+	err = db.AutoMigrate(&models.Organization{})
 	if err != nil {
 		log.Println("Failed to migrate Organization models")
 		return err
