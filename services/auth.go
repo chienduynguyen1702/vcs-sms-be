@@ -8,6 +8,7 @@ import (
 	"github.com/chienduynguyen1702/vcs-sms-be/middleware"
 	"github.com/chienduynguyen1702/vcs-sms-be/models"
 	"github.com/chienduynguyen1702/vcs-sms-be/repositories"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type AuthService struct {
@@ -28,10 +29,15 @@ func (as *AuthService) Login(email, password string) (uint, dtos.Response) {
 	if userInDb == nil {
 		return 0, dtos.ErrorResponse("User does not exist")
 	}
-	// Check if password is correct
-	if userInDb.Password != password {
+
+	// Check if the password is correct
+	if err := bcrypt.CompareHashAndPassword([]byte(userInDb.Password), []byte(password)); err != nil {
 		return 0, dtos.ErrorResponse("Password is incorrect")
 	}
+	// Check if password is correct
+	// if userInDb.Password != password {
+	// 	return 0, dtos.ErrorResponse("Password is incorrect")
+	// }
 	// Update login time
 	userInDb.LastLogin = time.Now()
 	as.userRepo.UpdateUser(userInDb)
@@ -74,12 +80,20 @@ func (as *AuthService) Register(email, password, confirmPassword, organizationNa
 	if errCreatingOrg != nil {
 		return dtos.ErrorResponse(errCreatingOrg.Error())
 	}
+	// Hash password
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return dtos.ErrorResponse(err.Error())
+	}
+	// stringlify
+	hashedPasswordStr := string(hashedPassword)
 	// Create new user
 	newUser := &models.User{
 		Email:          email,
 		Username:       email,
-		Password:       password,
+		Password:       hashedPasswordStr,
 		OrganizationID: createdOrg.ID,
+		RoleID:         1,
 	}
 	if err := as.userRepo.CreateUser(newUser); err != nil {
 		return dtos.ErrorResponse(err.Error())
