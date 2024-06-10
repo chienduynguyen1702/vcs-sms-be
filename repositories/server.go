@@ -71,7 +71,7 @@ func (sr *ServerRepository) CountServers() (int64, error) {
 
 func (sr *ServerRepository) GetServersByOrganizationID(organizationID string, page, limit int) ([]models.Server, error) {
 	var servers []models.Server
-	if err := sr.db.Where("organization_id = ?  AND is_archived = ?", organizationID, false).
+	if err := sr.db.Where("organization_id = ? ", organizationID).
 		Offset((page - 1) * limit).
 		Limit(limit).
 		Find(&servers).
@@ -86,7 +86,7 @@ func (sr *ServerRepository) GetServersByOrganizationIDAndSearch(organizationID, 
 	var servers []models.Server
 	// search include upper case and lower case
 	if err := sr.db.
-		Where("organization_id = ?  AND is_archived = ? AND (name LIKE ? OR ip LIKE ?)", organizationID, false, "%"+search+"%", "%"+search+"%").
+		Where("organization_id = ?  AND (name LIKE ? OR ip LIKE ?)", organizationID, "%"+search+"%", "%"+search+"%").
 		Offset((page - 1) * limit).
 		Limit(limit).
 		Find(&servers).Error; err != nil {
@@ -96,7 +96,7 @@ func (sr *ServerRepository) GetServersByOrganizationIDAndSearch(organizationID, 
 }
 func (sr *ServerRepository) GetArchivedServersByOrganizationID(organizationID string) ([]models.Server, error) {
 	var servers []models.Server
-	if err := sr.db.Where("organization_id = ? AND is_archived = ? ", organizationID, true).
+	if err := sr.db.Where("organization_id = ? ", organizationID).
 		// Preload("Archiver").
 		Find(&servers).Error; err != nil {
 		return nil, err
