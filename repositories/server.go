@@ -147,3 +147,13 @@ func (sr *ServerRepository) SetCachedServers(orgID string, page, limit int, serv
 
 	return nil
 }
+
+func (sr *ServerRepository) FlushCache() error {
+	// Delete key name "servers" in redis then recreate it
+	err := sr.redisClient.Del(Context, "servers").Err()
+	if err != nil {
+		log.Println("err delete cache", err)
+		return err
+	}
+	return nil
+}

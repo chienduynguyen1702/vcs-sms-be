@@ -199,11 +199,8 @@ func (ss *ServerService) UploadServerList(serverList []dtos.CreateServerRequest,
 	return updateCount, createCount, uploadErr
 }
 
-func (ss *ServerService) updateCacheServerList() error {
-	// servers, err := ss.serverRepo.GetServers()
-	// if err != nil {
-	//		return err
-	// }
-	// return ss.serverRepo.SetCachedServers(1, len(servers), servers)
-	return nil
+func (ss *ServerService) FlushCache() error {
+	// fmt.Println("flush cache in ServerService")
+
+	return ss.serverRepo.FlushCache()
 }

@@ -313,3 +313,8 @@ func (sc *ServerController) UploadServerList(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, dtos.SuccessResponse(fmt.Sprintf("uploaded %d servers, created %d servers.", updatedCount, createdCount), nil))
 }
+
+func (sc *ServerController) FlushCache(ctx *gin.Context) {
+	// fmt.Println("flush cache in controller")
+	sc.serverService.FlushCache()
+}

@@ -30,7 +30,7 @@ func init() {
 	if os.Getenv("RUN_SEED") == "true" {
 		seed.InitData(db) // seed data
 	}
-	
+
 	ctxBgr := context.Background()
 	redisClient, err := configs.NewRedisClient(ctxBgr)
 	if err != nil {
