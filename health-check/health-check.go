@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"math/rand"
@@ -9,12 +10,14 @@ import (
 	"sync"
 	"time"
 
+	"github.com/segmentio/kafka-go"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 type HealthCheck struct {
-	DB *gorm.DB
+	DB          *gorm.DB
+	KafkaWriter *kafka.Writer
 }
 
 type DBCredentials struct {
@@ -24,7 +27,27 @@ type DBCredentials struct {
 	Name string
 	Port string
 }
+type ResultMessage struct {
+	ServerID int    `json:"server_id"`
+	ServerIP string `json:"server_ip"`
+	Status   string `json:"status"`
+}
 
+func (h *HealthCheck) createMessageString(serverResult Server) string {
+	messageStr, err := json.Marshal(serverResult)
+	if err != nil {
+		log.Println("Failed to create message:", err)
+		return ""
+	}
+	return string(messageStr)
+}
+func (h *HealthCheck) CreateMessage(server Server) kafka.Message {
+	messageStr := h.createMessageString(server)
+	return kafka.Message{
+		Key:   []byte("key"),
+		Value: []byte(messageStr),
+	}
+}
 func (h *HealthCheck) ConnectDB(dbCreds DBCredentials) error {
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
@@ -66,7 +89,7 @@ func (h *HealthCheck) PingDB() {
 func (h *HealthCheck) CloseDB() {
 	db, err := h.DB.DB()
 	if err != nil {
-		log.Println("Failed to close database")
+		log.Println("Failed to close database:", err)
 	}
 	db.Close()
 	log.Println("Database connection closed")
@@ -78,7 +101,7 @@ func (h *HealthCheck) GetServers() ([]Server, error) {
 
 	err := h.DB.Table("servers").Find(&servers)
 	if err.Error != nil {
-		log.Println("Failed to get servers")
+		log.Println("Failed to get servers:", err.Error)
 		return nil, err.Error
 	}
 
@@ -91,6 +114,7 @@ func (h *HealthCheck) GetServer(id int) (Server, error) {
 	return server, nil
 }
 
+// This method pings all the servers then push results to kafka
 func (h *HealthCheck) PingServers(ListServers []Server) {
 	// create go routines to ping servers and wait group
 
@@ -99,37 +123,36 @@ func (h *HealthCheck) PingServers(ListServers []Server) {
 		// ping each server
 		wg.Add(1)
 		go h.Ping(&server, &wg)
-		// if server is down, send an email
 	}
 	wg.Wait()
 	fmt.Println("Finish Ping Servers")
 }
-func (h *HealthCheck) Ping(server *Server, wg *sync.WaitGroup) bool {
-	attempt := 0
-	// try 3 times attempt
-	for attempt < 3 {
-		// // real ping server
-		// if h.ping(server) {
-		// 	server.Status = "alive"
-		// 	wg.Done()
-		// 	return true
-		// }
 
-		// fake ping server
-		if h.fakePing(server) {
-			server.Status = "alive"
-			server.PrintOne()
-			wg.Done()
-			return true
-		}
+// This method pings all the servers then push results to kafka
+func (h *HealthCheck) Ping(server *Server, wg *sync.WaitGroup) {
+	// // ping server [REAL]
+	// if h.ping(server) {
+	// 	server.Status = "alive"
+	// }
 
-		// if can't ping server, try again
-		attempt++
+	// ping server [FAKE]
+	if h.fakePing(server) {
+		server.Status = "Online"
+		server.PrintOne()
 	}
-	server.Status = "dead"
+
+	// if can't ping server, try again
+	server.Status = "Offline"
 	server.PrintOne()
+
+	// push to kafka
+	messageKafka := h.CreateMessage(*server)
+	err := h.WriteMessageToKafka(messageKafka)
+	if err != nil {
+		log.Println("Failed to write message to kafka:", err)
+	}
+	// decrease wait group
 	wg.Done()
-	return false
 }
 
 // generate a fake ping 95% is alive
@@ -139,14 +162,29 @@ func (h *HealthCheck) fakePing(server *Server) bool {
 	randomNumber := rand.Intn(100)
 	time.Sleep(500 * time.Millisecond)
 	fmt.Println(randomNumber)
-	return randomNumber < 50
+	return randomNumber < 80
 }
 
 func (h *HealthCheck) ping(server *Server) bool {
-	out, _ := exec.Command("ping", server.IP, "-w 500").Output()
-	if strings.Contains(string(out), "bytes=") {
-		return true
-	} else {
-		return false
+	attempt := 0
+	// try 3 times attempt
+	for attempt < 3 {
+		out, _ := exec.Command("ping", server.IP, "-w 500").Output()
+		if strings.Contains(string(out), "bytes=") {
+			return true
+		}
+		attempt++
 	}
+
+	return false
+}
+
+// Write message to kafka
+func (h *HealthCheck) WriteMessageToKafka(message kafka.Message) error {
+	// Write message to kafka
+	if err := h.KafkaWriter.WriteMessages(ctx, message); err != nil {
+		log.Println("Failed to write message to kafka:", err)
+		return err
+	}
+	return nil
 }

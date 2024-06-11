@@ -5,9 +5,9 @@ import "fmt"
 // declare server model
 
 type Server struct {
-	IP     string
-	Name   string
-	Status string
+	IP     string `json:"ip"`
+	Name   string `json:"name"`
+	Status string `json:"status"`
 }
 
 // method to make []Server a ListServers type

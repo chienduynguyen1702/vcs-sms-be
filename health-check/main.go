@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 	"os"
 	"time"
@@ -9,6 +10,7 @@ import (
 )
 
 var dbCreds DBCredentials
+var ctx = context.Background()
 
 func init() {
 	if os.Getenv("LOAD_ENV_FILE") != "true" {
@@ -44,8 +46,11 @@ func main() {
 			log.Println("Failed to get servers")
 		}
 		// ################################################
+		// Try to ping
 		h.PingServers(servers)
 		// ################################################
+		// update data
+
 		// sleep for 3 min
 		time.Sleep(5 * time.Second)
 	}
