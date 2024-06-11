@@ -9,6 +9,10 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
+const (
+	DDMMYYYYhhmmss = "2006-01-02 15:04:05"
+)
+
 var dbCreds DBCredentials
 var ctx = context.Background()
 var initkafkaReader *kafka.Reader

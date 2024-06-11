@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"strconv"
 	"time"
@@ -14,12 +15,13 @@ const (
 
 // Reader of Kafka topic
 func NewKafkaReader(topic, kafkaAddress string) *kafka.Reader {
-	readTimeoutEnv := os.Getenv("KAFKA_READ_TIMEOUT")
+	readTimeoutEnv := os.Getenv("KAFKA_BATCH_TIMEOUT")
 	readTimeout, err := strconv.ParseInt(readTimeoutEnv, 10, 64)
 	if err != nil {
 		panic(err.Error())
 	}
-	readBatchTimeout := time.Duration(readTimeout) * time.Nanosecond
+	readBatchTimeout := time.Duration(readTimeout) * time.Millisecond
+	fmt.Println("Read batch timeout:", readBatchTimeout)
 	return kafka.NewReader(kafka.ReaderConfig{
 		Brokers:   []string{kafkaAddress},
 		GroupID:   "consumer-group-id",

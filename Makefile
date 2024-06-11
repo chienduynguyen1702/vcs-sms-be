@@ -1,27 +1,33 @@
 BROKER_HOST=kafka
 KAFKA_PATH_SH=/opt/kafka/bin
-PROJECT_NAME=vcs2
-SERVICE=service
-GATEWAY=gateway
+PROJECT_NAME=vcs-sms
+HEALTHCHECK=${PROJECT_NAME}-health-check
+GATEWAY=${PROJECT_NAME}-gateway
 BROKER=broker
-REDIS=redis
+REDIS=${PROJECT_NAME}-redis
+CONSUMMER=${PROJECT_NAME}-consumer
 PING_STATUS_TOPIC=ping_status
+CONSUMER_GROUP=consumer-group-id
 
 restart-health-check:
 	docker compose up --build -d && docker ps && docker logs -f vcs-sms-health-check
 ######## Kafka Commands ########
 list-topics:
-	docker-compose exec $(BROKER_HOST) $(KAFKA_PATH_SH)/kafka-topics.sh --list --bootstrap-server $(BROKER_HOST):9092
+	docker compose exec $(BROKER_HOST) $(KAFKA_PATH_SH)/kafka-topics.sh --list --bootstrap-server $(BROKER_HOST):9092
 describe-topics:
-	docker-compose exec $(BROKER_HOST) $(KAFKA_PATH_SH)/kafka-topics.sh --describe --bootstrap-server $(BROKER_HOST):9092
+	docker compose exec $(BROKER_HOST) $(KAFKA_PATH_SH)/kafka-topics.sh --describe --bootstrap-server $(BROKER_HOST):9092
 create-ping-topic:
-	docker-compose exec $(BROKER_HOST) $(KAFKA_PATH_SH)/kafka-topics.sh --create --topic $(PING_STATUS_TOPIC) --partitions 1 --replication-factor 1 --bootstrap-server $(BROKER_HOST):9092
+	docker compose exec $(BROKER_HOST) $(KAFKA_PATH_SH)/kafka-topics.sh --create --topic $(PING_STATUS_TOPIC) --partitions 1 --replication-factor 1 --bootstrap-server $(BROKER_HOST):9092
 create-responses-topic:
-	docker-compose exec $(BROKER_HOST) $(KAFKA_PATH_SH)/kafka-topics.sh --create --topic responses --partitions 1 --replication-factor 1 --bootstrap-server $(BROKER_HOST):9092
+	docker compose exec $(BROKER_HOST) $(KAFKA_PATH_SH)/kafka-topics.sh --create --topic responses --partitions 1 --replication-factor 1 --bootstrap-server $(BROKER_HOST):9092
 consume-ping-topic:
-	docker-compose exec $(BROKER_HOST) $(KAFKA_PATH_SH)/kafka-console-consumer.sh --topic $(PING_STATUS_TOPIC) --bootstrap-server $(BROKER_HOST):9092 --from-beginning
+	docker compose exec $(BROKER_HOST) $(KAFKA_PATH_SH)/kafka-console-consumer.sh --topic $(PING_STATUS_TOPIC) --bootstrap-server $(BROKER_HOST):9092 --from-beginning
 produce-ping-topic:
-	docker-compose exec $(BROKER_HOST) $(KAFKA_PATH_SH)/kafka-console-producer.sh --topic $(PING_STATUS_TOPIC) --bootstrap-server $(BROKER_HOST):9092
+	docker compose exec $(BROKER_HOST) $(KAFKA_PATH_SH)/kafka-console-producer.sh --topic $(PING_STATUS_TOPIC) --bootstrap-server $(BROKER_HOST):9092
+list-consumer-groups:
+	docker compose exec $(BROKER_HOST) $(KAFKA_PATH_SH)/kafka-consumer-groups.sh --list --bootstrap-server $(BROKER_HOST):9092
+list-consumers:
+	docker compose exec $(BROKER_HOST) $(KAFKA_PATH_SH)/kafka-consumer-groups.sh --describe --group $(CONSUMER_GROUP) --bootstrap-server $(BROKER_HOST):9092
 
 
 ######## gRPC Commands ########
@@ -31,25 +37,33 @@ create-pb:
 
 ######## Docker Commands ########
 restart-compose:
-	docker-compose down
-	docker-compose up --build -d
+	docker compose down
+	docker compose up --build -d
+restart-consumer:
+	docker stop $(CONSUMMER)
+	docker rm $(CONSUMMER)
+	docker compose up --build -d
 reset-compose:
-	docker-compose down
+	docker compose down
 	docker volume prune -f
-	docker-compose up --build -d
+	docker compose up --build -d
 log-compose:
-	docker-compose logs -f --tail 30 -t
-log-service:
-	docker-compose logs -f --tail 30 $(SERVICE)
+	docker compose logs -f --tail 30 -t
+log-consumer:
+	docker logs -f --tail 30 $(CONSUMMER)
+log-health-check:
+	docker logs -f --tail 30 $(HEALTHCHECK)
 log-gateway:
-	docker-compose logs -f --tail 30 $(GATEWAY)
+	docker logs -f --tail 30 $(GATEWAY)
 log-broker:
-	docker-compose logs -f --tail 30 $(BROKER)	
+	docker logs -f --tail 30 $(BROKER)	
 start-compose:
 	docker compose up --build -d
+list-compose:
+	docker compose ps | grep vcs
 
 
 delete-ping-topic:
-	docker-compose exec $(BROKER_HOST) $(KAFKA_PATH_SH)/kafka-topics.sh --delete --topic ping_status --bootstrap-server $(BROKER_HOST):9092
+	docker compose exec $(BROKER_HOST) $(KAFKA_PATH_SH)/kafka-topics.sh --delete --topic ping_status --bootstrap-server $(BROKER_HOST):9092
 delete-__consumer_offsets-topic:
-	docker-compose exec $(BROKER_HOST) $(KAFKA_PATH_SH)/kafka-topics.sh --delete --topic __consumer_offsets --bootstrap-server $(BROKER_HOST):9092
+	docker compose exec $(BROKER_HOST) $(KAFKA_PATH_SH)/kafka-topics.sh --delete --topic __consumer_offsets --bootstrap-server $(BROKER_HOST):9092

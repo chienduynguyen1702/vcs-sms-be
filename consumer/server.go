@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"time"
 )
@@ -25,10 +26,24 @@ func WrapServers(servers []Server) ListServers {
 func (s *Server) PrintOne() {
 	fmt.Printf("| %15s | %15s | %s \n", s.IP, s.Status, s.Name)
 }
+func (s *Server) PrintResult() {
+	fmt.Printf("|%20v| %15s | %15s | %s \n", s.PingAt.Format(DDMMYYYYhhmmss), s.IP, s.Status, s.Name)
+}
 
 func (s *Server) Print() {
 	fmt.Printf("| %15s | %15s | %s \n", "     IP    ", "    Status   ", "     Name ")
 	fmt.Printf("| %15s | %15s | %s \n", s.IP, s.Status, s.Name)
+}
+
+func (s *Server) UnmarshalJSON(b []byte) error {
+	type serverAlias Server
+	var server serverAlias
+	err := json.Unmarshal(b, &server)
+	if err != nil {
+		return err
+	}
+	*s = Server(server)
+	return nil
 }
 
 type ListServers []Server

@@ -40,7 +40,7 @@ func (c *Consumer) Validate() bool {
 // printValue is a method that prints the value of the Consumer struct
 func (c *Consumer) printValue() {
 	fmt.Println("----------------------------")
-	fmt.Println("|    Consumer values    |")
+	fmt.Println("|      Consumer values     |")
 	fmt.Println("----------------------------")
 	if c.DB != nil {
 		fmt.Println("| Database     | Connected |")
@@ -60,14 +60,22 @@ func (c *Consumer) printValue() {
 func (c *Consumer) StartConsumer() {
 	fmt.Println("")
 	fmt.Println(" ========== Starting Consumer ==========")
+	fmt.Println("")
 	for {
-		fmt.Println("")
 		// get messages from kafka
 		m, err := c.KafkaReader.ReadMessage(ctx)
 		if err != nil {
 			log.Println("Failed to read message from kafka:", err)
 		}
-		fmt.Printf("message at topic/partition/offset %v/%v/%v: %s = %s\n", m.Topic, m.Partition, m.Offset, string(m.Key), string(m.Value))
+		// fmt.Printf("message at topic/partition/offset %v/%v/%v: %s = %s\n", m.Topic, m.Partition, m.Offset, string(m.Key), string(m.Value))
+		// json unmarshall message to server struct
+		server := Server{}
+		err = server.UnmarshalJSON(m.Value)
+		if err != nil {
+			log.Println("Failed to unmarshal message from kafka:", err)
+		}
+		server.PrintResult()
+
 	}
 }
 

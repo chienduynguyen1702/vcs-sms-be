@@ -93,6 +93,7 @@ services:
       - kafka
     networks:
       - vcs-sms-checkpoint
+
   consumer:
     build:
       context: ./consumer
@@ -109,8 +110,35 @@ services:
     networks:
       - vcs-sms-checkpoint
 
+  elasticsearch: # make sure available storage for kibana about > 25GB
+    container_name: vcs-sms-elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.1
+    # 8.x
+    environment: 
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+    ports:
+      - 9200:9200
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    networks:
+      - vcs-sms-checkpoint
+
+  kibana: # make sure available storage for kibana about > 25GB
+    image: docker.elastic.co/kibana/kibana:8.13.1
+    container_name: vcs-sms-kibana
+    environment:
+      # XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY: d1a66dfd-c4d3-4a0a-8290-2abcb83ab3aa
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200    # address of elasticsearch docker container which kibana will connect
+    ports:
+      - 5601:5601
+    depends_on:
+      - elasticsearch         # kibana will start when elasticsearch has started
+    networks:
+      - vcs-sms-checkpoint
 volumes:
   vcs_sms_db_volume:
+  elasticsearch-data:
 
 
 networks:
