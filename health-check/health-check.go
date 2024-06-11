@@ -20,19 +20,6 @@ type HealthCheck struct {
 	KafkaWriter *kafka.Writer
 }
 
-type DBCredentials struct {
-	Host string
-	User string
-	Pass string
-	Name string
-	Port string
-}
-type ResultMessage struct {
-	ServerID int    `json:"server_id"`
-	ServerIP string `json:"server_ip"`
-	Status   string `json:"status"`
-}
-
 func (h *HealthCheck) createMessageString(serverResult Server) string {
 	messageStr, err := json.Marshal(serverResult)
 	if err != nil {
