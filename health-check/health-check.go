@@ -222,6 +222,7 @@ func (h *HealthCheck) Ping(server *Server, wg *sync.WaitGroup) {
 
 	// if can't ping server, try again
 	server.PrintOne()
+	server.PingAt = time.Now()
 
 	// push to kafka
 	messageKafka := h.CreateMessage(*server)

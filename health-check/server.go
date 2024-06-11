@@ -8,14 +8,10 @@ import (
 // declare server model
 
 type Server struct {
-	IP     string `json:"ip"`
-	Name   string `json:"name"`
-	Status string `json:"status"`
-}
-
-type ServerMessage struct {
-	Server    Server
-	TimeStamp time.Time
+	IP     string    `json:"ip"`
+	Name   string    `json:"name"`
+	Status string    `json:"status"`
+	PingAt time.Time `json:"ping_at"`
 }
 
 // method to make []Server a ListServers type
