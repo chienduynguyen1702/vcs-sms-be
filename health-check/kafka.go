@@ -15,7 +15,8 @@ const (
 )
 
 func NewConn(kafkaAddress string) *kafka.Conn {
-	conn, err := kafka.Dial("tcp", "localhost:9092")
+	// fmt.Println("Kafka address: ", kafkaAddress)
+	conn, err := kafka.Dial("tcp", kafkaAddress)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -24,7 +25,7 @@ func NewConn(kafkaAddress string) *kafka.Conn {
 }
 
 // Write message to Kafka topic
-func NewKafkaWriter(topic string, kafkaAddress string) *kafka.Writer {
+func newKafkaWriter(topic string, kafkaAddress string) *kafka.Writer {
 	writeTimeoutEnv := os.Getenv("KAFKA_BATCH_TIMEOUT")
 	writeTimeout, err := strconv.ParseInt(writeTimeoutEnv, 10, 64)
 	if err != nil {
@@ -40,29 +41,34 @@ func NewKafkaWriter(topic string, kafkaAddress string) *kafka.Writer {
 }
 
 // var kafkaBroker = []string{os.Getenv("KAFKA_BROKER")}
-var kafkaAddress = os.Getenv("KAFKA_BROKER")
-var pingStatusTopicProducer *kafka.Writer
+// var kafkaAddress = os.Getenv("KAFKA_BROKER")
+// var pingStatusTopicProducer *kafka.Writer
 
 // Connect to Kafka and check if working topic is exist
-func ConnectProducerToKafka() *kafka.Writer {
+func ConnectProducerToKafka(kafkaAddress, pingStatusTopicName string) (*kafka.Writer, error) {
+	// log.Printf("kafkaAddress: %s", kafkaAddress)
+	// log.Printf("pingStatusTopicName: %s", pingStatusTopicName)
+
 	conn, err := kafka.DialLeader(context.Background(), "tcp", kafkaAddress, pingStatusTopicName, 0)
 	if err != nil {
-		panic(err.Error())
+		log.Printf("Failed to DialLeader to Kafka: %s", err)
+		return nil, err
 	}
 	defer conn.Close()
 
-	if err := CreatePingStatusTopicIfNotExists(conn); err != nil {
-		panic(err.Error())
+	if err := createPingStatusTopicIfNotExists(conn); err != nil {
+		return nil, err
 	}
-	pingStatusTopicProducer = NewKafkaWriter(pingStatusTopicName, kafkaAddress)
-	return pingStatusTopicProducer
+	pingStatusTopicProducer := newKafkaWriter(pingStatusTopicName, kafkaAddress)
+	// log.Printf("pingStatusTopicProducer: %v", pingStatusTopicProducer)
+	return pingStatusTopicProducer, nil
 }
 
 // CreateTopicIfNotExists create topic if not exists
-func CreatePingStatusTopicIfNotExists(conn *kafka.Conn) error {
+func createPingStatusTopicIfNotExists(conn *kafka.Conn) error {
 	partitions, err := conn.ReadPartitions()
 	if err != nil {
-		panic(err.Error())
+		return err
 	}
 
 	for _, p := range partitions {
@@ -78,7 +84,7 @@ func CreatePingStatusTopicIfNotExists(conn *kafka.Conn) error {
 		ReplicationFactor: 1,
 	})
 	if err != nil {
-		panic(err.Error())
+		return err
 	}
 	log.Printf("Topic %s created.", pingStatusTopicName)
 	return nil

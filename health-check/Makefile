@@ -3,4 +3,4 @@ buildrun:
 build:
 	go build -o app
 run:
-	go run main.go healthcheck.go server.go
+	go run main.go health-check.go server.go database.go kafka.go

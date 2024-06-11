@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 // declare server model
 
@@ -8,6 +11,11 @@ type Server struct {
 	IP     string `json:"ip"`
 	Name   string `json:"name"`
 	Status string `json:"status"`
+}
+
+type ServerMessage struct {
+	Server    Server
+	TimeStamp time.Time
 }
 
 // method to make []Server a ListServers type

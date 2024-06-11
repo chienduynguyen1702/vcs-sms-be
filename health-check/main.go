@@ -4,13 +4,17 @@ import (
 	"context"
 	"log"
 	"os"
-	"time"
+	"strconv"
 
 	"github.com/joho/godotenv"
+	"github.com/segmentio/kafka-go"
 )
 
 var dbCreds DBCredentials
 var ctx = context.Background()
+var initkafkaWriter *kafka.Writer
+var err error
+var interval int
 
 func init() {
 	if os.Getenv("LOAD_ENV_FILE") != "true" {
@@ -19,6 +23,7 @@ func init() {
 			panic("Error loading .env file")
 		}
 	}
+
 	dbCreds = DBCredentials{
 		Host: os.Getenv("DB_HOST"),
 		User: os.Getenv("DB_USER"),
@@ -27,32 +32,46 @@ func init() {
 		Port: os.Getenv("DB_PORT"),
 	}
 
+	kafkaAddress := os.Getenv("KAFKA_BROKER")
+	initkafkaWriter, err = ConnectProducerToKafka(kafkaAddress, "ping_status")
+	if err != nil {
+		log.Println("Failed to connect to kafka:", err)
+	}
+
+	intervalStr := os.Getenv("PING_INTERVAL")
+	//parse to int
+	interval, err = strconv.Atoi(intervalStr)
+	if err != nil {
+		log.Println("Failed to parse interval:", err)
+	}
 }
 
 // ################ main function ################
 func main() {
 	// create a new health check instance
-	h := HealthCheck{}
+	h := InitHealthCheckInstance()
+
 	// connect to the database
 	err := h.ConnectDB(dbCreds)
 	if err != nil {
-		log.Println("Failed to connect to database")
+		panic("Failed to connect to database")
 	}
-	// get all the servers
-	for {
-		// ################################################
-		servers, err := h.GetServers()
-		if err != nil {
-			log.Println("Failed to get servers")
-		}
-		// ################################################
-		// Try to ping
-		h.PingServers(servers)
-		// ################################################
-		// update data
 
-		// sleep for 3 min
-		time.Sleep(5 * time.Second)
+	// connect to kafka
+	err = h.SetKafkaWriter(initkafkaWriter)
+	if err != nil {
+		log.Println("Failed to connect to kafka:", err)
+
 	}
+	// set ping interval
+	h.SetPingInterval(interval)
+
+	// validate the health check
+	if !h.Validate() {
+		panic("Failed to validate health check")
+	}
+
+	// start the health check
+	h.StartHealthCheck()
 
 }
