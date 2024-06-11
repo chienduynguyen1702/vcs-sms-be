@@ -4,7 +4,6 @@ import (
 	"context"
 	"log"
 	"os"
-	"strconv"
 
 	"github.com/joho/godotenv"
 	"github.com/segmentio/kafka-go"
@@ -12,9 +11,8 @@ import (
 
 var dbCreds DBCredentials
 var ctx = context.Background()
-var initkafkaWriter *kafka.Writer
+var initkafkaReader *kafka.Reader
 var err error
-var interval int
 
 func init() {
 	if os.Getenv("LOAD_ENV_FILE") != "true" {
@@ -33,45 +31,36 @@ func init() {
 	}
 
 	kafkaAddress := os.Getenv("KAFKA_BROKER")
-	initkafkaWriter, err = ConnectProducerToKafka(kafkaAddress, "ping_status")
+	initkafkaReader = NewKafkaReader(pingStatusTopicName, kafkaAddress)
 	if err != nil {
 		log.Println("Failed to connect to kafka:", err)
-	}
-
-	intervalStr := os.Getenv("PING_INTERVAL")
-	//parse to int
-	interval, err = strconv.Atoi(intervalStr)
-	if err != nil {
-		log.Println("Failed to parse interval:", err)
 	}
 }
 
 // ################ main function ################
 func main() {
 	// create a new health check instance
-	h := InitHealthCheckInstance()
+	c := InitConsumerInstance()
 
 	// connect to the database
-	err := h.ConnectDB(dbCreds)
+	err := c.ConnectDB(dbCreds)
 	if err != nil {
 		panic("Failed to connect to database")
 	}
 
 	// connect to kafka
-	err = h.SetKafkaWriter(initkafkaWriter)
+	err = c.SetKafkaReader(initkafkaReader)
 	if err != nil {
 		log.Println("Failed to connect to kafka:", err)
 
 	}
-	// set ping interval
-	h.SetPingInterval(interval)
 
 	// validate the health check
-	if !h.Validate() {
+	if !c.Validate() {
 		panic("Failed to validate health check")
 	}
 
 	// start the health check
-	h.StartHealthCheck()
+	c.StartConsumer()
 
 }

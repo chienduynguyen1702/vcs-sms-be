@@ -93,6 +93,21 @@ services:
       - kafka
     networks:
       - vcs-sms-checkpoint
+  consumer:
+    build:
+      context: ./consumer
+      dockerfile: dev.Dockerfile
+    container_name: vcs-sms-consumer
+    env_file:
+      - ./consumer/.env.container
+    restart: always
+    depends_on:
+      - health-check
+      - postgres
+      - redis
+      - kafka
+    networks:
+      - vcs-sms-checkpoint
 
 volumes:
   vcs_sms_db_volume:
