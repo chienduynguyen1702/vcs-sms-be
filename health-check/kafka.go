@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	orderTopicName = "orders"
+	pingStatusTopicName = "ping_status"
 )
 
 func NewConn(kafkaAddress string) *kafka.Conn {
@@ -41,45 +41,45 @@ func NewKafkaWriter(topic string, kafkaAddress string) *kafka.Writer {
 
 // var kafkaBroker = []string{os.Getenv("KAFKA_BROKER")}
 var kafkaAddress = os.Getenv("KAFKA_BROKER")
-var orderTopicProducer *kafka.Writer
+var pingStatusTopicProducer *kafka.Writer
 
 // Connect to Kafka and check if working topic is exist
 func ConnectProducerToKafka() *kafka.Writer {
-	conn, err := kafka.DialLeader(context.Background(), "tcp", kafkaAddress, orderTopicName, 0)
+	conn, err := kafka.DialLeader(context.Background(), "tcp", kafkaAddress, pingStatusTopicName, 0)
 	if err != nil {
 		panic(err.Error())
 	}
 	defer conn.Close()
 
-	if err := CreateOrderTopicIfNotExists(conn); err != nil {
+	if err := CreatePingStatusTopicIfNotExists(conn); err != nil {
 		panic(err.Error())
 	}
-	orderTopicProducer = NewKafkaWriter(orderTopicName, kafkaAddress)
-	return orderTopicProducer
+	pingStatusTopicProducer = NewKafkaWriter(pingStatusTopicName, kafkaAddress)
+	return pingStatusTopicProducer
 }
 
 // CreateTopicIfNotExists create topic if not exists
-func CreateOrderTopicIfNotExists(conn *kafka.Conn) error {
+func CreatePingStatusTopicIfNotExists(conn *kafka.Conn) error {
 	partitions, err := conn.ReadPartitions()
 	if err != nil {
 		panic(err.Error())
 	}
 
 	for _, p := range partitions {
-		if p.Topic == orderTopicName {
-			log.Printf("Topic %s is already existed.", orderTopicName)
+		if p.Topic == pingStatusTopicName {
+			log.Printf("Topic %s is already existed.", pingStatusTopicName)
 			return nil
 		}
 	}
 
 	err = conn.CreateTopics(kafka.TopicConfig{
-		Topic:             orderTopicName,
+		Topic:             pingStatusTopicName,
 		NumPartitions:     1,
 		ReplicationFactor: 1,
 	})
 	if err != nil {
 		panic(err.Error())
 	}
-	log.Printf("Topic %s created.", orderTopicName)
+	log.Printf("Topic %s created.", pingStatusTopicName)
 	return nil
 }
