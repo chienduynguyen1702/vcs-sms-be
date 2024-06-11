@@ -10,7 +10,7 @@ services:
     environment:
       POSTGRES_USER: vcs
       POSTGRES_PASSWORD: vcs
-      POSTGRES_DB: $DB_DATABASE
+      POSTGRES_DB: $DB_NAME
     env_file:
       - ./gateway/.env
     volumes:
