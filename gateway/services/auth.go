@@ -29,7 +29,6 @@ func (as *AuthService) Login(email, password string) (uint, dtos.Response) {
 	if userInDb == nil {
 		return 0, dtos.ErrorResponse("User does not exist")
 	}
-
 	// Check if the password is correct
 	if err := bcrypt.CompareHashAndPassword([]byte(userInDb.Password), []byte(password)); err != nil {
 		return 0, dtos.ErrorResponse("Password is incorrect")

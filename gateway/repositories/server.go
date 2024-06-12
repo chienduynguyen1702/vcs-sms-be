@@ -61,9 +61,18 @@ func (sr *ServerRepository) GetServers() ([]models.Server, error) {
 	}
 	return servers, nil
 }
+
 func (sr *ServerRepository) CountServers() (int64, error) {
 	var total int64
 	if err := sr.db.Table("servers").Count(&total).Error; err != nil {
+		return 0, err
+	}
+	return total, nil
+}
+
+func (sr *ServerRepository) CountServersAndSearch(search string) (int64, error) {
+	var total int64
+	if err := sr.db.Table("servers").Where("(name LIKE ? OR ip LIKE ?)", "%"+search+"%", "%"+search+"%").Count(&total).Error; err != nil {
 		return 0, err
 	}
 	return total, nil

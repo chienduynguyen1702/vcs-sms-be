@@ -98,18 +98,22 @@ func (ss *ServerService) GetServers(orgID, search string, page, limit int) (int6
 	var total int64
 	var err error
 	// Get total servers
-	total, err = ss.serverRepo.CountServers()
-	if err != nil {
-		return 0, nil, err
-	}
 
 	if search != "" { // Get paginated servers list by search
+		total, err = ss.serverRepo.CountServersAndSearch(search)
+		if err != nil {
+			return 0, nil, err
+		}
 		servers, err = ss.serverRepo.GetServersByOrganizationIDAndSearch(orgID, search, page, limit)
 		if err != nil {
 			return 0, dtos.ListServerResponse{}, err
 		}
 
 	} else { // Get paginated servers list as default
+		total, err = ss.serverRepo.CountServers()
+		if err != nil {
+			return 0, nil, err
+		}
 		// by cache
 		servers, err = ss.serverRepo.GetCachedServers(orgID, page, limit)
 		if err != nil {
