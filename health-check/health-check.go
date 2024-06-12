@@ -21,6 +21,7 @@ type HealthCheck struct {
 
 	// PingInterval is the interval between pings, default is 300s
 	PingInterval int
+	Debug        bool
 }
 
 // Init is a method that initializes the HealthCheck
@@ -28,6 +29,7 @@ func InitHealthCheckInstance() *HealthCheck {
 	// default ping interval is 300s
 	h := &HealthCheck{}
 	h.PingInterval = 300
+	h.Debug = false
 
 	return h
 }
@@ -67,6 +69,11 @@ func (h *HealthCheck) printValue() {
 	} else {
 		fmt.Println("| KafkaWriter  | Not yet   |")
 	}
+	if h.Debug {
+		fmt.Println("| Debug        | Enabled   |")
+	} else {
+		fmt.Println("| Debug        | Disabled  |")
+	}
 	fmt.Printf("| PingInterval | %8ds |\n", h.PingInterval)
 	fmt.Println("----------------------------")
 	fmt.Println("")
@@ -76,7 +83,8 @@ func (h *HealthCheck) printValue() {
 func (h *HealthCheck) StartHealthCheck() {
 	fmt.Println("")
 	for {
-		fmt.Println(" ========== Starting health check ==========")
+		fmt.Println("")
+		fmt.Println(" ========== Starting health check ")
 		fmt.Println("")
 		// get all servers
 		servers, err := h.GetServers()
@@ -88,7 +96,8 @@ func (h *HealthCheck) StartHealthCheck() {
 		h.PingServers(servers)
 
 		fmt.Println("")
-		fmt.Println(" ========== Finish health check ==========")
+		h.SaveServers(servers)
+		fmt.Println(" ========== Finish health check ")
 
 		// sleep interval time before pinging again
 		time.Sleep(time.Duration(h.PingInterval) * time.Second)
@@ -196,18 +205,38 @@ func (h *HealthCheck) PingServers(ListServers []Server) {
 	// create go routines to ping servers and wait group
 
 	wg := sync.WaitGroup{}
-	for _, server := range ListServers {
+	for i := range ListServers {
 		// ping each server
 		wg.Add(1)
-		go h.Ping(&server, &wg)
-
+		go func(i int) {
+			defer wg.Done()
+			h.Ping(&ListServers[i])
+		}(i)
 		time.Sleep(time.Duration(h.PingInterval) * time.Millisecond)
 	}
 	wg.Wait()
 }
 
+// Save servers to database using transaction
+func (h *HealthCheck) SaveServers(servers []Server) {
+	tx := h.DB.Begin()
+	for index, server := range servers {
+		// creata a save point
+		savePointName := fmt.Sprintf("savepoint%d", index)
+		tx.SavePoint(savePointName)
+		err := tx.Save(&server).Error // save server to database
+		if err != nil {
+			tx.RollbackTo(savePointName)
+			log.Println("Failed to save server", server.IP, ":", err)
+			continue
+		}
+	}
+	tx.Commit()
+	fmt.Println(" ==> Done save server to db")
+}
+
 // This method pings all the servers then push results to kafka
-func (h *HealthCheck) Ping(server *Server, wg *sync.WaitGroup) {
+func (h *HealthCheck) Ping(server *Server) {
 	// // ping server [REAL]
 	// if h.ping(server) {
 	// 	server.Status = "alive"
@@ -216,14 +245,16 @@ func (h *HealthCheck) Ping(server *Server, wg *sync.WaitGroup) {
 	// ping server [FAKE] : return 80% alive
 	if h.fakePing() {
 		server.Status = "Online"
+		server.IsOnline = true
 	} else {
 		server.Status = "Offline"
+		server.IsOnline = false
 	}
 
-	// if can't ping server, try again
-	server.PrintOne()
 	server.PingAt = time.Now()
-
+	if h.Debug {
+		server.PrintOne()
+	}
 	// push to kafka
 	messageKafka := h.CreateMessage(*server)
 	err := h.WriteMessageToKafka(messageKafka)
@@ -231,8 +262,6 @@ func (h *HealthCheck) Ping(server *Server, wg *sync.WaitGroup) {
 		log.Println("Failed to write message to kafka:", err)
 	}
 
-	// decrease wait group
-	wg.Done()
 }
 
 // generate a fake ping 95% is alive
