@@ -1,4 +1,4 @@
-module vcs-sms-health-check
+module vcs-sms-consumer
 
 go 1.22.2
 
