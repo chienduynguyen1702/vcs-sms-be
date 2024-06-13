@@ -112,7 +112,6 @@ func (c *Consumer) ConnectDB(dbCreds DBCredentials) error {
 	}
 	c.DB = DB
 	// c.PingDB()
-	log.Printf("Database connected\n")
 	return nil
 }
 
@@ -123,7 +122,6 @@ func (c *Consumer) SetKafkaReader(kafkaAddress *kafka.Reader) error {
 	}
 
 	c.KafkaReader = kafkaAddress
-	log.Println("Kafka reader connected")
 	return nil
 }
 

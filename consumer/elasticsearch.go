@@ -20,7 +20,7 @@ func NewTypedClientConnection(cloudID, apiKey string) (*elasticsearch.TypedClien
 	// Es config
 	cfg := elasticsearch.Config{
 		// Addresses: []string{
-		// 	os.Getenv("ELASTICSEARCH_URL"),
+		// 	address,
 		// },
 		// Username: os.Getenv("ELASTICSEARCH_USERNAME"),
 		// Password: os.Getenv("ELASTICSEARCH_PASSWORD"),
@@ -32,10 +32,10 @@ func NewTypedClientConnection(cloudID, apiKey string) (*elasticsearch.TypedClien
 	// Connect to Elasticsearch
 	es, err := elasticsearch.NewTypedClient(cfg)
 	if err != nil {
-		log.Fatalf("Error creating the Elasticsearch client: %s", err)
+		log.Fatalf("Error creating the Elasticsearch TypedClient: %s", err)
 		return nil, err
 	}
-	fmt.Println("Connected to Elasticsearch!")
+	fmt.Println("Created Elasticsearch TypedClient !")
 	return es, nil
 }
 

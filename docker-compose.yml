@@ -95,6 +95,8 @@ services:
       - vcs-sms-checkpoint
 
   consumer:
+    dns:
+    - 8.8.8.8
     build:
       context: ./consumer
       dockerfile: dev.Dockerfile

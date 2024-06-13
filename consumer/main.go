@@ -20,6 +20,7 @@ var initkafkaReader *kafka.Reader
 var err error
 var cloudID string
 var apiKey string
+var esCloudAddress string
 
 func init() {
 	if os.Getenv("LOAD_ENV_FILE") != "true" {
@@ -44,6 +45,7 @@ func init() {
 	}
 	cloudID = os.Getenv("ELASTICSEARCH_CLOUD_ID")
 	apiKey = os.Getenv("ELASTICSEARCH_API_KEY")
+	// esCloudAddress = os.Getenv("ELASTICSEARCH_CLOUD_ADDRESS")
 	if cloudID == "" || apiKey == "" {
 		log.Fatal("Failed to get elasticsearch credentials")
 	}
@@ -59,19 +61,21 @@ func main() {
 	if err != nil {
 		panic("Failed to connect to database")
 	}
+	log.Printf("Database connected\n")
 
 	// connect to kafka
 	err = c.SetKafkaReader(initkafkaReader)
 	if err != nil {
 		log.Println("Failed to connect to kafka:", err)
-
 	}
-
+	log.Println("Set KafkaReader !")
+	c.ES = InitConsumerESClient()
 	// connect to elasticsearch
 	err = c.ES.SetESClient(cloudID, apiKey)
 	if err != nil {
 		log.Println("Failed to connect to elasticsearch:", err)
 	}
+	log.Println("Set ESClient !")
 
 	// validate the health check
 	if !c.Validate() {

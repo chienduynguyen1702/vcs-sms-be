@@ -20,4 +20,4 @@ COPY . .
 # EXPOSE 8080
 
 # Run the Go application by go run command
-CMD ["go", "run", "main.go", "consumer.go", "server.go", "database.go" ,"kafka.go"]
+CMD ["go", "run", "main.go", "consumer.go", "server.go", "database.go" ,"kafka.go", "elasticsearch.go"]
