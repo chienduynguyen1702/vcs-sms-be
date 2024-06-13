@@ -14,10 +14,10 @@ RUN go mod download
 COPY . .
 
 # Build the Go application
-RUN go build -o healthcheck
+RUN go build -o consumer
 
 # Expose the port that the application listens on
 # EXPOSE 8080
 
 # Run the Go application
-CMD ["./healthcheck"]
+CMD ["./consumer"]
