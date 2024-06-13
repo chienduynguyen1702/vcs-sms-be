@@ -24,7 +24,7 @@ func (m *GmailService) SendEmail(filePath string, toMail string) error {
 	msg.SetHeader("Subject", "Statistical Servers Report")
 	msg.SetBody("text/plain", "Here is the report you requested.")
 	msg.Attach(filePath)
-@
+
 	if err := m.Dialer.DialAndSend(msg); err != nil {
 		return err
 	}
