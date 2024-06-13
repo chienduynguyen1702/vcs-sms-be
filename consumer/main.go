@@ -11,12 +11,15 @@ import (
 
 const (
 	DDMMYYYYhhmmss = "2006-01-02 15:04:05"
+	ES_INDEX_NAME  = "server"
 )
 
 var dbCreds DBCredentials
 var ctx = context.Background()
 var initkafkaReader *kafka.Reader
 var err error
+var cloudID string
+var apiKey string
 
 func init() {
 	if os.Getenv("LOAD_ENV_FILE") != "true" {
@@ -35,9 +38,14 @@ func init() {
 	}
 
 	kafkaAddress := os.Getenv("KAFKA_BROKER")
-	initkafkaReader = NewKafkaReader(pingStatusTopicName, kafkaAddress)
+	initkafkaReader, err = NewKafkaReader(pingStatusTopicName, kafkaAddress)
 	if err != nil {
-		log.Println("Failed to connect to kafka:", err)
+		log.Fatal("Failed to connect to kafka:", err)
+	}
+	cloudID = os.Getenv("ELASTICSEARCH_CLOUD_ID")
+	apiKey = os.Getenv("ELASTICSEARCH_API_KEY")
+	if cloudID == "" || apiKey == "" {
+		log.Fatal("Failed to get elasticsearch credentials")
 	}
 }
 
@@ -57,6 +65,12 @@ func main() {
 	if err != nil {
 		log.Println("Failed to connect to kafka:", err)
 
+	}
+
+	// connect to elasticsearch
+	err = c.ES.SetESClient(cloudID, apiKey)
+	if err != nil {
+		log.Println("Failed to connect to elasticsearch:", err)
 	}
 
 	// validate the health check

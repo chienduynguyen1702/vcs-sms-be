@@ -14,11 +14,11 @@ const (
 )
 
 // Reader of Kafka topic
-func NewKafkaReader(topic, kafkaAddress string) *kafka.Reader {
+func NewKafkaReader(topic, kafkaAddress string) (*kafka.Reader, error) {
 	readTimeoutEnv := os.Getenv("KAFKA_BATCH_TIMEOUT")
 	readTimeout, err := strconv.ParseInt(readTimeoutEnv, 10, 64)
 	if err != nil {
-		panic(err.Error())
+		return nil, err
 	}
 	readBatchTimeout := time.Duration(readTimeout) * time.Millisecond
 	fmt.Println("Read batch timeout:", readBatchTimeout)
@@ -30,5 +30,5 @@ func NewKafkaReader(topic, kafkaAddress string) *kafka.Reader {
 		MinBytes:  10e3, // 10KB
 		MaxBytes:  10e6, // 10MB
 		MaxWait:   readBatchTimeout,
-	})
+	}), nil
 }

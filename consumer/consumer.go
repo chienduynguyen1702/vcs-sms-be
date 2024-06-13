@@ -12,6 +12,7 @@ import (
 type Consumer struct {
 	DB          *gorm.DB
 	KafkaReader *kafka.Reader
+	ES          *ConsumerESClient
 }
 
 // Init is a method that initializes the Consumer
@@ -32,6 +33,10 @@ func (c *Consumer) Validate() bool {
 		log.Println("Kafka reader is nil, try SetKafkaReader() first")
 		return false
 	}
+	if c.ES == nil {
+		log.Println("Elasticsearch client is nil, try SetESClient() first")
+		return false
+	}
 	c.printValue()
 	log.Println("Consumer is valid, ready to start")
 	return true
@@ -42,15 +47,24 @@ func (c *Consumer) printValue() {
 	fmt.Println("----------------------------")
 	fmt.Println("|      Consumer values     |")
 	fmt.Println("----------------------------")
+
 	if c.DB != nil {
 		fmt.Println("| Database     | Connected |")
 	} else {
 		fmt.Println("| Database     | Not yet   |")
 	}
+
 	if c.KafkaReader != nil {
 		fmt.Println("| KafkaReader  | Connected |")
 	} else {
 		fmt.Println("| KafkaReader  | Not yet   |")
+	}
+
+	if c.ES != nil {
+		fmt.Println("| ES           | Connected |")
+	} else {
+
+		fmt.Println("| ES           | Not yet   |")
 	}
 	fmt.Println("----------------------------")
 	fmt.Println("")
