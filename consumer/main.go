@@ -81,7 +81,7 @@ func main() {
 	if !c.Validate() {
 		panic("Failed to validate health check")
 	}
-
+	c.SetDebugMode(true)
 	// start the health check
 	c.StartConsumer()
 

@@ -13,14 +13,19 @@ type Consumer struct {
 	DB          *gorm.DB
 	KafkaReader *kafka.Reader
 	ES          *ConsumerESClient
+	Debug       bool
 }
 
 // Init is a method that initializes the Consumer
 func InitConsumerInstance() *Consumer {
 	// default ping interval is 300s
 	h := &Consumer{}
-
+	h.Debug = false
 	return h
+}
+
+func (c *Consumer) SetDebugMode(debug bool) {
+	c.Debug = debug
 }
 
 // Validate is a method that validates the Consumer struct
@@ -88,8 +93,14 @@ func (c *Consumer) StartConsumer() {
 		if err != nil {
 			log.Println("Failed to unmarshal message from kafka:", err)
 		}
-		server.PrintResult()
-
+		if c.Debug {
+			server.PrintResult()
+		}
+		// insert status to elasticsearch
+		err = c.ES.IndexServer(ES_INDEX_NAME, server)
+		if err != nil {
+			log.Println("Failed to index server to elasticsearch:", err)
+		}
 	}
 }
 
