@@ -93,9 +93,10 @@ func (c *ConsumerESClient) IndexExists(indexName string) bool {
 // IndexServer indexes a server in elasticsearch
 func (c *ConsumerESClient) IndexServer(indexName string, server Server) error {
 	document := map[string]interface{}{
-		"ping_at": server.PingAt,
-		"ip":      server.IP,
-		"status":  server.Status,
+		"ping_at":   server.PingAt,
+		"ip":        server.IP,
+		"status":    server.Status,
+		"is_online": server.Status == "Online",
 	}
 
 	// Index a document
