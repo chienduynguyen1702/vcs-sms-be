@@ -23,9 +23,11 @@ func WrapServers(servers []Server) ListServers {
 	}
 	return l
 }
+
 func (s *Server) PrintOne() {
 	fmt.Printf("| %15s | %15s | %s \n", s.IP, s.Status, s.Name)
 }
+
 func (s *Server) PrintResult() {
 	fmt.Printf("|%20v| %15s | %15s | %s \n", s.PingAt.Format(DDMMYYYYhhmmss), s.IP, s.Status, s.Name)
 }

@@ -16,7 +16,7 @@ func InitGmailService(mail, pass string) *GmailService {
 		Pass:   pass,
 	}
 }
-
+// send file at filePath to toMail
 func (m *GmailService) SendEmail(filePath string, toMail string) error {
 	msg := gomail.NewMessage()
 	msg.SetHeader("From", "no-reply-vcs@mail.vn")

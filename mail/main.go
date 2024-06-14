@@ -5,6 +5,8 @@ import (
 	"log"
 	"os"
 
+	"github.com/robfig/cron"
+
 	"github.com/joho/godotenv"
 )
 
@@ -16,17 +18,37 @@ func main() {
 			log.Fatal("Error loading .env file")
 		}
 	}
+
 	mail := os.Getenv("MAIL_SERVICE_MAIL")
 	pass := os.Getenv("MAIL_SERVICE_PASS")
 	if mail == "" || pass == "" {
 		fmt.Println("Please set MAIL_SERVICE_MAIL and MAIL_SERVICE_PASS")
 		return
 	}
+
 	gmailService := InitGmailService(mail, pass)
-	// fmt.Println("Gmail service: ", gmailService.Mail)
-	err := gmailService.SendEmail("text.txt", "chiennd1702@gmail.com")
+
+	cron := cron.New()
+
+	// @every 10s
+	// @every day in 6am
+	err := cron.AddFunc("0 6 * * *", func() {
+		fmt.Println("Starting send mail")
+
+		err := gmailService.SendEmail("text.txt", "chiennd1702@gmail.com")
+		if err != nil {
+			fmt.Println("Error when send mail: ", err)
+		}
+
+		fmt.Println("Finish send mail")
+	})
+
 	if err != nil {
-		fmt.Println("Error when send mail: ", err)
+		fmt.Println("Error when add cron job: ", err)
+		return
 	}
-	fmt.Println("Finish send mail")
+
+	cron.Start()
+
+	select {}
 }
