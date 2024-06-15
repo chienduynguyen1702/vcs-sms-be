@@ -99,8 +99,10 @@ services:
     - 8.8.8.8
     build:
       context: ./consumer
-      dockerfile: dev.Dockerfile
+      dockerfile: Dockerfile
     container_name: vcs-sms-consumer
+    ports:
+      - "50051:50051"
     volumes:
       - report-file-volume:/reports
     env_file:

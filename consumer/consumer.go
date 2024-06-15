@@ -1,8 +1,10 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
+	uc_pb "vcs-sms-consumer/proto/uptime_calculate"
 
 	"github.com/segmentio/kafka-go"
 	"gorm.io/driver/postgres"
@@ -174,4 +176,19 @@ func (c *Consumer) QueryES() {
 	// for each server, query elasticsearch
 	// get the online percentage
 	// update the server status
+}
+
+// RequestAggregation is a method that handles the RequestAggregation gRPC call
+func (c *Consumer) RequestAggregation(ctx context.Context, req *uc_pb.AggregationRequest) (*uc_pb.AggregationResponse, error) {
+	fd := req.GetFromDate()
+	td := req.GetToDate()
+	// parse fromDate and toDate to time.Time
+	fromDate := fd.AsTime().Format(YYYYMMDD)
+	toDate := td.AsTime().Format(YYYYMMDD)
+
+	log.Printf("Client sent request to aggregation from %v to %v", fromDate, toDate)
+	return &uc_pb.AggregationResponse{
+		IsSuccess: true,
+		FilePath:  "path/to/file",
+	}, nil
 }

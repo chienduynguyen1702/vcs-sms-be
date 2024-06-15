@@ -115,7 +115,7 @@ func (c *ConsumerESClient) IndexServer(indexName string, server Server) error {
 	return nil
 }
 
-func (c *ConsumerESClient) AggregateUptimeServer(indexName string, startTime, toTime time.Time) {
+func (c *ConsumerESClient) AggregateUptimeServer(indexName string, startTime, toTime time.Time) (error, string) {
 	// build query
 	agg := c.aggregationUptimeServerBuilder(startTime, toTime)
 
@@ -126,6 +126,7 @@ func (c *ConsumerESClient) AggregateUptimeServer(indexName string, startTime, to
 		Do(context.Background())
 	if err != nil {
 		log.Fatalf("Error aggregating uptime: %s", err)
+		return err, ""
 	}
 
 	// Parse and extract the results
@@ -135,12 +136,13 @@ func (c *ConsumerESClient) AggregateUptimeServer(indexName string, startTime, to
 	// PrintSliceOfDayBuckets(dayBuckets)
 
 	// Write to excel
-	c.WriteToExcel(dayBuckets)
+	filePath := c.WriteToExcel(dayBuckets, startTime, toTime)
+	return nil, filePath
 }
-func (c *ConsumerESClient) WriteToExcel(dayBuckets []DayBuckets) {
+func (c *ConsumerESClient) WriteToExcel(dayBuckets []DayBuckets, startTime, toTime time.Time) string {
 	fmt.Println("Writing to excel")
 	// write to excel
-	fileName := fmt.Sprintf("%s/VCS-SMS-Report-%s.xlsx", OUTPUT_EXCEL_PATH, time.Now().Format("2006-01-02"))
+	filePath := fmt.Sprintf("%s/VCS-SMS-Report-%s-%s.xlsx", OUTPUT_EXCEL_PATH, startTime.Format("2006-01-02"), toTime.Format("2006-01-02"))
 
 	newFile := excelize.NewFile()
 	// Create a new sheet by each DayBucket.KeyAsString
@@ -183,10 +185,11 @@ func (c *ConsumerESClient) WriteToExcel(dayBuckets []DayBuckets) {
 	}
 
 	// Save xlsx file by the given path.
-	if err := newFile.SaveAs(fileName); err != nil {
+	if err := newFile.SaveAs(filePath); err != nil {
 		log.Println("Failed to save xlsx:", err)
 	}
-	fmt.Println("Saved to excel file:", fileName)
+	fmt.Println("Saved to excel file:", filePath)
+	return filePath
 }
 
 const (

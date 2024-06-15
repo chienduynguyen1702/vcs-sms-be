@@ -2,15 +2,20 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
+	"net"
 	"os"
+	"vcs-sms-consumer/proto/uptime_calculate"
 
 	"github.com/joho/godotenv"
 	"github.com/segmentio/kafka-go"
+	"google.golang.org/grpc"
 )
 
 const (
 	DDMMYYYYhhmmss = "2006-01-02 15:04:05"
+	YYYYMMDD       = "2006-01-02"
 	ES_INDEX_NAME  = "server"
 )
 
@@ -20,7 +25,12 @@ var initkafkaReader *kafka.Reader
 var err error
 var cloudID string
 var apiKey string
-var esCloudAddress string
+
+// var esCloudAddress string
+
+// define a gRPC server attibutes
+var grpcServer *grpc.Server
+var grpcPort string
 
 func init() {
 	if os.Getenv("LOAD_ENV_FILE") != "true" {
@@ -49,6 +59,9 @@ func init() {
 	if cloudID == "" || apiKey == "" {
 		log.Fatal("Failed to get elasticsearch credentials")
 	}
+
+	// create a new gRPC server
+	grpcServer = grpc.NewServer()
 }
 
 // ################ main function ################
@@ -82,7 +95,29 @@ func main() {
 		panic("Failed to validate health check")
 	}
 	c.SetDebugMode(true)
-	// start the health check
-	c.StartConsumer()
+	// Create UpTimeCalculateServer
+	ucServer := &UptimeCalculateServerImpl{consumer: c}
 
+	// start the health check
+	go c.StartConsumer()
+
+	// start the gRPC server
+	grpcPort = os.Getenv("GRPC_PORT")
+	if grpcPort == "" {
+		fmt.Println("GRPC_PORT is not set, using default port 50051")
+		grpcPort = "50051"
+	}
+	grpcAddress := ":" + grpcPort
+
+	// fmt.Println("grpcAddress:", grpcAddress)
+
+	lis, err := net.Listen("tcp", grpcAddress)
+	if err != nil {
+		panic(err)
+	}
+	uptime_calculate.RegisterUptimeCalculateServer(grpcServer, ucServer)
+	log.Printf("Server listening at %s", lis.Addr().String())
+	if err := grpcServer.Serve(lis); err != nil {
+		panic(err)
+	}
 }
