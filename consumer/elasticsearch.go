@@ -115,7 +115,7 @@ func (c *ConsumerESClient) IndexServer(indexName string, server Server) error {
 	return nil
 }
 
-func (c *ConsumerESClient) AggregateUptimeServer(indexName string, startTime, toTime time.Time) (error, string) {
+func (c *ConsumerESClient) AggregateUptimeServer(indexName string, startTime, toTime time.Time) (string, error) {
 	// build query
 	agg := c.aggregationUptimeServerBuilder(startTime, toTime)
 
@@ -126,7 +126,7 @@ func (c *ConsumerESClient) AggregateUptimeServer(indexName string, startTime, to
 		Do(context.Background())
 	if err != nil {
 		log.Fatalf("Error aggregating uptime: %s", err)
-		return err, ""
+		return "", err
 	}
 
 	// Parse and extract the results
@@ -137,7 +137,7 @@ func (c *ConsumerESClient) AggregateUptimeServer(indexName string, startTime, to
 
 	// Write to excel
 	filePath := c.WriteToExcel(dayBuckets, startTime, toTime)
-	return nil, filePath
+	return filePath, nil
 }
 func (c *ConsumerESClient) WriteToExcel(dayBuckets []DayBuckets, startTime, toTime time.Time) string {
 	fmt.Println("Writing to excel")

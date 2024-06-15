@@ -19,12 +19,21 @@ type UptimeCalculateServerImpl struct {
 func (s *UptimeCalculateServerImpl) RequestAggregation(ctx context.Context, req *uc_pb.AggregationRequest) (*uc_pb.AggregationResponse, error) {
 	fromDate := req.GetFromDate().AsTime()
 	toDate := req.GetToDate().AsTime()
+
+	// check if fromDate is after toDate
+	if fromDate.After(toDate) {
+		return &uc_pb.AggregationResponse{
+			IsSuccess: false,
+			FilePath:  "",
+		}, nil
+	}
+
 	// Get 00:00:00 of fromDate
 	startDateOfFromDate := time.Date(fromDate.Year(), fromDate.Month(), fromDate.Day(), 0, 0, 0, 0, fromDate.Location())
 	// Get 23:59:59 of toDate
 	endDateOfToDate := time.Date(toDate.Year(), toDate.Month(), toDate.Day(), 23, 59, 59, 999999999, toDate.Location())
 	// Run Elasticsearch query
-	err, filePath := s.consumer.ES.AggregateUptimeServer(ES_INDEX_NAME, startDateOfFromDate, endDateOfToDate)
+	filePath, err := s.consumer.ES.AggregateUptimeServer(ES_INDEX_NAME, startDateOfFromDate, endDateOfToDate)
 	if err != nil {
 		return &uc_pb.AggregationResponse{
 			IsSuccess: false,
