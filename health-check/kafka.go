@@ -31,7 +31,7 @@ func newKafkaWriter(topic string, kafkaAddress string) *kafka.Writer {
 	if err != nil {
 		panic(err.Error())
 	}
-	writeBatchTimeout := time.Duration(writeTimeout) * time.Nanosecond
+	writeBatchTimeout := time.Duration(writeTimeout) * time.Second
 	return kafka.NewWriter(kafka.WriterConfig{
 		Brokers:      []string{kafkaAddress},
 		Topic:        topic,
