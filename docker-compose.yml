@@ -101,6 +101,8 @@ services:
       context: ./consumer
       dockerfile: dev.Dockerfile
     container_name: vcs-sms-consumer
+    volumes:
+      - report-file-volume:/reports
     env_file:
       - ./consumer/.env.container
     restart: always
@@ -115,6 +117,8 @@ services:
       context: ./mail
       dockerfile: dev.Dockerfile
     container_name: vcs-sms-mail
+    volumes:
+      - report-file-volume:/reports
     env_file:
       - ./mail/.env.container
     networks:
@@ -148,6 +152,7 @@ services:
 volumes:
   vcs_sms_db_volume:
   # elasticsearch-data:
+  report-file-volume:
 
 
 networks:
