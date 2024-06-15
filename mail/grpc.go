@@ -29,8 +29,8 @@ func (s *SendMailServerImpl) DoSendMail(ctx context.Context, in *send_mail.MailR
 
 	//debug
 	fmt.Println("MailReceiver: ", in.MailReceiver)
-	fmt.Println("FromDate: ", in.FromDate)
-	fmt.Println("ToDate: ", in.ToDate)
+	// fmt.Println("FromDate: ", in.FromDate)
+	// fmt.Println("ToDate: ", in.ToDate)
 
 	// extract Date Range from request
 	aggReq := &uptime_calculate.AggregationRequest{
@@ -56,16 +56,19 @@ func (s *SendMailServerImpl) DoSendMail(ctx context.Context, in *send_mail.MailR
 		log.Println("Aggregation is not success")
 		return mailRes, nil
 	}
-	log.Println("Aggregation is success")
-	log.Println("File path: ", aggRes.FilePath)
+	// log.Println("Aggregation is success")
+	// log.Println("File path: ", aggRes.FilePath)
 
-	log.Println("Sending mail to:", in.MailReceiver)
 	// Send mail
+	log.Println("Sending mail to:", in.MailReceiver)
+
 	err = s.gmail.SendEmail(aggRes.FilePath, in.MailReceiver)
 	if err != nil {
 		log.Println("Error when send mail: ", err)
 		return nil, err
 	}
+
 	log.Println("Sent mail to:", in.MailReceiver)
+
 	return mailRes, nil
 }
