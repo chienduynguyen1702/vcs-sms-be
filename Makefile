@@ -31,8 +31,13 @@ list-consumers:
 
 
 ######## gRPC Commands ########
-create-pb:
-	protoc --go_out=. --go-grpc_out=. proto/response.proto
+create-pb-uptime-calculate:
+	protoc --go_out=./consumer/ --go-grpc_out=./consumer/ proto/uptime_calculate.proto
+	protoc --go_out=./mail/ --go-grpc_out=./mail/ proto/uptime_calculate.proto
+
+create-pb-send-mail:
+	protoc --go_out=./gateway/ --go-grpc_out=./gateway/ proto/send_mail.proto
+	protoc --go_out=./mail/ --go-grpc_out=./mail/ proto/send_mail.proto
 
 
 ######## Docker Commands ########

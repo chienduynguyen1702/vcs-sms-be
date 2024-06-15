@@ -1,0 +1,21 @@
+syntax="proto3";
+
+option go_package = "./proto/uptime_calculate";
+
+import "google/protobuf/timestamp.proto";
+
+package uptime_calculate;
+
+service UptimeCalculate {
+  rpc RequestAggregation (AggregationRequest) returns (AggregationResponse);
+}
+
+
+message AggregationRequest {
+    google.protobuf.Timestamp fromDate = 1;
+    google.protobuf.Timestamp toDate = 2;
+}
+message AggregationResponse {
+    bool isSuccess = 1;
+    string filePath = 2;
+}

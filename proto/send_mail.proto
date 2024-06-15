@@ -1,0 +1,22 @@
+syntax="proto3";
+
+option go_package = "./proto/send_mail";
+
+import "google/protobuf/timestamp.proto";
+
+package send_mail;
+
+service SendMail {
+  rpc DoSendMail (MailRequest) returns (MailResponse);
+}
+
+
+message MailRequest {
+    google.protobuf.Timestamp fromDate = 1;
+    google.protobuf.Timestamp toDate = 2;
+    string mailReceiver = 3;
+}
+message MailResponse {
+    bool isSuccess = 1;
+    string filePath = 2;
+}
