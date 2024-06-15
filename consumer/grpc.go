@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"log"
 	"time"
 	uc_pb "vcs-sms-consumer/proto/uptime_calculate"
 )
@@ -22,6 +23,7 @@ func (s *UptimeCalculateServerImpl) RequestAggregation(ctx context.Context, req 
 
 	// check if fromDate is after toDate
 	if fromDate.After(toDate) {
+		log.Println("fromDate is after toDate")
 		return &uc_pb.AggregationResponse{
 			IsSuccess: false,
 			FilePath:  "",
