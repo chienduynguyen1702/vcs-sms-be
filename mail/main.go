@@ -30,9 +30,8 @@ func main() {
 
 	cron := cron.New()
 
-	// @every 10s
 	// @every day in 6am
-	err := cron.AddFunc("0 6 * * *", func() {
+	err := cron.AddFunc("0 0 6 * *", func() {
 		fmt.Println("Starting send mail")
 
 		err := gmailService.SendEmail("text.txt", "chiennd1702@gmail.com")
