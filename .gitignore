@@ -27,4 +27,4 @@ learning_gorm_volume/
 server.crt
 server.key
 */logs/*.log
-*/reports/*.xlsx
+reports/*.xlsx
