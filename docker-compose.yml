@@ -155,6 +155,12 @@ volumes:
   vcs_sms_db_volume:
   # elasticsearch-data:
   report-file-volume:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${PWD}/reports
+      o: bind
+
 
 
 networks:
