@@ -19,7 +19,7 @@ func NewKafkaReader(topic, kafkaAddress string) (*kafka.Reader, error) {
 	if err != nil {
 		return nil, err
 	}
-	readBatchTimeout := time.Duration(readTimeout) * time.Millisecond
+	readBatchTimeout := time.Duration(readTimeout) * time.Second
 	// fmt.Println("Read batch timeout:", readBatchTimeout)
 	return kafka.NewReader(kafka.ReaderConfig{
 		Brokers:   []string{kafkaAddress},

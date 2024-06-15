@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"time"
 
 	"github.com/segmentio/kafka-go"
 	"gorm.io/driver/postgres"
@@ -82,10 +81,12 @@ func (c *Consumer) StartConsumer() {
 	fmt.Println(" ========== Starting Consumer ==========")
 	fmt.Println("")
 	for {
+
 		// get 00h00m00s today and 23h59m59s today
-		start := time.Now().Truncate(24 * time.Hour)
-		end := start.Add(24*time.Hour - time.Second)
-		c.ES.AggregateUptimeServer(ES_INDEX_NAME, start, end)
+		// start := time.Now().Truncate(24 * time.Hour)
+		// end := start.Add(24*time.Hour - time.Second)
+		// c.ES.AggregateUptimeServer(ES_INDEX_NAME, start, end)
+
 		// get messages from kafka
 		m, err := c.KafkaReader.ReadMessage(ctx)
 		if err != nil {

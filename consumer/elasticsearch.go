@@ -13,6 +13,7 @@ import (
 	"github.com/elastic/go-elasticsearch/v8/typedapi/some"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types/enums/calendarinterval"
+	"github.com/xuri/excelize/v2"
 )
 
 type ConsumerESClient struct {
@@ -128,24 +129,72 @@ func (c *ConsumerESClient) AggregateUptimeServer(indexName string, startTime, to
 	}
 
 	// Parse and extract the results
-	// var result map[string]interface{}
-	// if err := json.NewDecoder(res).Decode(&result); err != nil {
-	// 	log.Fatalf("Error parsing the response body: %s", err)
-	// }
+	dayBuckets := c.extractResultsToDaily(res)
 
-	// unmarshall the response by below function
-	// func (s *search.Response) UnmarshalJSON(data []byte) error
-	// var resString string
-	// res.UnmarshalJSON([]byte(res.Aggregations["date_filter"]))
-	extractResults(res)
-	// Print the results to check
+	// debug
+	// PrintSliceOfDayBuckets(dayBuckets)
+
+	// Write to excel
+	c.WriteToExcel(dayBuckets)
+}
+func (c *ConsumerESClient) WriteToExcel(dayBuckets []DayBuckets) {
+	fmt.Println("Writing to excel")
+	// write to excel
+	fileName := fmt.Sprintf("%s/VCS-SMS-Report-%s.xlsx", OUTPUT_EXCEL_PATH, time.Now().Format("2006-01-02"))
+
+	newFile := excelize.NewFile()
+	// Create a new sheet by each DayBucket.KeyAsString
+	for _, dayBucket := range dayBuckets {
+		// Create a new sheet.
+		sheetName := dayBucket.KeyAsString            // 2024-06-15T00:00:00.000Z
+		t, err := time.Parse(time.RFC3339, sheetName) // convert to date format
+		if err != nil {
+			log.Println("Failed to parse time:", err)
+			break
+		}
+		sheetName = t.Format("2006-01-02")
+
+		index, err := newFile.NewSheet(sheetName)
+		if err != nil {
+			log.Println("Failed to create a new sheet: ", err)
+			break
+		}
+		// Set value of a cell.
+		newFile.SetCellValue(sheetName, "A1", "Server")
+		newFile.SetCellValue(sheetName, "B1", "Online Percentage")
+
+		for i, serverBucket := range dayBucket.ByServer.ServerBuckets {
+			// Set value of Server column.
+			err = newFile.SetCellValue(sheetName, fmt.Sprintf("A%d", i+2), serverBucket.Key)
+			if err != nil {
+				log.Println("Failed to et value of Server column:", err)
+				break
+			}
+			// Set value of Online Percentage column.
+			err = newFile.SetCellValue(sheetName, fmt.Sprintf("B%d", i+2), serverBucket.OnlinePercentage.Value)
+			if err != nil {
+				log.Println("Failed to Set value of Online Percentage column:", err)
+				break
+			}
+
+		}
+		// Set active sheet of the workbook.
+		newFile.SetActiveSheet(index)
+	}
+
+	// Save xlsx file by the given path.
+	if err := newFile.SaveAs(fileName); err != nil {
+		log.Println("Failed to save xlsx:", err)
+	}
+	fmt.Println("Saved to excel file:", fileName)
 }
 
 const (
-	DATE_FILTER_AGG = "date_filter"
-	BY_DAY_AGG      = "by_day"
-	BY_SERVER_AGG   = "by_server"
-	ONLINE_PERCENT  = "online_percentage"
+	DATE_FILTER_AGG   = "date_filter"
+	BY_DAY_AGG        = "by_day"
+	BY_SERVER_AGG     = "by_server"
+	ONLINE_PERCENT    = "online_percentage"
+	OUTPUT_EXCEL_PATH = "/reports"
 )
 
 // aggregationUptimeServerBuilder builds the query for aggregating uptime of servers
@@ -227,40 +276,68 @@ func (c *ConsumerESClient) aggregationUptimeServerBuilder(startTime, toTime time
 type AggResult struct {
 	Aggregations Aggregations `json:"aggregations"`
 }
+
 type Aggregations struct {
 	DateFilter struct {
 		DocCount int `json:"doc_count"`
 		ByDay    struct {
-			DayBuckets []struct {
-				KeyAsString string `json:"key_as_string"`
-				Key         int64  `json:"key"`
-				DocCount    int    `json:"doc_count"`
-				ByServer    struct {
-					DocCountErrorUpperBound int `json:"doc_count_error_upper_bound"`
-					SumOtherDocCount        int `json:"sum_other_doc_count"`
-					ServerBuckets           []struct {
-						Key        string `json:"key"`
-						DocCount   int    `json:"doc_count"`
-						TotalPings struct {
-							Value int `json:"value"`
-						} `json:"total_pings"`
-						OnlinePings struct {
-							DocCount    int `json:"doc_count"`
-							OnlineCount struct {
-								Value int `json:"value"`
-							} `json:"online_count"`
-						} `json:"online_pings"`
-						OnlinePercentage struct {
-							Value float64 `json:"value"`
-						} `json:"online_percentage"`
-					} `json:"buckets"`
-				} `json:"by_server"`
-			} `json:"buckets"`
-		} `json:"by_day"`
-	} `json:"date_filter"`
+			DayBuckets []DayBuckets `json:"buckets"`
+		} `json:"by_day"` // const BY_DAY_AGG
+	} `json:"date_filter"` // const DATE_FILTER_AGG
 }
 
-func extractResults(res *search.Response) {
+type DayBuckets struct {
+	KeyAsString string `json:"key_as_string"`
+	Key         int64  `json:"key"`
+	DocCount    int    `json:"doc_count"`
+	ByServer    struct {
+		DocCountErrorUpperBound int             `json:"doc_count_error_upper_bound"`
+		SumOtherDocCount        int             `json:"sum_other_doc_count"`
+		ServerBuckets           []ServerBuckets `json:"buckets"`
+	} `json:"by_server"` // const BY_SERVER_AGG
+}
+
+func (d *DayBuckets) PrintResult() {
+	fmt.Println("Day:", d.KeyAsString)
+	for _, serverBucket := range d.ByServer.ServerBuckets {
+		fmt.Println("Server:", serverBucket.Key)
+		fmt.Println("Total pings:", serverBucket.TotalPings.Value)
+		fmt.Println("Online pings:", serverBucket.OnlinePings.OnlineCount.Value)
+		fmt.Println("Online percentage:", serverBucket.OnlinePercentage.Value)
+	}
+	fmt.Println("")
+}
+func PrintSliceOfDayBuckets(dayBuckets []DayBuckets) {
+	for _, dayBucket := range dayBuckets {
+		fmt.Println("Day:", dayBucket.KeyAsString)
+		for _, serverBucket := range dayBucket.ByServer.ServerBuckets {
+			fmt.Println("Server:", serverBucket.Key)
+			fmt.Println("Total pings:", serverBucket.TotalPings.Value)
+			fmt.Println("Online pings:", serverBucket.OnlinePings.OnlineCount.Value)
+			fmt.Println("Online percentage:", serverBucket.OnlinePercentage.Value)
+		}
+		fmt.Println("")
+	}
+}
+
+type ServerBuckets struct {
+	Key        string `json:"key"`
+	DocCount   int    `json:"doc_count"`
+	TotalPings struct {
+		Value int `json:"value"`
+	} `json:"total_pings"`
+	OnlinePings struct {
+		DocCount    int `json:"doc_count"`
+		OnlineCount struct {
+			Value int `json:"value"`
+		} `json:"online_count"`
+	} `json:"online_pings"`
+	OnlinePercentage struct {
+		Value float64 `json:"value"`
+	} `json:"online_percentage"` // const ONLINE_PERCENT
+}
+
+func (c *ConsumerESClient) extractResultsToDaily(res *search.Response) []DayBuckets {
 	resJson, err := json.Marshal(res)
 	if err != nil {
 		log.Fatalf("Error parsing the response body: %s", err)
@@ -278,39 +355,7 @@ func extractResults(res *search.Response) {
 		log.Fatalf("Error parsing the response body: %s", err)
 	}
 
-	fmt.Println("a.Aggregations.DateFilter.ByDay", a.Aggregations.DateFilter.ByDay)
+	fmt.Println("Found", len(a.Aggregations.DateFilter.ByDay.DayBuckets), "daily aggregation buckets")
 
-	// dateFilterAgg, found := res.Aggregations[DATE_FILTER_AGG]
-	// if !found {
-	// 	log.Println(DATE_FILTER_AGG, " not found in response")
-	// 	return
-	// }
-	// fmt.Println(DATE_FILTER_AGG, ":", dateFilterAgg)
-	// fmt.Println("dateFilterAgg: %+v", dateFilterAgg)
-	// fmt.Println("Found ", dateFilterAgg.[BY_DAY_AGG], " in response")
-	// byDayAgg, found := dateFilterAgg.ChildrenAggregate
-	// if !found {
-	// 	log.Println("by_day not found in response")
-	// 	return
-	// }
-	// byServerAgg, found := byDayAgg.Aggregations[BY_SERVER_AGG]
-
-	// for _, dayBucket := range byDayAgg.Buckets {
-	// 	date := dayBucket.KeyAsString
-
-	// 	fmt.Printf("Date: %s\n", date)
-
-	// 	byServerAgg, found := dayBucket.Aggregations["by_server"]
-	// 	if !found {
-	// 		log.Println("by_server not found in response")
-	// 		continue
-	// 	}
-
-	// 	for _, serverBucket := range byServerAgg.Terms.Buckets {
-	// 		ip := serverBucket.Key
-	// 		onlinePercentage := serverBucket.Aggregations["online_percentage"].BucketScript.Value
-
-	// 		fmt.Printf("Server IP: %s, Online Percentage: %.2f%%\n", *ip, *onlinePercentage)
-	// 	}
-	// }
+	return a.Aggregations.DateFilter.ByDay.DayBuckets
 }
