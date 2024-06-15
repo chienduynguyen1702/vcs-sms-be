@@ -4,27 +4,23 @@ import (
 	"context"
 	"log"
 	"time"
-	uc_pb "vcs-sms-consumer/proto/uptime_calculate"
+	"vcs-sms-consumer/proto/uptime_calculate"
 )
-
-type UptimeCalculateServer interface {
-	RequestAggregation(context.Context, *uc_pb.AggregationRequest) (*uc_pb.AggregationResponse, error)
-}
 
 // UptimeCalculateServerImpl implements UptimeCalculateServer
 type UptimeCalculateServerImpl struct {
 	consumer *Consumer
-	uc_pb.UnimplementedUptimeCalculateServer
+	uptime_calculate.UnimplementedUptimeCalculateServer
 }
 
-func (s *UptimeCalculateServerImpl) RequestAggregation(ctx context.Context, req *uc_pb.AggregationRequest) (*uc_pb.AggregationResponse, error) {
+func (s *UptimeCalculateServerImpl) RequestAggregation(ctx context.Context, req *uptime_calculate.AggregationRequest) (*uptime_calculate.AggregationResponse, error) {
 	fromDate := req.GetFromDate().AsTime()
 	toDate := req.GetToDate().AsTime()
 
 	// check if fromDate is after toDate
 	if fromDate.After(toDate) {
 		log.Println("fromDate is after toDate")
-		return &uc_pb.AggregationResponse{
+		return &uptime_calculate.AggregationResponse{
 			IsSuccess: false,
 			FilePath:  "",
 		}, nil
@@ -37,14 +33,14 @@ func (s *UptimeCalculateServerImpl) RequestAggregation(ctx context.Context, req 
 	// Run Elasticsearch query
 	filePath, err := s.consumer.ES.AggregateUptimeServer(ES_INDEX_NAME, startDateOfFromDate, endDateOfToDate)
 	if err != nil {
-		return &uc_pb.AggregationResponse{
+		return &uptime_calculate.AggregationResponse{
 			IsSuccess: false,
 			FilePath:  "",
 		}, err
 	}
 
 	// Process and return the response
-	response := &uc_pb.AggregationResponse{
+	response := &uptime_calculate.AggregationResponse{
 		// Populate the response with esResult data
 		IsSuccess: true,
 		FilePath:  filePath,

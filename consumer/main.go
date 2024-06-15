@@ -95,11 +95,12 @@ func main() {
 		panic("Failed to validate health check")
 	}
 	c.SetDebugMode(true)
+	// ######## start the health check
+	go c.StartConsumer()
+
+	//################# GRPC SERVER #################
 	// Create UpTimeCalculateServer
 	ucServer := &UptimeCalculateServerImpl{consumer: c}
-
-	// start the health check
-	go c.StartConsumer()
 
 	// start the gRPC server
 	grpcPort = os.Getenv("GRPC_PORT")
@@ -116,7 +117,7 @@ func main() {
 		panic(err)
 	}
 	uptime_calculate.RegisterUptimeCalculateServer(grpcServer, ucServer)
-	log.Printf("Server listening at %s", lis.Addr().String())
+	log.Printf("Consumer GRPC Server listening at %s", lis.Addr().String())
 	if err := grpcServer.Serve(lis); err != nil {
 		panic(err)
 	}

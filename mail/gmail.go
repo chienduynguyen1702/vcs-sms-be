@@ -43,6 +43,7 @@ func (m *GmailService) SendEmail(filePath string, toMail string) error {
 	if err := m.Dialer.DialAndSend(msg); err != nil {
 		return err
 	}
+
 	return nil
 }
 

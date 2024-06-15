@@ -20,4 +20,4 @@ COPY . .
 # EXPOSE 8080
 
 # Run the Go application by go run command
-CMD ["go", "run", "main.go", "mail.go", "gmail.go"]
+CMD ["go", "run", "main.go", "mail.go", "gmail.go","grpc.go"]
