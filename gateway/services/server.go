@@ -1,13 +1,19 @@
 package services
 
 import (
+	"context"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/chienduynguyen1702/vcs-sms-be/dtos"
 	"github.com/chienduynguyen1702/vcs-sms-be/models"
+	"github.com/chienduynguyen1702/vcs-sms-be/proto/send_mail"
 	"github.com/chienduynguyen1702/vcs-sms-be/repositories"
 	"github.com/chienduynguyen1702/vcs-sms-be/utilities"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type IServerService interface {
@@ -16,11 +22,28 @@ type IServerService interface {
 }
 
 type ServerService struct {
-	serverRepo *repositories.ServerRepository
+	serverRepo        *repositories.ServerRepository
+	mailServiceClient send_mail.SendMailClient
 }
 
-func NewServerService(serverRepo *repositories.ServerRepository) *ServerService {
-	return &ServerService{serverRepo: serverRepo}
+func InitMailServiceClient(mailServiceAddress string) send_mail.SendMailClient {
+	insecureCreds := insecure.NewCredentials()
+	cc, err := grpc.NewClient(mailServiceAddress, grpc.WithTransportCredentials(insecureCreds))
+	if err != nil {
+		log.Println("Failed to create Client Con to Consumer server", err)
+		panic(err)
+	}
+	mailServiceClient := send_mail.NewSendMailClient(cc)
+	log.Println("Mail service client created")
+	return mailServiceClient
+}
+
+func NewServerService(serverRepo *repositories.ServerRepository, mailServiceAddress string) *ServerService {
+	mailServiceClient := InitMailServiceClient(mailServiceAddress)
+	return &ServerService{
+		serverRepo:        serverRepo,
+		mailServiceClient: mailServiceClient,
+	}
 }
 
 func (ss *ServerService) CreateServer(server *dtos.CreateServerRequest, orgIDString string) error {
@@ -207,4 +230,39 @@ func (ss *ServerService) FlushCache() error {
 	// fmt.Println("flush cache in ServerService")
 
 	return ss.serverRepo.FlushCache()
+}
+
+func (s *ServerService) SendReportByMail(mailRequestHTTP *dtos.SendMailRequest) error {
+	// convert to grpc request
+	layoutDate := "2006-01-02"
+	var err error
+	fromDate, err := time.Parse(layoutDate, mailRequestHTTP.From)
+	if err != nil {
+		log.Println("Failed to parse from date", err)
+		return err
+	}
+
+	toDate, err := time.Parse(layoutDate, mailRequestHTTP.To)
+	if err != nil {
+		log.Println("Failed to parse to date", err)
+		return err
+	}
+	// convert time.Time to *timestamppb.Timestamp
+	fromDateTimestamp := timestamppb.New(fromDate)
+	toDateTimestamp := timestamppb.New(toDate)
+
+	mailReqGRPC := send_mail.MailRequest{
+		MailReceiver: mailRequestHTTP.Mail,
+		FromDate:     fromDateTimestamp,
+		ToDate:       toDateTimestamp,
+	}
+	mailResGRPC, err := s.mailServiceClient.DoSendMail(context.Background(), &mailReqGRPC)
+	if err != nil {
+		return err
+	}
+	if !mailResGRPC.IsSuccess {
+		return fmt.Errorf("Failed to send mail")
+	}
+	log.Println("Mail sent successfully", mailResGRPC)
+	return nil
 }

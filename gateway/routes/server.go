@@ -21,4 +21,6 @@ func setupGroupServer(rg *gin.RouterGroup) {
 
 	rg.GET("/servers/download-template", middleware.RequiredAuth, serverController.DownloadTemplate)
 	rg.POST("/servers/upload", middleware.RequiredAuth, serverController.UploadServerList, serverController.FlushCache)
+
+	rg.POST("/servers/send-report", middleware.RequiredAuth, serverController.SendReportByMail)
 }

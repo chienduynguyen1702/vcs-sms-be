@@ -29,12 +29,16 @@ type AppFactory struct {
 
 	roleRepository *repositories.RoleRepository
 	roleRepoInit   sync.Once
+
+	mailServiceAddress string
 }
 
-func NewAppFactory(db *gorm.DB, redisClient *redis.Client) *AppFactory {
+func NewAppFactory(db *gorm.DB, redisClient *redis.Client, mailServiceAddress string) *AppFactory {
 	return &AppFactory{
 		db:          db,
 		redisClient: redisClient,
+
+		mailServiceAddress: mailServiceAddress,
 	}
 }
 

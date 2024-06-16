@@ -318,3 +318,28 @@ func (sc *ServerController) FlushCache(ctx *gin.Context) {
 	// fmt.Println("flush cache in controller")
 	sc.serverService.FlushCache()
 }
+
+// SendReportByMail godoc
+// @Summary Send report by mail
+// @Description Send report by mail
+// @Tags Server
+// @Accept  json
+// @Produce  json
+// @Param SendMailRequest body dtos.SendMailRequest true "Send Report by Mail Request Date is YYYY-MM-DD"
+// @Success 200 {object} string
+// @Router /api/v1/servers/send-report [post]
+func (sc *ServerController) SendReportByMail(ctx *gin.Context) {
+	sendMailRequest := &dtos.SendMailRequest{}
+	if err := ctx.ShouldBindJSON(sendMailRequest); err != nil {
+		ctx.JSON(http.StatusBadRequest, dtos.ErrorResponse(err.Error()))
+		return
+	}
+
+	err := sc.serverService.SendReportByMail(sendMailRequest)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, dtos.ErrorResponse(err.Error()))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, dtos.SuccessResponse("Send report by mail successfully", nil))
+}

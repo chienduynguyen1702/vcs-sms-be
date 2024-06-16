@@ -49,6 +49,17 @@ definitions:
     - password
     - password_confirm
     type: object
+  dtos.SendMailRequest:
+    properties:
+      from:
+        description: from date
+        type: string
+      mail:
+        type: string
+      to:
+        description: to date
+        type: string
+    type: object
   dtos.UpdateOrganizationRequest:
     properties:
       address:
@@ -408,6 +419,28 @@ paths:
           schema:
             type: string
       summary: Download template
+      tags:
+      - Server
+  /api/v1/servers/send-report:
+    post:
+      consumes:
+      - application/json
+      description: Send report by mail
+      parameters:
+      - description: Send Report by Mail Request Date is YYYY-MM-DD
+        in: body
+        name: SendMailRequest
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.SendMailRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Send report by mail
       tags:
       - Server
   /api/v1/servers/upload:

@@ -322,6 +322,40 @@
                 }
             }
         },
+        "/api/v1/servers/send-report": {
+            "post": {
+                "description": "Send report by mail",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Server"
+                ],
+                "summary": "Send report by mail",
+                "parameters": [
+                    {
+                        "description": "Send Report by Mail Request Date is YYYY-MM-DD",
+                        "name": "SendMailRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.SendMailRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/servers/upload": {
             "post": {
                 "description": "Upload server list from client .xlsx file",
@@ -824,6 +858,22 @@
                     "type": "string"
                 },
                 "password_confirm": {
+                    "type": "string"
+                }
+            }
+        },
+        "dtos.SendMailRequest": {
+            "type": "object",
+            "properties": {
+                "from": {
+                    "description": "from date",
+                    "type": "string"
+                },
+                "mail": {
+                    "type": "string"
+                },
+                "to": {
+                    "description": "to date",
                     "type": "string"
                 }
             }

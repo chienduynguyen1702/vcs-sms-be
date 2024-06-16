@@ -43,7 +43,16 @@ func init() {
 	if os.Getenv("GIN_MODE") == "release" {
 		gin.SetMode(gin.ReleaseMode)
 	}
-	factory.AppFactoryInstance = factory.NewAppFactory(db, redisClient)
+
+	// Get MailServiceAddress
+	var mailServiceAddress string
+	mailServiceAddress = os.Getenv("MAIL_SERVICE_ADDRESS")
+	if mailServiceAddress == "" {
+		log.Fatal("MAIL_SERVICE_ADDRESS is empty. Set default value for MAIL_SERVICE_ADDRESS: mail:50052")
+		mailServiceAddress = "mail:50052"
+	}
+
+	factory.AppFactoryInstance = factory.NewAppFactory(db, redisClient, mailServiceAddress)
 }
 
 // @Security ApiKeyAuth
