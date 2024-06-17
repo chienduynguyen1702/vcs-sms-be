@@ -75,7 +75,7 @@ services:
   health-check:
     build:
       context: ./health-check
-      dockerfile: dev.Dockerfile
+      dockerfile: Dockerfile
     container_name: vcs-sms-health-check
     env_file:
       - ./health-check/.env.container
