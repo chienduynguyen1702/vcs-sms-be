@@ -23,4 +23,6 @@ func setupGroupServer(rg *gin.RouterGroup) {
 	rg.POST("/servers/upload", middleware.RequiredAuth, serverController.UploadServerList, serverController.FlushCache)
 
 	rg.POST("/servers/send-report", middleware.RequiredAuth, serverController.SendReportByMail)
+
+	rg.POST("/servers/flush-cache", serverController.FlushCache)
 }

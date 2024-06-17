@@ -14,21 +14,8 @@ RUN go mod download
 # Copy the rest of the application source code
 COPY . .
 
-# Build the Go application
-RUN go build -v -o ./main
-
-# Start a new stage from scratch
-FROM alpine:latest  
-
-# Set the working directory inside the container
-WORKDIR /root/
-
-# Copy the binary from the builder stage to the current stage
-COPY --from=builder /app/main ./main
-COPY ./files/server_list_template.xlsx ./files/server_list_template.xlsx
-
 # Expose port 8080 to the outside world
 EXPOSE 8080
 
 # Command to run the executable
-CMD ["/root/main"]
+CMD ["go","run","main.go"]

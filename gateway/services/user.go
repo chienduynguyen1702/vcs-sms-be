@@ -6,6 +6,7 @@ import (
 	"github.com/chienduynguyen1702/vcs-sms-be/dtos"
 	"github.com/chienduynguyen1702/vcs-sms-be/models"
 	"github.com/chienduynguyen1702/vcs-sms-be/repositories"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type IUserService interface {
@@ -54,10 +55,17 @@ func (us *UserService) CreateUser(user *dtos.CreateUserRequest, adminID string) 
 
 	findingRoleID = findingRole.ID
 
+	// Hash password
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return fmt.Errorf("Failed to hash password")
+	}
+	// stringlify
+	hashedPasswordStr := string(hashedPassword)
 	// set organizationID for new user
 	newUser := &models.User{
 		Email:               user.Email,
-		Password:            user.Password,
+		Password:            hashedPasswordStr,
 		Username:            user.Username,
 		OrganizationID:      orgID,
 		Phone:               user.Phone,
@@ -111,6 +119,14 @@ func (us *UserService) UpdateUser(userBodyRequest dtos.UpdateUserRequest, userID
 		return fmt.Errorf("role not found")
 	}
 
+	// Hash password
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userBodyRequest.ConfirmPassword), bcrypt.DefaultCost)
+	if err != nil {
+		return fmt.Errorf("Failed to hash password")
+	}
+	// stringlify
+	hashedPasswordStr := string(hashedPassword)
+
 	findingRoleID = findingRole.ID
 	user.Email = userBodyRequest.Email
 	user.Username = userBodyRequest.Username
@@ -118,7 +134,7 @@ func (us *UserService) UpdateUser(userBodyRequest dtos.UpdateUserRequest, userID
 	user.Phone = userBodyRequest.Phone
 	// user.IsOrganizationAdmin = userBodyRequest.IsOrganizationAdmin
 	user.RoleID = findingRoleID
-	user.Password = userBodyRequest.ConfirmPassword
+	user.Password = hashedPasswordStr
 
 	return us.userRepo.UpdateUser(user)
 }

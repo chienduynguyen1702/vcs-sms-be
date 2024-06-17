@@ -67,6 +67,7 @@ func (ss *ServerService) CreateServer(server *dtos.CreateServerRequest, orgIDStr
 		IP:             server.IP,
 		OrganizationID: orgID,
 		Description:    server.Description,
+		Status:         server.Status,
 	}
 	return ss.serverRepo.CreateServer(newServer)
 }
@@ -233,8 +234,8 @@ func (ss *ServerService) FlushCache() error {
 }
 
 func (s *ServerService) SendReportByMail(mailRequestHTTP *dtos.SendMailRequest) error {
-	// convert to grpc request
-	layoutDate := "2006-01-02"
+	// convert to grpc request YYYY-MM-DDThh:mm:ss.000Z"
+	layoutDate := time.RFC3339
 	var err error
 	fromDate, err := time.Parse(layoutDate, mailRequestHTTP.From)
 	if err != nil {

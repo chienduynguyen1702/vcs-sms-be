@@ -61,6 +61,7 @@ type CreateServerRequest struct {
 	Name        string `json:"name"`
 	IP          string `json:"ip"`
 	Description string `json:"description"`
+	Status      string `json:"status"`
 }
 
 type UpdateServerRequest struct {

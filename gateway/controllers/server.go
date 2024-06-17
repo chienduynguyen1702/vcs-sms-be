@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 
@@ -289,13 +290,21 @@ func (sc *ServerController) UploadServerList(ctx *gin.Context) {
 	}
 	var serverList []dtos.CreateServerRequest
 	for i, row := range rows {
+		log.Println("row", row)
 		if i == 0 {
 			continue
+		}
+		des := ""
+		if len(row) < 3 {
+			des = ""
+		} else {
+			des = row[2]
 		}
 		server := dtos.CreateServerRequest{
 			IP:          row[0],
 			Name:        row[1],
-			Description: row[2],
+			Description: des,
+			Status:      "Unknown",
 		}
 		serverList = append(serverList, server)
 	}
@@ -325,7 +334,7 @@ func (sc *ServerController) FlushCache(ctx *gin.Context) {
 // @Tags Server
 // @Accept  json
 // @Produce  json
-// @Param SendMailRequest body dtos.SendMailRequest true "Send Report by Mail Request Date is YYYY-MM-DD"
+// @Param SendMailRequest body dtos.SendMailRequest true "Send Report by Mail Request Date is YYYY-MM-DDThh:mm:ss.000Z"
 // @Success 200 {object} string
 // @Router /api/v1/servers/send-report [post]
 func (sc *ServerController) SendReportByMail(ctx *gin.Context) {

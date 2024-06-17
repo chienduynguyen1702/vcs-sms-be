@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/chienduynguyen1702/vcs-sms-be/dtos"
@@ -32,6 +33,7 @@ func (uc *UserController) CreateUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, dtos.ErrorResponse(err.Error()))
 		return
 	}
+	log.Println(newUser)
 	adminID, exist := ctx.Get("userID")
 	if !exist {
 		ctx.JSON(http.StatusUnauthorized, dtos.ErrorResponse("Unauthorized"))
