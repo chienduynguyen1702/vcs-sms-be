@@ -15,6 +15,8 @@ import (
 	"gorm.io/gorm"
 )
 
+const MAXIMUM_CHANNELS = 100
+
 type HealthCheck struct {
 	DB          *gorm.DB
 	KafkaWriter *kafka.Writer
@@ -37,6 +39,11 @@ func InitHealthCheckInstance() *HealthCheck {
 // SetPingInterval is a method that sets the ping interval
 func (h *HealthCheck) SetPingInterval(interval int) {
 	h.PingInterval = interval
+}
+
+// SetDebug is a method that sets the debug mode
+func (h *HealthCheck) SetDebugMode(debug bool) {
+	h.Debug = debug
 }
 
 // Validate is a method that validates the HealthCheck struct
@@ -202,18 +209,32 @@ func (h *HealthCheck) GetServer(id int) (Server, error) {
 
 // This method pings all the servers then push results to kafka
 func (h *HealthCheck) PingServers(ListServers []Server) {
-	// create go routines to ping servers and wait group
 
+	// Create a buffered channel with capacity of MAXIMUM_CHANNELS
+	channel := make(chan Server, MAXIMUM_CHANNELS)
+
+	// create go routines to ping servers and wait group
 	wg := sync.WaitGroup{}
-	for i := range ListServers {
-		// ping each server
-		wg.Add(1)
-		go func(i int) {
-			defer wg.Done()
-			h.Ping(&ListServers[i])
-		}(i)
-		time.Sleep(time.Duration(h.PingInterval) * time.Millisecond)
+	// Function to process pinging each server
+	pingServer := func(s Server) {
+		defer wg.Done()
+		h.Ping(&s) // Assuming Ping method is defined on HealthCheck
 	}
+
+	// Start a goroutine to receive from the channel and ping servers
+	go func() {
+		for s := range channel {
+			wg.Add(1)
+			go pingServer(s)
+		}
+	}()
+
+	// Send servers to the channel
+	for _, srv := range ListServers {
+		channel <- srv
+	}
+	close(channel)
+
 	wg.Wait()
 }
 

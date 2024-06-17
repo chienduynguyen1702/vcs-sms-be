@@ -15,6 +15,7 @@ var ctx = context.Background()
 var initkafkaWriter *kafka.Writer
 var err error
 var interval int
+var HealthCheckDebugMode bool
 
 func init() {
 	if os.Getenv("LOAD_ENV_FILE") != "true" {
@@ -44,6 +45,12 @@ func init() {
 	if err != nil {
 		log.Println("Failed to parse interval:", err)
 	}
+
+	HealthCheckDebugMode, err = strconv.ParseBool(os.Getenv("HEALTH_CHECK_DEBUG_MODE"))
+	if err != nil {
+		log.Println("Failed to parse debug mode:", err, "setting debug mode to false")
+		HealthCheckDebugMode = false
+	}
 }
 
 // ################ main function ################
@@ -65,6 +72,9 @@ func main() {
 	}
 	// set ping interval
 	h.SetPingInterval(interval)
+
+	// Set debug mode
+	h.SetDebugMode(HealthCheckDebugMode)
 
 	// validate the health check
 	if !h.Validate() {
