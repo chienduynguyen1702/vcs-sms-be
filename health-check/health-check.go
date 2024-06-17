@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"net/http"
 	"os/exec"
 	"strings"
 	"sync"
@@ -24,6 +25,8 @@ type HealthCheck struct {
 	// PingInterval is the interval between pings, default is 300s
 	PingInterval int
 	Debug        bool
+
+	GateWayAPIEndpoint string
 }
 
 // Init is a method that initializes the HealthCheck
@@ -44,6 +47,11 @@ func (h *HealthCheck) SetPingInterval(interval int) {
 // SetDebug is a method that sets the debug mode
 func (h *HealthCheck) SetDebugMode(debug bool) {
 	h.Debug = debug
+}
+
+// SetGatewayAPIEndpoint is a method that sets the gateway API endpoint
+func (h *HealthCheck) SetGatewayAPIEndpoint(endpoint string) {
+	h.GateWayAPIEndpoint = endpoint
 }
 
 // Validate is a method that validates the HealthCheck struct
@@ -82,6 +90,11 @@ func (h *HealthCheck) printValue() {
 		fmt.Println("| Debug        | Disabled  |")
 	}
 	fmt.Printf("| PingInterval | %8ds |\n", h.PingInterval)
+	if h.GateWayAPIEndpoint != "" {
+		fmt.Printf("| GatewayAPI   | %s \n", h.GateWayAPIEndpoint)
+	} else {
+		fmt.Println("| GatewayAPI   | Not yet   ")
+	}
 	fmt.Println("----------------------------")
 	fmt.Println("")
 }
@@ -98,14 +111,17 @@ func (h *HealthCheck) StartHealthCheck() {
 		if err != nil {
 			log.Println("Failed to get servers")
 		}
-
+		// create go routines to ping servers and wait group
+		wg := &sync.WaitGroup{}
 		// ping servers
-		h.PingServers(servers)
+		h.PingServers(servers, wg)
+		wg.Wait()
 
 		fmt.Println("")
 		h.SaveServers(servers)
-		fmt.Println(" ========== Finish health check ")
+		h.CallFlushCache(h.GateWayAPIEndpoint)
 
+		fmt.Println(" ========== Finish health check ")
 		// sleep interval time before pinging again
 		time.Sleep(time.Duration(h.PingInterval) * time.Second)
 	}
@@ -189,8 +205,8 @@ func (h *HealthCheck) CloseDB() {
 }
 
 // GetServers is a method that gets all the servers
-func (h *HealthCheck) GetServers() ([]Server, error) {
-	var servers []Server
+func (h *HealthCheck) GetServers() ([]*Server, error) {
+	var servers []*Server
 
 	err := h.DB.Table("servers").Find(&servers)
 	if err.Error != nil {
@@ -208,38 +224,65 @@ func (h *HealthCheck) GetServer(id int) (Server, error) {
 }
 
 // This method pings all the servers then push results to kafka
-func (h *HealthCheck) PingServers(ListServers []Server) {
+func (h *HealthCheck) PingServers(ListServers []*Server, wg *sync.WaitGroup) {
 
 	// Create a buffered channel with capacity of MAXIMUM_CHANNELS
-	channel := make(chan Server, MAXIMUM_CHANNELS)
+	channel := make(chan *Server, MAXIMUM_CHANNELS)
 
-	// create go routines to ping servers and wait group
-	wg := sync.WaitGroup{}
 	// Function to process pinging each server
-	pingServer := func(s Server) {
-		defer wg.Done()
-		h.Ping(&s) // Assuming Ping method is defined on HealthCheck
+	pingServer := func(s *Server, wg *sync.WaitGroup) {
+		err := h.Ping(s) // Assuming Ping method is defined on HealthCheck
+		if err != nil {
+			log.Println("Failed to ping server", s.IP, ":", err)
+		}
+		wg.Done()
 	}
 
 	// Start a goroutine to receive from the channel and ping servers
 	go func() {
 		for s := range channel {
-			wg.Add(1)
-			go pingServer(s)
+			go pingServer(s, wg)
 		}
 	}()
 
 	// Send servers to the channel
 	for _, srv := range ListServers {
+		wg.Add(1)
 		channel <- srv
 	}
 	close(channel)
 
-	wg.Wait()
+	// Wait for all pings to complete
+	// wg.Wait()
+}
+
+func (h *HealthCheck) CallFlushCache(endpoint string) {
+	// call api POST http://gateway:8080/api/v1/servers/flush-cache
+	// using http client
+	client := &http.Client{}
+	req, err := http.NewRequest("POST", endpoint, nil)
+	if err != nil {
+		log.Println("Failed to create request:", err)
+		return
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Println("Failed to send request:", err)
+		return
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		log.Println("Failed to flush cache, status code:", resp.StatusCode)
+	}
+	defer resp.Body.Close()
+
+	log.Println("Flush cache successfully")
 }
 
 // Save servers to database using transaction
-func (h *HealthCheck) SaveServers(servers []Server) {
+func (h *HealthCheck) SaveServers(servers []*Server) {
+	fmt.Println(" ==> Start save server to db")
 	tx := h.DB.Begin()
 	for index, server := range servers {
 		// creata a save point
@@ -257,7 +300,7 @@ func (h *HealthCheck) SaveServers(servers []Server) {
 }
 
 // This method pings all the servers then push results to kafka
-func (h *HealthCheck) Ping(server *Server) {
+func (h *HealthCheck) Ping(server *Server) error {
 	// // ping server [REAL]
 	// if h.ping(server) {
 	// 	server.Status = "alive"
@@ -281,8 +324,9 @@ func (h *HealthCheck) Ping(server *Server) {
 	err := h.WriteMessageToKafka(messageKafka)
 	if err != nil {
 		log.Println("Failed to write message to kafka:", err)
+		return err
 	}
-
+	return nil
 }
 
 // generate a fake ping 95% is alive

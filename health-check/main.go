@@ -16,6 +16,7 @@ var initkafkaWriter *kafka.Writer
 var err error
 var interval int
 var HealthCheckDebugMode bool
+var GateWayFlushCachingServerAPIEndpoint string
 
 func init() {
 	if os.Getenv("LOAD_ENV_FILE") != "true" {
@@ -51,6 +52,11 @@ func init() {
 		log.Println("Failed to parse debug mode:", err, "setting debug mode to false")
 		HealthCheckDebugMode = false
 	}
+	GateWayFlushCachingServerAPIEndpoint = os.Getenv("GATEWAY_FLUSH_CACHING_SERVER_API_ENDPOINT")
+	if GateWayFlushCachingServerAPIEndpoint == "" {
+		log.Println("Failed to get Gateway API endpoint, setting to default")
+		GateWayFlushCachingServerAPIEndpoint = "http://gateway:8080/api/v1/servers/flush-cache"
+	}
 }
 
 // ################ main function ################
@@ -75,6 +81,9 @@ func main() {
 
 	// Set debug mode
 	h.SetDebugMode(HealthCheckDebugMode)
+
+	// Set Gateway API endpoint
+	h.SetGatewayAPIEndpoint(GateWayFlushCachingServerAPIEndpoint)
 
 	// validate the health check
 	if !h.Validate() {
