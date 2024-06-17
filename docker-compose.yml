@@ -1,6 +1,21 @@
 # version: '3'
 
 services:
+  gate-way:
+    build:
+      context: ./gateway
+      dockerfile: docker/Dockerfile
+    container_name: vcs-sms-gate-way
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./gateway/.env.container
+    restart: always
+    volumes:
+      - "report-file-volume:/reports"
+    networks:
+      - vcs-sms-checkpoint
+
   postgres:
     image: postgres:12-alpine
     container_name: vcs-sms-db
@@ -104,7 +119,7 @@ services:
     ports:
       - "50051:50051"
     volumes:
-      - report-file-volume:/reports
+      - "report-file-volume:/reports"
     env_file:
       - ./consumer/.env.container
     restart: always
@@ -122,7 +137,7 @@ services:
     ports:
       - "50052:50052"
     volumes:
-      - report-file-volume:/reports
+      - "report-file-volume:/reports"
     env_file:
       - ./mail/.env.container
     networks:
@@ -159,9 +174,9 @@ volumes:
   report-file-volume:
     driver: local
     driver_opts:
-      type: none
-      device: ${PWD}/reports
-      o: bind
+      type: "none"
+      device: "./reports"
+      o: "bind"
 
 
 
