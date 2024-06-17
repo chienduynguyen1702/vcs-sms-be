@@ -11,6 +11,10 @@ services:
     env_file:
       - ./gateway/.env.container
     restart: always
+    depends_on:
+      - postgres
+      - redis
+      - kafka
     volumes:
       - "report-file-volume:/reports"
     networks:
@@ -124,7 +128,6 @@ services:
       - ./consumer/.env.container
     restart: always
     depends_on:
-      - health-check
       - kafka
     networks:
       - vcs-sms-checkpoint
