@@ -73,9 +73,13 @@ services:
       - vcs-sms-checkpoint
 
   health-check:
+    dns:
+    - 8.8.8.8
     build:
       context: ./health-check
       dockerfile: Dockerfile
+    ports:
+      - "9999:9999"
     container_name: vcs-sms-health-check
     env_file:
       - ./health-check/.env.container
