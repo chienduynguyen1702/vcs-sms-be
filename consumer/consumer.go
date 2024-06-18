@@ -1,11 +1,14 @@
 package main
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	uc_pb "vcs-sms-consumer/proto/uptime_calculate"
 
+	"github.com/elastic/go-elasticsearch/esapi"
 	"github.com/segmentio/kafka-go"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -82,6 +85,9 @@ func (c *Consumer) StartConsumer() {
 	fmt.Println("")
 	fmt.Println(" ========== Starting Consumer ==========")
 	fmt.Println("")
+	// Buffer to store messages
+	var messages []Server
+	batchSize := 10000
 	for {
 
 		// get 00h00m00s today and 23h59m59s today
@@ -93,23 +99,62 @@ func (c *Consumer) StartConsumer() {
 		m, err := c.KafkaReader.ReadMessage(ctx)
 		if err != nil {
 			log.Println("Failed to read message from kafka:", err)
+			continue
 		}
-		// fmt.Printf("message at topic/partition/offset %v/%v/%v: %s = %s\n", m.Topic, m.Partition, m.Offset, string(m.Key), string(m.Value))
-		// json unmarshall message to server struct
+
 		server := Server{}
 		err = server.UnmarshalJSON(m.Value)
 		if err != nil {
 			log.Println("Failed to unmarshal message from kafka:", err)
+			continue
 		}
+
 		if c.Debug {
 			server.PrintResult()
 		}
-		// insert status to elasticsearch
-		err = c.ES.IndexServer(ES_INDEX_NAME, server)
-		if err != nil {
-			log.Println("Failed to index server to elasticsearch:", err)
+
+		messages = append(messages, server)
+
+		if len(messages) >= batchSize {
+			err = c.bulkIndexToES(messages)
+			if err != nil {
+				log.Println("Failed to bulk index servers to elasticsearch:", err)
+			}
+			// Clear the messages slice after bulk indexing
+			messages = messages[:0]
 		}
 	}
+}
+
+func (c *Consumer) bulkIndexToES(servers []Server) error {
+	var buf bytes.Buffer
+
+	for _, server := range servers {
+		meta := []byte(fmt.Sprintf(`{ "index" : { "_index" : "%s" } }%s`, ES_INDEX_NAME, "\n"))
+		data, err := json.Marshal(server)
+		if err != nil {
+			return fmt.Errorf("failed to marshal server to JSON: %w", err)
+		}
+		buf.Write(meta)
+		buf.Write(data)
+		buf.WriteString("\n")
+	}
+
+	req := esapi.BulkRequest{
+		Body: bytes.NewReader(buf.Bytes()),
+	}
+
+	res, err := req.Do(context.Background(), c.ES.TypedClient)
+	if err != nil {
+		return fmt.Errorf("failed to execute bulk request: %w", err)
+	}
+	defer res.Body.Close()
+
+	if res.IsError() {
+		return fmt.Errorf("bulk request returned error: %s", res.Status())
+	}
+
+	return nil
 }
 
 // use db to connect to database

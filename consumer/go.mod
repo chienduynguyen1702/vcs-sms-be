@@ -3,6 +3,7 @@ module vcs-sms-consumer
 go 1.22.2
 
 require (
+	github.com/elastic/go-elasticsearch v0.0.0
 	github.com/elastic/go-elasticsearch/v8 v8.14.0
 	github.com/golang/protobuf v1.5.4
 	github.com/joho/godotenv v1.5.1

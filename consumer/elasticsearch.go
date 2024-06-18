@@ -115,6 +115,35 @@ func (c *ConsumerESClient) IndexServer(indexName string, server Server) error {
 	return nil
 }
 
+// BulkIndexServers indexes a batch of servers in elasticsearch
+// func (c *ConsumerESClient) BulkIndexServers(indexName string, servers []Server) error {
+// 	var bulkRequest []byte
+// 	for _, server := range servers {
+// 		// Create bulk request body
+// 		meta := []byte(fmt.Sprintf(`{ "index" : { "_index" : "%s" } }%s`, ES_INDEX_NAME, "\n"))
+// 		data, err := json.Marshal(server)
+// 		if err != nil {
+// 			return fmt.Errorf("failed to marshal server to JSON: %w", err)
+// 		}
+// 		bulkRequest = append(bulkRequest, meta...)
+// 		bulkRequest = append(bulkRequest, data...)
+// 		bulkRequest = append(bulkRequest, "\n"...)
+// 	}
+
+// 	// Perform bulk indexing
+// 	err := c.TypedClient.API.Bulk(bytes.NewReader(bulkRequest))
+// 	if err != nil {
+// 		return fmt.Errorf("failed to execute bulk request: %w", err)
+// 	}
+// 	defer res.Body.Close()
+
+// 	if res.IsError() {
+// 		return fmt.Errorf("bulk request returned error: %s", res.Status())
+// 	}
+
+// 	return nil
+// }
+
 func (c *ConsumerESClient) AggregateUptimeServer(indexName string, startTime, toTime time.Time) (string, error) {
 	// build query
 	agg := c.aggregationUptimeServerBuilder(startTime, toTime)
