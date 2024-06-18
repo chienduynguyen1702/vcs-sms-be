@@ -4,6 +4,10 @@ FROM golang:latest
 # Set the working directory inside the container
 WORKDIR /app
 
+# install ping command
+RUN apt-get update -y
+RUN apt-get install -y iputils-ping
+
 # Copy the Go module files
 COPY go.mod go.sum ./
 

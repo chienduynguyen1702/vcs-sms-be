@@ -16,7 +16,10 @@ import (
 	"gorm.io/gorm"
 )
 
-const MAXIMUM_CHANNELS = 100
+const (
+	MAXIMUM_CHANNELS = 100
+	PING_TIMEOUT     = 5
+)
 
 type HealthCheck struct {
 	DB          *gorm.DB
@@ -103,6 +106,7 @@ func (h *HealthCheck) printValue() {
 func (h *HealthCheck) StartHealthCheck() {
 	fmt.Println("")
 	for {
+		startTime := time.Now()
 		fmt.Println("")
 		fmt.Println(" ========== Starting health check ")
 		fmt.Println("")
@@ -120,8 +124,10 @@ func (h *HealthCheck) StartHealthCheck() {
 		fmt.Println("")
 		h.SaveServers(servers)
 		h.CallFlushCache(h.GateWayAPIEndpoint)
-
+		endTime := time.Now()
 		fmt.Println(" ========== Finish health check ")
+		// print time as seconds
+		fmt.Println(" ========== Time taken: ", endTime.Sub(startTime).Seconds(), "s")
 		// sleep interval time before pinging again
 		time.Sleep(time.Duration(h.PingInterval) * time.Second)
 	}
@@ -340,17 +346,23 @@ func (h *HealthCheck) fakePing() bool {
 }
 
 func (h *HealthCheck) ping(server *Server) bool {
-	attempt := 0
-	// try 3 times attempt
-	for attempt < 3 {
-		out, _ := exec.Command("ping", server.IP, "-w 500").Output()
-		if strings.Contains(string(out), "bytes=") {
-			return true
-		}
-		attempt++
-	}
+	// fmt.Println("Ping server", server.IP)
+	// -w 3 is the timeout in 3 seconds
+	// -c 3 is the number of pings
+	// example command: ping 8.8.8.8 -c 3 -w 3
+	out, _ := exec.Command("ping", server.IP, "-c", "3", "-w", " 6").Output()
 
-	return false
+	// if the output contains "bytes=" then the server is online
+	// example output: "Reply from 8.8.8.8 bytes=32 time=1ms TTL=48"
+	// if strings.Contains(string(out), "100%") {
+	// 	fmt.Println("Ping server", server.IP, ": FAILED ", string(out))
+	// 	return false
+	// }
+
+	// fmt.Println("Ping server", server.IP, ": SUCCESS ", string(out))
+	// return true
+	return !strings.Contains(string(out), "100%") // if 100% packet loss, return false
+
 }
 
 // Write message to kafka
