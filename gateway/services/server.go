@@ -9,6 +9,7 @@ import (
 	"github.com/chienduynguyen1702/vcs-sms-be/dtos"
 	"github.com/chienduynguyen1702/vcs-sms-be/models"
 	"github.com/chienduynguyen1702/vcs-sms-be/proto/send_mail"
+	"github.com/chienduynguyen1702/vcs-sms-be/proto/uptime_calculate"
 	"github.com/chienduynguyen1702/vcs-sms-be/repositories"
 	"github.com/chienduynguyen1702/vcs-sms-be/utilities"
 	"google.golang.org/grpc"
@@ -22,8 +23,9 @@ type IServerService interface {
 }
 
 type ServerService struct {
-	serverRepo        *repositories.ServerRepository
-	mailServiceClient send_mail.SendMailClient
+	serverRepo          *repositories.ServerRepository
+	mailServiceClient   send_mail.SendMailClient
+	UptimeServiceClient uptime_calculate.UptimeCalculateClient
 }
 
 func InitMailServiceClient(mailServiceAddress string) send_mail.SendMailClient {
@@ -38,11 +40,26 @@ func InitMailServiceClient(mailServiceAddress string) send_mail.SendMailClient {
 	return mailServiceClient
 }
 
-func NewServerService(serverRepo *repositories.ServerRepository, mailServiceAddress string) *ServerService {
+func InitUptimeServiceClient(uptimeServiceAddress string) uptime_calculate.UptimeCalculateClient {
+	insecureCreds := insecure.NewCredentials()
+	cc, err := grpc.NewClient(uptimeServiceAddress, grpc.WithTransportCredentials(insecureCreds))
+	if err != nil {
+		log.Println("Failed to create Client Con to Consumer server", err)
+		panic(err)
+	}
+	UptimeServiceClient := uptime_calculate.NewUptimeCalculateClient(cc)
+	log.Println("Uptime service client created")
+	return UptimeServiceClient
+}
+
+func NewServerService(serverRepo *repositories.ServerRepository, mailServiceAddress, uptimeServiceAddress string) *ServerService {
 	mailServiceClient := InitMailServiceClient(mailServiceAddress)
+	UptimeServiceClient := InitUptimeServiceClient(uptimeServiceAddress)
+
 	return &ServerService{
-		serverRepo:        serverRepo,
-		mailServiceClient: mailServiceClient,
+		serverRepo:          serverRepo,
+		mailServiceClient:   mailServiceClient,
+		UptimeServiceClient: UptimeServiceClient,
 	}
 }
 
@@ -237,6 +254,12 @@ func (s *ServerService) SendReportByMail(mailRequestHTTP *dtos.SendMailRequest) 
 	// convert to grpc request YYYY-MM-DDThh:mm:ss.000Z"
 	layoutDate := time.RFC3339
 	var err error
+
+	count, onlineServer, offlineServer, apus, err := s.GetMailData(mailRequestHTTP.From, mailRequestHTTP.To)
+	if err != nil {
+		return err
+	}
+
 	fromDate, err := time.Parse(layoutDate, mailRequestHTTP.From)
 	if err != nil {
 		log.Println("Failed to parse from date", err)
@@ -248,22 +271,92 @@ func (s *ServerService) SendReportByMail(mailRequestHTTP *dtos.SendMailRequest) 
 		log.Println("Failed to parse to date", err)
 		return err
 	}
+
+	// debug
+	// fmt.Println("fromDate", fromDate)
+	// fmt.Println("toDate", toDate)
 	// convert time.Time to *timestamppb.Timestamp
 	fromDateTimestamp := timestamppb.New(fromDate)
 	toDateTimestamp := timestamppb.New(toDate)
 
+	// create mail request for mail service
 	mailReqGRPC := send_mail.MailRequest{
 		MailReceiver: mailRequestHTTP.Mail,
 		FromDate:     fromDateTimestamp,
 		ToDate:       toDateTimestamp,
+
+		TotalServer:                count,
+		NumberOfOnlineServer:       onlineServer,
+		NumberOfOfflineServer:      offlineServer,
+		AveragePercentUptimeServer: apus,
 	}
+	// call mail service to send mail
 	mailResGRPC, err := s.mailServiceClient.DoSendMail(context.Background(), &mailReqGRPC)
 	if err != nil {
-		return err
+		log.Println("Failed to send mail:", err)
+		return fmt.Errorf("Failed to send mail:", err)
 	}
 	if !mailResGRPC.IsSuccess {
-		return fmt.Errorf("Failed to send mail")
+		log.Println("Failed to send mail:", err)
+		return fmt.Errorf("Failed to send mail:", mailResGRPC.Message)
 	}
 	log.Println("Mail sent successfully", mailResGRPC)
 	return nil
+}
+
+func (s *ServerService) GetMailData(from, to string) (int64, int64, int64, float32, error) {
+
+	// debug
+	// fmt.Println("from", from)
+	// fmt.Println("to", to)
+	// convert to grpc request YYYY-MM-DDThh:mm:ss.000Z"
+	layoutDate := time.RFC3339
+	var err error
+	fromDate, err := time.Parse(layoutDate, from)
+	if err != nil {
+		log.Println("Failed to parse from date", err)
+		return 0, 0, 0, 0, err
+	}
+
+	toDate, err := time.Parse(layoutDate, to)
+	if err != nil {
+		log.Println("Failed to parse to date", err)
+		return 0, 0, 0, 0, err
+	}
+
+	// debug
+	// fmt.Println("fromDate", fromDate)
+	// fmt.Println("toDate", toDate)
+	// convert time.Time to *timestamppb.Timestamp
+	fromDateTimestamp := timestamppb.New(fromDate)
+	toDateTimestamp := timestamppb.New(toDate)
+
+	// Count server
+	count, err := s.serverRepo.CountServers()
+	if err != nil {
+		return 0, 0, 0, 0, err
+	}
+
+	// Get online and offline server
+	onlineServer, offlineServer, err := s.serverRepo.GetOnlineOfflineServer()
+	if err != nil {
+		return 0, 0, 0, 0, err
+	}
+
+	// call uptime service to get uptime average
+	aggReq := &uptime_calculate.AggregationRequest{
+		FromDate: fromDateTimestamp,
+		ToDate:   toDateTimestamp,
+	}
+	aggRes, err := s.UptimeServiceClient.RequestAggregation(context.Background(), aggReq)
+	if err != nil {
+		log.Println("Failed to get uptime average", err)
+		return 0, 0, 0, 0, fmt.Errorf("Failed to get uptime average", err)
+	}
+	if !aggRes.IsSuccess {
+		log.Println("Failed to get uptime average : aggRes Is not Success")
+		return 0, 0, 0, 0, fmt.Errorf("Failed to get uptime average: aggRes Is not Success")
+	}
+	apus := aggRes.AveragePercentUptimeServer
+	return count, onlineServer, offlineServer, apus, nil
 }

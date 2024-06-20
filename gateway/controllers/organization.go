@@ -44,21 +44,21 @@ func (oc *OrganizationController) GetOrganization(ctx *gin.Context) {
 // @Tags Organization
 // @Accept  json
 // @Produce  json
+// @Param id path int true "Org ID"
 // @Param UpdateOrganizationBodyRequest body dtos.UpdateOrganizationRequest true "Update Organization Request"
 // @Success 200 {object} string
-// @Router /api/v1/organizations/{orgID} [put]
+// @Router /api/v1/organizations/{id} [put]
 func (oc *OrganizationController) UpdateOrganization(ctx *gin.Context) {
-	orgID, exist := ctx.Get("orgID")
-	if !exist {
-		ctx.JSON(http.StatusUnauthorized, dtos.ErrorResponse("Failed to get organizationID in context"))
-		return
-	}
+
+	// get params from request
+	orgID := ctx.Param("id")
+
 	updateOrganizationRequest := &dtos.UpdateOrganizationRequest{}
 	if err := ctx.ShouldBindJSON(updateOrganizationRequest); err != nil {
 		ctx.JSON(http.StatusBadRequest, dtos.ErrorResponse(err.Error()))
 		return
 	}
-	updateOrgDToResponse, err := oc.organizationService.UpdateOrganization(updateOrganizationRequest, orgID.(string))
+	updateOrgDToResponse, err := oc.organizationService.UpdateOrganization(updateOrganizationRequest, orgID)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, dtos.ErrorResponse(err.Error()))
 		return

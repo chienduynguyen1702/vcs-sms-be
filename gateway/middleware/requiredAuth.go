@@ -40,6 +40,7 @@ func RequiredAuth(c *gin.Context) {
 		return
 	}
 	userInDB, err := repositories.UserRepo.GetUserByID(userID)
+	c.Set("user", userInDB)
 	if err != nil {
 		// log.Println("Failed to get user from DB")
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Failed to get user from DB"})

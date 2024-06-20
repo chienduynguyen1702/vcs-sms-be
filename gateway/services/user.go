@@ -132,7 +132,7 @@ func (us *UserService) UpdateUser(userBodyRequest dtos.UpdateUserRequest, userID
 	user.Username = userBodyRequest.Username
 	user.Name = userBodyRequest.Name
 	user.Phone = userBodyRequest.Phone
-	// user.IsOrganizationAdmin = userBodyRequest.IsOrganizationAdmin
+	user.IsOrganizationAdmin = userBodyRequest.IsOrganizationAdmin
 	user.RoleID = findingRoleID
 	user.Password = hashedPasswordStr
 

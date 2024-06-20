@@ -166,3 +166,14 @@ func (sr *ServerRepository) FlushCache() error {
 	}
 	return nil
 }
+
+func (sr *ServerRepository) GetOnlineOfflineServer() (int64, int64, error) {
+	var online, offline int64
+	if err := sr.db.Table("servers").Where("status = ?", "Online").Count(&online).Error; err != nil {
+		return 0, 0, err
+	}
+	if err := sr.db.Table("servers").Where("status = ?", "Offline").Count(&offline).Error; err != nil {
+		return 0, 0, err
+	}
+	return online, offline, nil
+}

@@ -10,5 +10,5 @@ func setupGroupOrganization(rg *gin.RouterGroup) {
 	organizationController := factory.AppFactoryInstance.CreateOrganizationController()
 
 	rg.GET("/organizations", middleware.RequiredAuth, organizationController.GetOrganization)
-	rg.PUT("/organizations/:id", middleware.RequiredAuth, organizationController.UpdateOrganization)
+	rg.PUT("/organizations/:id", middleware.RequiredAuth, middleware.RequiredIsAdmin, organizationController.UpdateOrganization)
 }

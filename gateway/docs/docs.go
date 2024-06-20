@@ -129,6 +129,29 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/mail-infor": {
+            "get": {
+                "description": "Get mail info to send",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Mail"
+                ],
+                "summary": "Get mail info to send",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/organizations/": {
             "get": {
                 "description": "Get organization",
@@ -152,7 +175,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/organizations/{orgID}": {
+        "/api/v1/organizations/{id}": {
             "put": {
                 "description": "Update organization",
                 "consumes": [
@@ -166,6 +189,13 @@ const docTemplate = `{
                 ],
                 "summary": "Update organization",
                 "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Org ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "description": "Update Organization Request",
                         "name": "UpdateOrganizationBodyRequest",
@@ -345,7 +375,7 @@ const docTemplate = `{
                 "summary": "Send report by mail",
                 "parameters": [
                     {
-                        "description": "Send Report by Mail Request Date is YYYY-MM-DD",
+                        "description": "Send Report by Mail Request Date is YYYY-MM-DDThh:mm:ss.000Z",
                         "name": "SendMailRequest",
                         "in": "body",
                         "required": true,
@@ -804,6 +834,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name": {
+                    "type": "string"
+                },
+                "status": {
                     "type": "string"
                 }
             }

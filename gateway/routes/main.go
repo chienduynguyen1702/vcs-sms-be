@@ -110,14 +110,15 @@ func SetupV1Router() *gin.Engine {
 		setupGroupAuth(v1)
 		setupGroupOrganization(v1)
 		setupGroupServer(v1)
+		setupGroupMail(v1)
 	}
 	if os.Getenv("GIN_MODE") == "release" {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
 	// Swagger setup
-	docs.SwaggerInfo.Title = "Parameter Store Backend API"
-	docs.SwaggerInfo.Description = "This is a simple API for Parameter Store Backend."
+	docs.SwaggerInfo.Title = "VCS-SMS API"
+	docs.SwaggerInfo.Description = "This is a simple API for VCS - Server Management System."
 	docs.SwaggerInfo.Version = "1.0"
 	if os.Getenv("ENVIRONMENT") == "dev" {
 		docs.SwaggerInfo.Host = "localhost:" + os.Getenv("PORT")

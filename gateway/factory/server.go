@@ -15,7 +15,7 @@ func (af *AppFactory) CreateServerRepository() *repositories.ServerRepository {
 
 func (af *AppFactory) CreateServerService() *services.ServerService {
 	serverRepository := af.CreateServerRepository()
-	return services.NewServerService(serverRepository, af.mailServiceAddress)
+	return services.NewServerService(serverRepository, af.mailServiceAddress, af.uptimeServiceAddress)
 }
 
 func (af *AppFactory) CreateServerController() *controllers.ServerController {

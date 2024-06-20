@@ -20,6 +20,19 @@ func (ur *UserRepository) CreateUser(user *models.User) error {
 	return ur.db.Create(user).Error
 }
 
+func (ur *UserRepository) CheckIfUserIsAdmin(userID uint) bool {
+	var user models.User
+	ur.db.Where("id = ?", userID).First(&user)
+	return user.RoleID == 1
+}
+
+func (ur *UserRepository) GetAdminUser() ([]models.User, error) {
+	var users []models.User
+	if err := ur.db.Where("role_id = ?", 1).Find(&users).Error; err != nil {
+		return nil, err
+	}
+	return users, nil
+}
 func (ur *UserRepository) GetUserByEmail(email string) *models.User {
 	var user models.User
 	ur.db.Where("email = ?", email).First(&user)
@@ -76,4 +89,12 @@ func (ur *UserRepository) GetUsersArchivedByOrganizationID(organizationID string
 		return nil, err
 	}
 	return users, nil
+}
+
+func (ur *UserRepository) FindAdminUser() (*[]models.User, error) {
+	var users []models.User
+	if err := ur.db.Where("role_id = ?", 1).Find(&users).Error; err != nil {
+		return nil, err
+	}
+	return &users, nil
 }

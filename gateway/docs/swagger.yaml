@@ -7,6 +7,8 @@ definitions:
         type: string
       name:
         type: string
+      status:
+        type: string
     type: object
   dtos.CreateUserRequest:
     properties:
@@ -181,6 +183,21 @@ paths:
       summary: Validate
       tags:
       - Authentication
+  /api/v1/mail-infor:
+    get:
+      consumes:
+      - application/json
+      description: Get mail info to send
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Get mail info to send
+      tags:
+      - Mail
   /api/v1/organizations/:
     get:
       consumes:
@@ -196,12 +213,17 @@ paths:
       summary: Get organization
       tags:
       - Organization
-  /api/v1/organizations/{orgID}:
+  /api/v1/organizations/{id}:
     put:
       consumes:
       - application/json
       description: Update organization
       parameters:
+      - description: Org ID
+        in: path
+        name: id
+        required: true
+        type: integer
       - description: Update Organization Request
         in: body
         name: UpdateOrganizationBodyRequest
@@ -427,7 +449,7 @@ paths:
       - application/json
       description: Send report by mail
       parameters:
-      - description: Send Report by Mail Request Date is YYYY-MM-DD
+      - description: Send Report by Mail Request Date is YYYY-MM-DDThh:mm:ss.000Z
         in: body
         name: SendMailRequest
         required: true

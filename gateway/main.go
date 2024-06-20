@@ -51,8 +51,13 @@ func init() {
 		log.Fatal("MAIL_SERVICE_ADDRESS is empty. Set default value for MAIL_SERVICE_ADDRESS: mail:50052")
 		mailServiceAddress = "mail:50052"
 	}
-
-	factory.AppFactoryInstance = factory.NewAppFactory(db, redisClient, mailServiceAddress)
+	var uptimeServiceAddress string
+	uptimeServiceAddress = os.Getenv("UPTIME_SERVICE_ADDRESS")
+	if uptimeServiceAddress == "" {
+		log.Fatal("UPTIME_SERVICE_ADDRESS is empty. Set default value for UPTIME_SERVICE_ADDRESS: uptime:50051")
+		uptimeServiceAddress = "consumer:50051"
+	}
+	factory.AppFactoryInstance = factory.NewAppFactory(db, redisClient, mailServiceAddress, uptimeServiceAddress)
 }
 
 // @Security ApiKeyAuth
