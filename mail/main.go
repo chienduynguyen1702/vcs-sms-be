@@ -1,19 +1,21 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net"
+	"net/http"
 	"os"
 	"vcs-sms-mail/proto/send_mail"
-	"vcs-sms-mail/proto/uptime_calculate"
 
 	"github.com/robfig/cron"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 
 	"github.com/joho/godotenv"
 )
+
+var gmailService *GmailService
 
 func main() {
 	fmt.Println("Starting mail service ...")
@@ -31,20 +33,14 @@ func main() {
 		return
 	}
 
-	gmailService := InitGmailService(mail, pass)
+	gmailService = InitGmailService(mail, pass)
 
 	cron := cron.New()
 
-	// @every day in 6am
-	err := cron.AddFunc("0 0 0 * *", func() {
-		fmt.Println("Starting send mail")
-
-		err := gmailService.SendEmail("text.txt", "chiennd1702@gmail.com")
-		if err != nil {
-			fmt.Println("Error when send mail: ", err)
-		}
-
-		fmt.Println("Finish send mail")
+	// @every day in 0am +7 timezone => 7am in Vietnam timezone
+	//
+	err := cron.AddFunc("0 0 0 * * *", func() {
+		DailySendMail()
 	})
 
 	if err != nil {
@@ -65,18 +61,8 @@ func main() {
 	}
 	// var opts []grpc.DialOption
 
-	insecureCreds := insecure.NewCredentials()
-	cc, err := grpc.NewClient(consumerAddress, grpc.WithTransportCredentials(insecureCreds))
-	if err != nil {
-		log.Println("Failed to create Client Con to Consumer server", err)
-		panic(err)
-	}
-	uptimeClient := uptime_calculate.NewUptimeCalculateClient(cc)
-	// log
-	log.Printf("Connected to Consumer server at %s", consumerAddress)
-
 	// Create SendMailServerImpl
-	smServer := &SendMailServerImpl{gmail: gmailService, uptimeClient: uptimeClient}
+	smServer := &SendMailServerImpl{gmail: gmailService}
 
 	// start the gRPC server
 	grpcPort := os.Getenv("GRPC_PORT")
@@ -97,4 +83,52 @@ func main() {
 	if err := grpcServer.Serve(lis); err != nil {
 		panic(err)
 	}
+}
+
+func DailySendMail() {
+	var gatewayEndpoint string
+	gatewayEndpoint = os.Getenv("GATEWAY_GET_MAIL_DATA_ENDPOINT")
+	if gatewayEndpoint == "" {
+		fmt.Println("GATEWAY_GET_MAIL_DATA_ENDPOINT is not set. Set as default http://gate-way:8080/api/v1/mail-infor")
+		gatewayEndpoint = "http://gate-way:8080/api/v1/mail-infor"
+		return
+	}
+
+	fmt.Println("Starting send mail")
+	req, err := http.NewRequest("GET", gatewayEndpoint, nil)
+	if err != nil {
+		fmt.Println("Error when create request: ", err)
+		return
+	}
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Println("Error when send request: ", err)
+		return
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		fmt.Println("Error when send request, status code: ", resp.StatusCode)
+		return
+	}
+
+	// fmt.Println("Response: ", resp)
+	var mailReponse MailReponse
+	err = json.NewDecoder(resp.Body).Decode(&mailReponse)
+	if err != nil {
+		fmt.Println("Error when decode response: ", err)
+		return
+	}
+	mailBody := mailReponse.MailBody
+	fmt.Println("MailReponse: ", mailBody)
+	for _, mail := range mailBody.AdminMails {
+		fmt.Println("Mail: ", mail)
+		err := gmailService.SendEmailV2(mailBody.From, mailBody.To, mailBody.TotalServer, mailBody.TotalServerOnline, mailBody.TotalServerOffline, mailBody.AvgUptime, mail)
+		if err != nil {
+			fmt.Printf("Error when send mail to %s : %v", mail, err)
+		}
+	}
+
+	fmt.Println("Finish send mail")
 }

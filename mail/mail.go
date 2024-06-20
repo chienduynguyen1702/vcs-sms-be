@@ -1,11 +1,28 @@
 package main
 
+import "time"
+
 const (
 	SUBJECT = "[VCS-SMS] Statistical Servers Report"
 )
 
 type Mail interface {
 	SendEmail(filename string, toMail string) error
+}
+type MailReponse struct {
+	Success  bool     `json:"success"`
+	Message  string   `json:"message"`
+	MailBody MailBody `json:"data"`
+}
+
+type MailBody struct {
+	AdminMails         []string  `json:"admin_mails"`
+	From               time.Time `json:"from"`
+	To                 time.Time `json:"to"`
+	TotalServer        int64     `json:"total_server"`
+	TotalServerOnline  int64     `json:"total_server_online"`
+	TotalServerOffline int64     `json:"total_server_offline"`
+	AvgUptime          float32   `json:"avg_uptime"`
 }
 
 // func uploadHandler(c *gin.Context) {
