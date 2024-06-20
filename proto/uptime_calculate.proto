@@ -17,5 +17,5 @@ message AggregationRequest {
 }
 message AggregationResponse {
     bool isSuccess = 1;
-    string filePath = 2;
+    float averagePercentUptimeServer = 2;
 }

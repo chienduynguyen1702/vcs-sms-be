@@ -15,8 +15,13 @@ message MailRequest {
     google.protobuf.Timestamp fromDate = 1;
     google.protobuf.Timestamp toDate = 2;
     string mailReceiver = 3;
+    int64 totalServer = 4;
+    int64 numberOfOnlineServer = 5;
+    int64 numberOfOfflineServer = 6;
+    float averagePercentUptimeServer = 7;
 }
+
 message MailResponse {
     bool isSuccess = 1;
-    string filePath = 2;
+    string message = 2;
 }
