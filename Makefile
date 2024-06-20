@@ -2,12 +2,13 @@ BROKER_HOST=kafka
 KAFKA_PATH_SH=/opt/kafka/bin
 PROJECT_NAME=vcs-sms
 HEALTHCHECK=${PROJECT_NAME}-health-check
-GATEWAY=${PROJECT_NAME}-gateway
+GATEWAY=${PROJECT_NAME}-gate-way
 BROKER=broker
 REDIS=${PROJECT_NAME}-redis
 CONSUMMER=${PROJECT_NAME}-consumer
 PING_STATUS_TOPIC=ping_status
 CONSUMER_GROUP=consumer-group-id
+MAIL=${PROJECT_NAME}-mail
 
 restart-health-check:
 	docker compose up --build -d && docker ps && docker logs -f vcs-sms-health-check
@@ -33,7 +34,7 @@ list-consumers:
 ######## gRPC Commands ########
 create-pb-uptime-calculate:
 	protoc --go_out=./consumer/ --go-grpc_out=./consumer/ proto/uptime_calculate.proto
-	protoc --go_out=./mail/ --go-grpc_out=./mail/ proto/uptime_calculate.proto
+	protoc --go_out=./gateway/ --go-grpc_out=./gateway/ proto/uptime_calculate.proto
 
 create-pb-send-mail:
 	protoc --go_out=./gateway/ --go-grpc_out=./gateway/ proto/send_mail.proto
@@ -62,6 +63,8 @@ log-gateway:
 	docker logs -f --tail 30 $(GATEWAY)
 log-broker:
 	docker logs -f --tail 30 $(BROKER)	
+log-mail:
+	docker logs -f --tail 30 $(MAIL)	
 start-compose:
 	docker compose up --build -d
 list-compose:
