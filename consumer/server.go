@@ -9,10 +9,11 @@ import (
 // declare server model
 
 type Server struct {
-	IP     string    `json:"ip"`
-	Name   string    `json:"name"`
-	Status string    `json:"status"`
-	PingAt time.Time `json:"ping_at"`
+	IP       string    `json:"ip"`
+	Name     string    `json:"name"`
+	Status   string    `json:"status"`
+	PingAt   time.Time `json:"ping_at"`
+	IsOnline bool      `json:"is_online"`
 }
 
 // method to make []Server a ListServers type

@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.3.0
 // - protoc             v3.12.4
-// source: proto/consumer.proto
+// source: proto/uptime_calculate.proto
 
 package uptime_calculate
 
@@ -105,5 +105,5 @@ var UptimeCalculate_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/consumer.proto",
+	Metadata: "proto/uptime_calculate.proto",
 }

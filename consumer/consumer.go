@@ -87,7 +87,7 @@ func (c *Consumer) StartConsumer() {
 	fmt.Println("")
 	// Buffer to store messages
 	var messages []Server
-	batchSize := 10000
+	batchSize := 500
 	for {
 
 		// get 00h00m00s today and 23h59m59s today
@@ -233,7 +233,7 @@ func (c *Consumer) RequestAggregation(ctx context.Context, req *uc_pb.Aggregatio
 
 	log.Printf("Client sent request to aggregation from %v to %v", fromDate, toDate)
 	return &uc_pb.AggregationResponse{
-		IsSuccess: true,
-		FilePath:  "path/to/file",
+		IsSuccess:                  true,
+		AveragePercentUptimeServer: 100,
 	}, nil
 }

@@ -21,8 +21,8 @@ func (s *UptimeCalculateServerImpl) RequestAggregation(ctx context.Context, req 
 	if fromDate.After(toDate) {
 		log.Println("fromDate is after toDate")
 		return &uptime_calculate.AggregationResponse{
-			IsSuccess: false,
-			FilePath:  "",
+			IsSuccess:                  false,
+			AveragePercentUptimeServer: 0,
 		}, nil
 	}
 
@@ -31,19 +31,20 @@ func (s *UptimeCalculateServerImpl) RequestAggregation(ctx context.Context, req 
 	// Get 23:59:59 of toDate
 	endDateOfToDate := time.Date(toDate.Year(), toDate.Month(), toDate.Day(), 23, 59, 59, 999999999, toDate.Location())
 	// Run Elasticsearch query
-	filePath, err := s.consumer.ES.AggregateUptimeServer(ES_INDEX_NAME, startDateOfFromDate, endDateOfToDate)
+	result, err := s.consumer.ES.AggregateUptimeServer(ES_INDEX_NAME, startDateOfFromDate, endDateOfToDate)
+	// fmt.Println("result", result)
 	if err != nil {
 		return &uptime_calculate.AggregationResponse{
-			IsSuccess: false,
-			FilePath:  "",
+			IsSuccess:                  false,
+			AveragePercentUptimeServer: 0,
 		}, err
 	}
 
 	// Process and return the response
 	response := &uptime_calculate.AggregationResponse{
 		// Populate the response with esResult data
-		IsSuccess: true,
-		FilePath:  filePath,
+		IsSuccess:                  true,
+		AveragePercentUptimeServer: result,
 	}
 
 	return response, nil
