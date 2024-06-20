@@ -115,6 +115,7 @@ services:
       context: ./mail
       dockerfile: Dockerfile
     container_name: vcs-sms-mail
+    restart: always
     ports:
       - "50052:50052"
     volumes:
