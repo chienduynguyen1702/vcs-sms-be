@@ -55,7 +55,7 @@ func init() {
 	GateWayFlushCachingServerAPIEndpoint = os.Getenv("GATEWAY_FLUSH_CACHING_SERVER_API_ENDPOINT")
 	if GateWayFlushCachingServerAPIEndpoint == "" {
 		log.Println("Failed to get Gateway API endpoint, setting to default")
-		GateWayFlushCachingServerAPIEndpoint = "http://gateway:8080/api/v1/servers/flush-cache"
+		GateWayFlushCachingServerAPIEndpoint = "http://gate-way:8080/api/v1/servers/flush-cache"
 	}
 }
 
