@@ -27,9 +27,9 @@ func NewMailController(mailService *services.MailService) *MailController {
 // @Router /api/v1/mail-infor [get]
 func (rc *MailController) GetMailInfoToSend(ctx *gin.Context) {
 	// get 0h00 today
-	from := time.Now().Truncate(24 * time.Hour)
-	// get 0h00 tomorrow
-	to := from.Add(24 * time.Hour)
+	to := time.Now().Truncate(24 * time.Hour)
+	// get 0h00 yesterday
+	from := to.Add(-24 * time.Hour)
 	fromStr := from.Format("2006-01-02T15:04:05Z")
 	toStr := to.Format("2006-01-02T15:04:05Z")
 	mails, err := rc.mailService.GetMailInfoToSend(fromStr, toStr)
