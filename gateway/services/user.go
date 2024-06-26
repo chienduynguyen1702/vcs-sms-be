@@ -107,7 +107,7 @@ func (us *UserService) UpdateUser(userBodyRequest dtos.UpdateUserRequest, userID
 	var findingRoleID uint
 	var errGetRole error
 	var findingRole *models.Role
-	if user.IsOrganizationAdmin {
+	if userBodyRequest.IsOrganizationAdmin {
 		findingRole, errGetRole = us.roleRepo.GetRoleByName("Admin")
 	} else {
 		findingRole, errGetRole = us.roleRepo.GetRoleByName("User")
