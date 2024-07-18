@@ -1,5 +1,9 @@
-# Create docker registry in local
+# Create docker swarm for vcs-sms-be
+
+## Create docker registry in local
+
 Create a registry in local:
+
 - health check status of registry
 - expose 5000 port
 - named local-registry
@@ -29,9 +33,9 @@ services:
 volumes:
   registry-data:
 
-``` 
+```
 
-# Tag and push image to local registry
+## Tag and push image to local registry
 
 ``` bash
 # Build and tag the gateway service image
@@ -51,4 +55,15 @@ docker push localhost:5000/gateway:latest
 docker push localhost:5000/consumer:latest
 docker push localhost:5000/mail:latest
 docker push localhost:5000/health-check:latest
+```
+
+## update docker-compose.yml to use local image
+
+```yml
+services:
+  gate-way:
+    image: localhost:5000/gateway:latest
+...
+  consumer:
+    image: localhost:5000/consumer:latest
 ```
