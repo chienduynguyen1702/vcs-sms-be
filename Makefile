@@ -75,3 +75,7 @@ delete-ping-topic:
 	docker compose exec $(BROKER_HOST) $(KAFKA_PATH_SH)/kafka-topics.sh --delete --topic ping_status --bootstrap-server $(BROKER_HOST):9092
 delete-__consumer_offsets-topic:
 	docker compose exec $(BROKER_HOST) $(KAFKA_PATH_SH)/kafka-topics.sh --delete --topic __consumer_offsets --bootstrap-server $(BROKER_HOST):9092
+
+######## Docker Swarm Commands ########
+swarm-create-stack:
+	docker stack deploy --compose-file docker-compose.yml vcs-sms-be
