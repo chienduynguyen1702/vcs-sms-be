@@ -1,16 +1,10 @@
-# version: '3'
+version: '3.7'
 
 services:
   gate-way:
-    build:
-      context: ./gateway
-      dockerfile: docker/Dockerfile
-    container_name: vcs-sms-gate-way
-    ports:
-      - "8080:8080"
+    image: localhost:5000/gateway:latest
     env_file:
       - ./gateway/.env.container
-    restart: always
     depends_on:
       - postgres
       - redis
@@ -22,10 +16,6 @@ services:
 
   postgres:
     image: postgres:12-alpine
-    container_name: vcs-sms-db
-    restart: always
-    ports:
-      - "$DB_PORT:5432"
     environment:
       POSTGRES_USER: vcs
       POSTGRES_PASSWORD: vcs
@@ -39,17 +29,14 @@ services:
 
   redis:
     image: redis:alpine
-    container_name: vcs-sms-redis
-    restart: always
     ports:
       - "$REDIS_PORT:6379"
     networks:
       - vcs-sms-checkpoint
-  # run in container: using hostname as broker
+
   kafka:
     image: apache/kafka:latest
     hostname: broker
-    container_name: vcs-sms-kafka
     environment:
       KAFKA_NODE_ID: 1
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
@@ -74,16 +61,10 @@ services:
 
   health-check:
     dns:
-    - 8.8.8.8
-    build:
-      context: ./health-check
-      dockerfile: Dockerfile
-    ports:
-      - "9999:9999"
-    container_name: vcs-sms-health-check
+      - 8.8.8.8
+    image: localhost:5000/health-check:latest
     env_file:
       - ./health-check/.env.container
-    restart: always
     depends_on:
       - postgres
       - redis
@@ -93,66 +74,28 @@ services:
 
   consumer:
     dns:
-    - 8.8.8.8
-    build:
-      context: ./consumer
-      dockerfile: Dockerfile
-    container_name: vcs-sms-consumer
-    ports:
-      - "50051:50051"
+      - 8.8.8.8
+    image: localhost:5000/consumer:latest
     volumes:
       - "report-file-volume:/reports"
     env_file:
       - ./consumer/.env.container
-    restart: always
     depends_on:
       - kafka
     networks:
       - vcs-sms-checkpoint
 
   mail:
-    build: 
-      context: ./mail
-      dockerfile: Dockerfile
-    container_name: vcs-sms-mail
-    restart: always
-    ports:
-      - "50052:50052"
+    image: localhost:5000/mail:latest
     volumes:
       - "report-file-volume:/reports"
     env_file:
       - ./mail/.env.container
     networks:
       - vcs-sms-checkpoint
-  # elasticsearch: # make sure available storage for kibana about > 25GB
-  #   container_name: vcs-sms-elasticsearch
-  #   image: docker.elastic.co/elasticsearch/elasticsearch:8.13.1
-  #   # 8.x
-  #   environment: 
-  #     - xpack.security.enabled=false
-  #     - discovery.type=single-node
-  #   ports:
-  #     - 9200:9200
-  #   volumes:
-  #     - elasticsearch-data:/usr/share/elasticsearch/data
-  #   networks:
-  #     - vcs-sms-checkpoint
 
-  # kibana: # make sure available storage for kibana about > 25GB
-  #   image: docker.elastic.co/kibana/kibana:8.13.1
-  #   container_name: vcs-sms-kibana
-  #   environment:
-  #     # XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY: d1a66dfd-c4d3-4a0a-8290-2abcb83ab3aa
-  #     - ELASTICSEARCH_HOSTS=http://elasticsearch:9200    # address of elasticsearch docker container which kibana will connect
-  #   ports:
-  #     - 5601:5601
-  #   depends_on:
-  #     - elasticsearch         # kibana will start when elasticsearch has started
-  #   networks:
-  #     - vcs-sms-checkpoint
 volumes:
   vcs_sms_db_volume:
-  # elasticsearch-data:
   report-file-volume:
     driver: local
     driver_opts:
@@ -160,8 +103,6 @@ volumes:
       device: "./reports"
       o: "bind"
 
-
-
 networks:
   vcs-sms-checkpoint:
-    driver: bridge
+    driver: overlay
