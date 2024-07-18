@@ -1,6 +1,37 @@
 version: '3.7'
 
 services:
+  traefik:
+    image: traefik:v2.3
+    command:
+      # traefik configuration
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.tcp.forwardedHeaders.insecure=true"
+      - "--providers.docker.exposedbydefault=false"
+      # tcp entrypoint
+      - "--entrypoints.postgres.address=:5432"
+      - "--entrypoints.redis.address=:6379"
+      - "--entrypoints.kafka.address=:9092"
+      - "--entrypoints.elasticsearch.address=:9200"
+      # http entrypoint
+      - "--entrypoints.http_mail.address=:8081"
+      - "--entrypoints.http_gateway.address=:8082"
+      # grpc entrypoint
+
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+      - "8082:8082"
+
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    networks:
+      - vcs-sms-checkpoint
+
   gate-way:
     image: localhost:5000/gateway:latest
     env_file:
@@ -13,6 +44,25 @@ services:
       - "report-file-volume:/reports"
     networks:
       - vcs-sms-checkpoint
+    deploy:
+      mode: replicated
+      replicas: 3
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+      restart_policy:
+        condition: on-failure
+      update_config:
+        parallelism: 2
+        delay: 10s
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.gateway.rule=Host(`localhost`)"
+        - "traefik.http.services.gateway.loadbalancer.server.port=8080"
 
   postgres:
     image: postgres:12-alpine
@@ -26,6 +76,11 @@ services:
       - vcs_sms_db_volume:/var/lib/postgresql/data
     networks:
       - vcs-sms-checkpoint
+    labels:
+      - "traefik.enable=true"
+      - "traefik.tcp.routers.db.rule=HostSNI(`postgres.localhost`)"
+      - "traefik.tcp.routers.db.entrypoints=postgres"
+      - "traefik.tcp.services.db.loadbalancer.server.port=5432"
 
   redis:
     image: redis:alpine
@@ -71,6 +126,8 @@ services:
       - kafka
     networks:
       - vcs-sms-checkpoint
+    labels:
+      - "traefik.enable=true"
 
   consumer:
     dns:
@@ -80,10 +137,55 @@ services:
       - "report-file-volume:/reports"
     env_file:
       - ./consumer/.env.container
+    environment:
+      - ELASTICSEARCH_HOST=$ELASTICSEARCH_HOST
+      - ELASTIC_USERNAME=$ELASTIC_USERNAME
+      - ELASTIC_PASSWORD=$ELASTIC_PASSWORD
     depends_on:
       - kafka
     networks:
       - vcs-sms-checkpoint
+    deploy:
+      mode: replicated
+      replicas: 3
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+      restart_policy:
+        condition: on-failure
+      update_config:
+        parallelism: 2
+        delay: 10s
+      labels:
+        - "traefik.enable=true"
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.9
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - ELASTIC_USERNAME=$ELASTIC_USERNAME
+      - ELASTIC_PASSWORD=$ELASTIC_PASSWORD
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./esdata:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - vcs-sms-checkpoint
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.elasticsearch.rule=Host(`es.localhost`)"
+      - "traefik.http.routers.elasticsearch.entrypoints=elasticsearch"
+      - "traefik.http.services.elasticsearch.loadbalancer.server.port=9200"
 
   mail:
     image: localhost:5000/mail:latest
@@ -93,6 +195,8 @@ services:
       - ./mail/.env.container
     networks:
       - vcs-sms-checkpoint
+    labels:
+      - "traefik.enable=false"
 
 volumes:
   vcs_sms_db_volume:
@@ -102,6 +206,7 @@ volumes:
       type: "none"
       device: "./reports"
       o: "bind"
+  esdata:
 
 networks:
   vcs-sms-checkpoint:
