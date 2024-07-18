@@ -134,6 +134,7 @@ func (us *UserService) UpdateUser(userBodyRequest dtos.UpdateUserRequest, userID
 	user.Phone = userBodyRequest.Phone
 	user.IsOrganizationAdmin = userBodyRequest.IsOrganizationAdmin
 	user.RoleID = findingRoleID
+	user.Role = *findingRole
 	user.Password = hashedPasswordStr
 
 	return us.userRepo.UpdateUser(user)
