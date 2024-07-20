@@ -79,3 +79,5 @@ delete-__consumer_offsets-topic:
 ######## Docker Swarm Commands ########
 swarm-create-stack:
 	docker stack deploy --compose-file docker-compose.yml vcs-sms-be
+swarm-remove-stack:
+	docker stack rm vcs-sms-be
