@@ -103,7 +103,7 @@ func (m *GmailService) SendEmailV2(FromDate, ToDate time.Time, TotalServer, Numb
 		</html>
 	`
 	msg := gomail.NewMessage()
-	msg.SetHeader("From", "chienduynguyen1702@mail.com")
+	msg.SetHeader("From", "chienduynguyen1702@gmail.com")
 	msg.SetHeader("To", MailReceiver)
 	msg.SetHeader("Subject", "Statistical Servers Report")
 	msg.SetBody("text/html", body)

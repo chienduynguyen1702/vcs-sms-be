@@ -28,6 +28,7 @@ func main() {
 
 	mail := os.Getenv("MAIL_SERVICE_MAIL")
 	pass := os.Getenv("MAIL_SERVICE_PASS")
+	log.Printf("Mail: %s, Pass: %s", mail, pass)
 	if mail == "" || pass == "" {
 		fmt.Println("Please set MAIL_SERVICE_MAIL and MAIL_SERVICE_PASS")
 		return

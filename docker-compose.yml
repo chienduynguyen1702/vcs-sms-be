@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   traefik:
-    image: traefik:v2.3
+    image: traefik:v3.0
     command:
       # traefik configuration
       - "--api.insecure=true"
@@ -10,29 +10,35 @@ services:
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
       - "--entrypoints.tcp.forwardedHeaders.insecure=true"
-      - "--providers.docker.exposedbydefault=false"
+      - "--accessLog.filePath=/var/log/traefik/traefik.log"
       # tcp entrypoint
       - "--entrypoints.postgres.address=:5432"
       - "--entrypoints.redis.address=:6379"
       - "--entrypoints.kafka.address=:9092"
       - "--entrypoints.elasticsearch.address=:9200"
+      - "--entrypoints.consumer.address=:50051"
+      - "--entrypoints.mail.address=:50052"
       # http entrypoint
-      - "--entrypoints.http_mail.address=:8081"
-      - "--entrypoints.http_gateway.address=:8082"
+      - "--entrypoints.gateway.address=:9090"
       # grpc entrypoint
 
     ports:
       - "80:80"
       - "443:443"
       - "8080:8080"
-      - "8082:8082"
+      - "9090:9090"
 
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
     networks:
       - vcs-sms-checkpoint
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
 
-  gate-way:
+
+  gateway:
     image: localhost:5000/gateway:latest
     env_file:
       - ./gateway/.env.container
@@ -46,7 +52,7 @@ services:
       - vcs-sms-checkpoint
     deploy:
       mode: replicated
-      replicas: 3
+      replicas: 2
       resources:
         limits:
           cpus: '0.5'
@@ -56,13 +62,13 @@ services:
           memory: 128M
       restart_policy:
         condition: on-failure
-      update_config:
-        parallelism: 2
-        delay: 10s
-      labels:
-        - "traefik.enable=true"
-        - "traefik.http.routers.gateway.rule=Host(`localhost`)"
-        - "traefik.http.services.gateway.loadbalancer.server.port=8080"
+    labels:
+      # Router configuration
+      - "traefik.http.routers.gateway.rule=Host(`gateway.localhost`)"
+      - "traefik.http.routers.gateway.entrypoints=web"
+      - "traefik.http.routers.gateway.service=gateway-service"
+      # Service configuration
+      - "traefik.http.services.gateway-service.loadbalancer.server.port=8080"
 
   postgres:
     image: postgres:12-alpine
@@ -78,7 +84,7 @@ services:
       - vcs-sms-checkpoint
     labels:
       - "traefik.enable=true"
-      - "traefik.tcp.routers.db.rule=HostSNI(`postgres.localhost`)"
+      - "traefik.tcp.routers.db.rule=HostSNI(`*`)"
       - "traefik.tcp.routers.db.entrypoints=postgres"
       - "traefik.tcp.services.db.loadbalancer.server.port=5432"
 
@@ -107,8 +113,8 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_LOG_DIRS: '/tmp/kraft-combined-logs'
-    ports:
-      - "9092:9092"
+    # ports:
+    #   - "9092:9092"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
@@ -126,8 +132,8 @@ services:
       - kafka
     networks:
       - vcs-sms-checkpoint
-    labels:
-      - "traefik.enable=true"
+    # labels:
+      # - "traefik.enable=true"
 
   consumer:
     dns:
@@ -147,7 +153,7 @@ services:
       - vcs-sms-checkpoint
     deploy:
       mode: replicated
-      replicas: 3
+      replicas: 2
       resources:
         limits:
           cpus: '0.5'
@@ -157,35 +163,14 @@ services:
           memory: 128M
       restart_policy:
         condition: on-failure
-      update_config:
-        parallelism: 2
-        delay: 10s
-      labels:
-        - "traefik.enable=true"
-
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.9
-    environment:
-      - discovery.type=single-node
-      - ES_JAVA_OPTS=-Xms512m -Xmx512m
-      - ELASTIC_USERNAME=$ELASTIC_USERNAME
-      - ELASTIC_PASSWORD=$ELASTIC_PASSWORD
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    volumes:
-      - ./esdata:/usr/share/elasticsearch/data
-    ports:
-      - "9200:9200"
-      - "9300:9300"
-    networks:
-      - vcs-sms-checkpoint
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.elasticsearch.rule=Host(`es.localhost`)"
-      - "traefik.http.routers.elasticsearch.entrypoints=elasticsearch"
-      - "traefik.http.services.elasticsearch.loadbalancer.server.port=9200"
+      # router
+      - "traefik.tcp.routers.consumer.rule=HostSNI(`*`)"
+      - "traefik.tcp.routers.consumer.entryPoints=consumer"
+      - "traefik.tcp.routers.consumer.service=consumer"
+      # service
+      - "traefik.tcp.services.consumer.loadbalancer.server.port=50051"
 
   mail:
     image: localhost:5000/mail:latest
@@ -193,10 +178,19 @@ services:
       - "report-file-volume:/reports"
     env_file:
       - ./mail/.env.container
+    environment:
+      - MAIL_SERVICE_MAIL=chienduynguyen1702@gmail.com
+      - MAIL_SERVICE_PASS=nzmo gayl tfwt vale
     networks:
       - vcs-sms-checkpoint
     labels:
-      - "traefik.enable=false"
+      - "traefik.enable=true"
+      # router
+      - "traefik.tcp.routers.mail.rule=HostSNI(`*`)"
+      - "traefik.tcp.routers.mail.entryPoints=mail"
+      - "traefik.tcp.routers.mail.service=mail"
+      # service
+      - "traefik.tcp.services.mail.loadbalancer.server.port=50052"
 
 volumes:
   vcs_sms_db_volume:
