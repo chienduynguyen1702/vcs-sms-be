@@ -7,7 +7,7 @@ services:
       dockerfile: docker/Dockerfile
     container_name: vcs-sms-gate-way
     ports:
-      - "8080:8080"
+      - "8081:8080"
     env_file:
       - ./gateway/.env.container
     restart: always
@@ -18,7 +18,7 @@ services:
     volumes:
       - "report-file-volume:/reports"
     networks:
-      - vcs-sms-checkpoint
+      - vcs-sms-checkpoint-v1
 
   postgres:
     image: postgres:12-alpine
@@ -35,7 +35,7 @@ services:
     volumes:
       - vcs_sms_db_volume:/var/lib/postgresql/data
     networks:
-      - vcs-sms-checkpoint
+      - vcs-sms-checkpoint-v1
 
   redis:
     image: redis:alpine
@@ -44,7 +44,7 @@ services:
     ports:
       - "$REDIS_PORT:6379"
     networks:
-      - vcs-sms-checkpoint
+      - vcs-sms-checkpoint-v1
   # run in container: using hostname as broker
   kafka:
     image: apache/kafka:latest
@@ -70,7 +70,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      - vcs-sms-checkpoint
+      - vcs-sms-checkpoint-v1
 
   health-check:
     dns:
@@ -89,7 +89,7 @@ services:
       - redis
       - kafka
     networks:
-      - vcs-sms-checkpoint
+      - vcs-sms-checkpoint-v1
 
   consumer:
     dns:
@@ -108,7 +108,7 @@ services:
     depends_on:
       - kafka
     networks:
-      - vcs-sms-checkpoint
+      - vcs-sms-checkpoint-v1
 
   mail:
     build: 
@@ -123,7 +123,7 @@ services:
     env_file:
       - ./mail/.env.container
     networks:
-      - vcs-sms-checkpoint
+      - vcs-sms-checkpoint-v1
   # elasticsearch: # make sure available storage for kibana about > 25GB
   #   container_name: vcs-sms-elasticsearch
   #   image: docker.elastic.co/elasticsearch/elasticsearch:8.13.1
@@ -136,7 +136,7 @@ services:
   #   volumes:
   #     - elasticsearch-data:/usr/share/elasticsearch/data
   #   networks:
-  #     - vcs-sms-checkpoint
+  #     - vcs-sms-checkpoint-v1
 
   # kibana: # make sure available storage for kibana about > 25GB
   #   image: docker.elastic.co/kibana/kibana:8.13.1
@@ -149,7 +149,7 @@ services:
   #   depends_on:
   #     - elasticsearch         # kibana will start when elasticsearch has started
   #   networks:
-  #     - vcs-sms-checkpoint
+  #     - vcs-sms-checkpoint-v1
 volumes:
   vcs_sms_db_volume:
   # elasticsearch-data:
@@ -163,5 +163,5 @@ volumes:
 
 
 networks:
-  vcs-sms-checkpoint:
+  vcs-sms-checkpoint-v1:
     driver: bridge

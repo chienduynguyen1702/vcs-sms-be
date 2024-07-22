@@ -1,0 +1,9 @@
+MAIL_SERVICE_MAIL="chienduynguyen1702@gmail.com" # email
+MAIL_SERVICE_PASS="nzmo gayl tfwt vale" # app password
+
+RUN_ON_CONTAINER=true # true or false
+
+GRPC_PORT=50052
+GRPC_SERVER_CONSUMER_ADDRESS=traefik:50051
+
+GATEWAY_GET_MAIL_DATA_ENDPOINT=http://gateway:8080/api/v1/mail-infor
