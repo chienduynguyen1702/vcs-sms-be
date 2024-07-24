@@ -6,7 +6,7 @@ services:
     command:
       # traefik configuration
       - "--api.insecure=true"
-      - "--providers.docker=true"
+      - "--providers.swarm=true"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
       - "--entrypoints.tcp.forwardedHeaders.insecure=true"
@@ -20,13 +20,11 @@ services:
       - "--entrypoints.mail.address=:50052"
       # http entrypoint
       - "--entrypoints.gateway.address=:9090"
-      # grpc entrypoint
 
     ports:
       - "80:80"
       - "443:443"
       - "8080:8080"
-      - "9090:9090"
 
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
@@ -36,6 +34,9 @@ services:
       placement:
         constraints:
           - node.role == manager
+      labels:
+        - "traefik.enable=true"
+        # Router configuration
 
 
   gateway:
@@ -62,13 +63,14 @@ services:
           memory: 128M
       restart_policy:
         condition: on-failure
-    labels:
-      # Router configuration
-      - "traefik.http.routers.gateway.rule=Host(`gateway.localhost`)"
-      - "traefik.http.routers.gateway.entrypoints=web"
-      - "traefik.http.routers.gateway.service=gateway-service"
-      # Service configuration
-      - "traefik.http.services.gateway-service.loadbalancer.server.port=8080"
+      labels:
+        - "traefik.enable=true"
+        # Router configuration
+        - "traefik.http.routers.gateway.rule=Host(`gateway.localhost`)"
+        - "traefik.http.routers.gateway.entrypoints=web"
+        - "traefik.http.routers.gateway.service=gateway-service"
+        # Service configuration
+        - "traefik.http.services.gateway-service.loadbalancer.server.port=8080"
 
   postgres:
     image: postgres:12-alpine
@@ -82,7 +84,8 @@ services:
       - vcs_sms_db_volume:/var/lib/postgresql/data
     networks:
       - vcs-sms-checkpoint
-    labels:
+    deploy:
+      labels:
       - "traefik.enable=true"
       - "traefik.tcp.routers.db.rule=HostSNI(`*`)"
       - "traefik.tcp.routers.db.entrypoints=postgres"
@@ -94,6 +97,9 @@ services:
       - "$REDIS_PORT:6379"
     networks:
       - vcs-sms-checkpoint
+    deploy:
+      labels:
+        - "traefik.enable=false"
 
   kafka:
     image: apache/kafka:latest
@@ -119,6 +125,9 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - vcs-sms-checkpoint
+    deploy:
+      labels:
+        - "traefik.enable=false"
 
   health-check:
     dns:
@@ -132,8 +141,9 @@ services:
       - kafka
     networks:
       - vcs-sms-checkpoint
-    # labels:
-      # - "traefik.enable=true"
+    deploy:
+      labels:
+      - "traefik.enable=false"
 
   consumer:
     dns:
@@ -163,14 +173,14 @@ services:
           memory: 128M
       restart_policy:
         condition: on-failure
-    labels:
-      - "traefik.enable=true"
-      # router
-      - "traefik.tcp.routers.consumer.rule=HostSNI(`*`)"
-      - "traefik.tcp.routers.consumer.entryPoints=consumer"
-      - "traefik.tcp.routers.consumer.service=consumer"
-      # service
-      - "traefik.tcp.services.consumer.loadbalancer.server.port=50051"
+      labels:
+        - "traefik.enable=true"
+        # router
+        - "traefik.tcp.routers.consumer.rule=HostSNI(`*`)"
+        - "traefik.tcp.routers.consumer.entryPoints=consumer"
+        - "traefik.tcp.routers.consumer.service=consumer"
+        # service
+        - "traefik.tcp.services.consumer.loadbalancer.server.port=50051"
 
   mail:
     image: localhost:5000/mail:latest
@@ -183,14 +193,26 @@ services:
       - MAIL_SERVICE_PASS=nzmo gayl tfwt vale
     networks:
       - vcs-sms-checkpoint
-    labels:
-      - "traefik.enable=true"
-      # router
-      - "traefik.tcp.routers.mail.rule=HostSNI(`*`)"
-      - "traefik.tcp.routers.mail.entryPoints=mail"
-      - "traefik.tcp.routers.mail.service=mail"
-      # service
-      - "traefik.tcp.services.mail.loadbalancer.server.port=50052"
+    deploy:
+      mode: replicated
+      replicas: 2
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+      restart_policy:
+        condition: on-failure
+      labels:
+        - "traefik.enable=true"
+        # router
+        - "traefik.tcp.routers.mail.rule=HostSNI(`*`)"
+        - "traefik.tcp.routers.mail.entryPoints=mail"
+        - "traefik.tcp.routers.mail.service=mail"
+        # service
+        - "traefik.tcp.services.mail.loadbalancer.server.port=50052"
 
 volumes:
   vcs_sms_db_volume:
